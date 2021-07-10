@@ -27,7 +27,7 @@
 #define	E_UTF8		17	/* マルチバイト文字コード＝UTF-8 */
 #define	E_DEFAULT	32	/* マルチバイト文字コード＝OSデフォルトのコード */
 
-void LoadMessageFromTxt(const aya::string_t &file,char cset);
+bool LoadMessageFromTxt(const aya::string_t &file,char cset);
 typedef std::vector<std::wstring> MessageArray;
 // フェータルエラー文字列（日本語）
 extern MessageArray msgf;

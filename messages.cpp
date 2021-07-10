@@ -11,6 +11,8 @@
 
 #include "messages.h"
 #include "file.h"
+#include "wsex.h"
+#include "misc.h"
 void ClearMessageArrays(){
 	msgf.clear();
 	msge.clear();
@@ -18,13 +20,15 @@ void ClearMessageArrays(){
 	msgn.clear();
 	msgj.clear();
 }
-void LoadMessageFromTxt(const aya::string_t &file,char cset){
-	CFile1 txt(file,cset,L"r");
-	txt.Open();
+bool LoadMessageFromTxt(const aya::string_t &file,char cset){
+	FILE *fp = aya::w_fopen(file.c_str(), L"r");
+	if (!fp)
+		return false;
 	MessageArray*ptr=&msgf;
 	aya::string_t line;
 	ClearMessageArrays();
-	while(txt.Read(line)==1){
+	while(aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) != aya::WS_EOF){
+		CutCrLf(line);
 		if(line.substr(0,3)==L"!!!"){
 			line=line.substr(3);
 			#define tmp(name) \
@@ -42,7 +46,8 @@ void LoadMessageFromTxt(const aya::string_t &file,char cset){
 		else if(line.substr(0,1)==L"*")
 			ptr->push_back(line.substr(1));
 	}
-	txt.Close();
+	fclose(fp);
+	return true;
 }
 // フェータルエラー文字列（日本語）
 MessageArray msgf={
