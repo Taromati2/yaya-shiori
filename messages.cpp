@@ -143,10 +143,15 @@ const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 		emsg = L"//msg M";
 	}
 
-	if ( id < 0 || ptr->size() <= static_cast<size_t>(id) )//catch overflow
-		return emsg+std::to_wstring(id)+L" : (please specify messagetxt)\r\n";
-	else
+	if ( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
+		aya::char_t buf[64] = L"";
+		aya::snprintf(buf,63,L"%04d",id);
+
+		return aya::string_t(emsg) + buf + L" : (please specify messagetxt)\r\n";
+	}
+	else {
 		return (*ptr)[id];
+	}
 }
 
 namespace ayamsg {
