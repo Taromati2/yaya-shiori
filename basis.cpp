@@ -470,7 +470,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				cset = cx;
 			}
 		}
-		return ayamsg::LoadMessageFromTxt(load_path + param1,cset);
+		return ayamsg::LoadMessageFromTxt(param1,cset);
 	}
 	// log
 	if ( cmd.compare(L"log") == 0 ) {
