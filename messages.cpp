@@ -4,208 +4,174 @@
 // ログメッセージ
 // written by umeici. 2004
 // 
-// 英語のメッセージは基本的に以下のサイト等で自動翻訳したものです。
-// excite翻訳
-// http://www.excite.co.jp/world/
-//
+
+#if defined(WIN32) || defined(_WIN32_WCE)
+# include "stdafx.h"
+#endif
 
 #include "messages.h"
-#include "file.h"
+
+#include "globaldef.h"
 #include "wsex.h"
 #include "misc.h"
-void ClearMessageArrays(){
-	msgf.clear();
-	msge.clear();
-	msgw.clear();
-	msgn.clear();
-	msgj.clear();
+
+//////////DEBUG/////////////////////////
+#ifdef _WINDOWS
+#ifdef _DEBUG
+#include <crtdbg.h>
+#define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
+#endif
+#endif
+////////////////////////////////////////
+
+static void ClearMessageArrays()
+{
+	ayamsg::msgf.clear();
+	ayamsg::msge.clear();
+	ayamsg::msgw.clear();
+	ayamsg::msgn.clear();
+	ayamsg::msgj.clear();
 }
-bool LoadMessageFromTxt(const aya::string_t &file,char cset){
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  ayamsg::IsEmpty
+ *  機能概要：  エラーメッセージテーブルが空かどうかを判定します
+ * -----------------------------------------------------------------------
+ */
+bool ayamsg::IsEmpty(void)
+{
+	return ayamsg::msgf.empty() && ayamsg::msge.empty() && ayamsg::msgw.empty();
+}
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  ayamsg::LoadMessageFromTxt
+ *  機能概要：  テキストファイルからエラーメッセージテーブルに読み込みます
+ * -----------------------------------------------------------------------
+ */
+bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
+{
 	FILE *fp = aya::w_fopen(file.c_str(), L"r");
-	if (!fp)
+
+	if (fp == NULL) {
 		return false;
-	MessageArray*ptr=&msgf;
-	aya::string_t line;
-	ClearMessageArrays();
-	while(aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) != aya::WS_EOF){
-		CutCrLf(line);
-		if(line.substr(0,3)==L"!!!"){
-			line=line.substr(3);
-			#define tmp(name) \
-			if(line==L ## #name)\
-				ptr=&name
-			tmp(msgf);
-			else tmp(msge);
-			else tmp(msgw);
-			else tmp(msgn);
-			else tmp(msgj);
-			#undef tmp
-		}
-		else if(line.substr(0,2)==L"//")
-			continue;
-		else if(line.substr(0,1)==L"*")
-			ptr->push_back(line.substr(1));
 	}
+
+	MessageArray *ptr = NULL;
+	aya::string_t line;
+	aya::string_t type;
+
+	ClearMessageArrays();
+
+	while ( true )
+	{
+		if (aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) == aya::WS_EOF) {
+			break;
+		}
+
+		CutCrLf(line);
+
+		if ( line.substr(0,3)==L"!!!" ) {
+			type = line.substr(3);
+
+			if ( type == L"msgf" ) {
+				ptr = &msgf;
+			}
+			else if ( type == L"msge" ) {
+				ptr = &msge;
+			}
+			else if ( type == L"msgw" ) {
+				ptr = &msgw;
+			}
+			else if ( type == L"msgn" ) {
+				ptr = &msgn;
+			}
+			else if ( type == L"msgj" || type == L"msg" ) {
+				ptr = &msgj;
+			}
+			else {
+				ptr = NULL;
+			}
+			continue;
+		}
+		
+		if ( line.substr(0,2)==L"//" ) {
+			continue;
+		}
+		
+		if ( line.substr(0,1)==L"*" ) {
+			if ( ptr ) {
+				ptr->push_back(line.substr(1));
+			}
+			continue;
+		}
+	}
+
 	fclose(fp);
+
 	return true;
 }
-// フェータルエラー文列（古中語）
-MessageArray msgf={
-	L"",
-};
 
-// エラー文列（古中語）
-MessageArray msge= {
-	L"天戒E0000：誤者未知。",
-	L"天戒E0001：須術之名。",
-	L"天戒E0002：'}'者多存。",
-	L"天戒E0003：術之名不改。",
-	L"天戒E0004：不可析。此或用“{”。",
-	L"天戒E0005：難讀文書。",
-	L"天戒E0006：少列之名。",
-	L"天戒E0007：文字不全。",
-	L"天戒E0008：有雙引號不驗。",
-	L"天戒E0009：內誤（一）。",
-	L"天戒E0010：文不可析。",
-	L"天戒E0011：字元末效。",
-	L"天戒E0012：數名有誤。",
-	L"天戒E0013：術名有重。",
-	L"天戒E0014：列須序號或可行。",
-	L"天戒E0015：內誤（二）。",
-	L"天戒E0016：內誤（三）。",
-	L"天戒E0017：缺列名于串中。",
-	L"天戒E0018：于串中缺列者序。",
-	L"天戒E0019：()未正閉。",
-	L"天戒E0020：[]未正閉或效。",
-	L"天戒E0021：內誤（四）。",
-	L"天戒E0022：式效。",
-	L"天戒E0023：“,”不是用。",
-	L"天戒E0024：“,”不是用。",
-	L"天戒E0025：不得術。",
-	L"天戒E0026：內誤（五）。",
-	L"天戒E0027：不有大素。",
-	L"天戒E0028：內誤（二十三）。",
-	L"天戒E0029：效之代。",
-	L"天戒E0030：不義之術（防重）。",
-	L"天戒E0031：內誤（六）。",
-	//不用
-	L"天戒E0032：必需之術不可得。",
-	//
-	L"天戒E0033：內誤（七）。",
-	L"天戒E0034：內誤（八）。",
-	L"天戒E0035：無“{”后于“if”。",
-	L"天戒E0036：無“{”后于“elseif”。",
-	L"天戒E0037：無“{”后于“else”。",
-	L"天戒E0038：無“{”后于“switch”。",
-	L"天戒E0039：無“{”后于“while”。",
-	L"天戒E0040：“for”之終式效。",
-	L"天戒E0041：“for”之累式效。",
-	L"天戒E0042：無“{”后于“for”。",
-	L"天戒E0043：列數錯位于“foreach”處。",
-	L"天戒E0044：無“{”后于“foreach”。",
-	L"天戒E0045：“when”者須常數。",
-	L"天戒E0046：“when”者須常數。",
-	L"天戒E0047：不得“if”、“elseif”、“case”與之應。",
-	L"天戒E0048：()未閉。",
-	L"天戒E0049：內誤（九）。",
-	L"天戒E0050：“when”者須常數。",
-	L"天戒E0051：無“{”后于“case”。",
-	L"天戒E0052：內誤（十）。",
-	L"天戒E0053：謬誤。",
-	L"天戒E0054：謬誤。",
-	L"天戒E0055：內誤（十一）。",
-	L"天戒E0056：內誤（十二）。",
-	L"天戒E0057：數者直未存。",
-	L"天戒E0058：內誤（十三）。",
-	L"天戒E0059：式效。",
-	L"天戒E0060：“%()”未閉。",
-	L"天戒E0061：“%()”司空。",
-	L"天戒E0062：內誤（十四）。",
-	L"天戒E0063：無“case”與“when”應之。",
-	L"天戒E0064：無“case”與“when”應之。",
-	L"天戒E0065：謬誤。",
-	L"天戒E0066：謬誤。",
-	L"天戒E0067：內誤（十五）。",
-	L"天戒E0068：“elseif”或“when”不可行。",
-	L"天戒E0069：“else”或“others”不可行。",
-	L"天戒E0070：內誤（十六）。",
-	L"天戒E0071：試以不義之函數。",
-	L"天戒E0072：列數缺名。",
-	L"天戒E0073：列效：不得列數。",
-	L"天戒E0074：誤。",
-	L"天戒E0075：誤。",
-	L"天戒E0076：預令者效。",
-	L"天戒E0077：內誤（十七）。",
-	L"天戒E0078：“%()”未閉。",
-	L"天戒E0079：“%()”空。",
-	L"天戒E0080：內誤（十八）。",
-	L"天戒E0081：此“[]”非。",
-	L"天戒E0082：內誤（十九）。",
-	L"天戒E0083：內誤（二十）。",
-	//不用
-	L"天戒E0084：內誤（二十一）。",
-	L"天戒E0085：內誤（二十二）。",
-	//
-	L"天戒E0086：謬誤。",
-	L"天戒E0087：“&”之位非。",
-	L"天戒E0088：內誤（二十四）。",
-	L"天戒E0089：內誤（二十五）。",
-	L"天戒E0090：內誤（二十六）。",
-	L"天戒E0091：內誤（二十七）。",
-	L"天戒E0092：不宜于()或[]后。",
-	L"天戒E0093：有不驗之單引號。",
-	L"天戒E0094：{}效或未正閉。",
-	L"天戒E0095：復載同文。",
-};
+/* -----------------------------------------------------------------------
+ *  関数名  ：  ayamsg::GetTextFromTable
+ *  機能概要：  エラーメッセージテーブルから文字列を抜き出します。
+ * -----------------------------------------------------------------------
+ */
+const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
+{
+	ayamsg::MessageArray *ptr;
+	aya::char_t *emsg;
 
-// ワーニング文字列（日本語）
-MessageArray msgw = {
-	L"大過W0000：謬誤。當略。",
-	L"大過W0001：復行者數敗：不可析行。",
-	L"大過W0002：復行者數敗：數名無效。",
-	L"大過W0003：復行者數敗：直或分象效。",
-	L"大過W0004：復行者數敗：直效。",
-	L"大過W0005：復行者數敗：分象效。",
-	L"大過W0006：內誤于臨行時。此行不知。",
-	L"大過W0007：此數未存。",
-	L"大過W0008：缺參。",
-	L"大過W0009：參體不合。",
-	L"大過W0010：空字串。",
-	L"大過W0011：不可遂定為數。",
-	L"大過W0012：若過限或效。",
-	L"大過W0013：治敗。",
-	L"大過W0014：未載此庫。",
-	L"大過W0015：文未開。",
-	L"大過W0016：語誤其中，不治。",
-	L"大過W0017：法式誤見，未知。",
-	L"大過W0018：須指定數。",
-	L"大過W0019：除零。",
-	L"大過W0020：須素偶而能創雜。",
-	L"大過W0021：此見空文。",
-	L"大過W0022：此案始得序。",
-};
+	if (mode == E_F) {
+		ptr = &ayamsg::msgf;
+		emsg = L"fatal F";
+	}
+	else if (mode == E_E) {
+		ptr = &ayamsg::msge;
+		emsg = L"error E";
+	}
+	else if (mode == E_W) {
+		ptr = &ayamsg::msgw;
+		emsg = L"warning W";
+	}
+	else if (mode == E_N) {
+		ptr = &ayamsg::msgn;
+		emsg = L"note N";
+	}
+	else {
+		ptr = &ayamsg::msgj;
+		emsg = L"//msg M";
+	}
 
-// 注記文列（古中語）
-MessageArray msgn = {
-	L"校注N0000：未行而數之復。",
-	L"校注N0001：字元式碼集效。行OS之應置。",
-};
+	if ( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
+		aya::char_t buf[64];
+		swprintf(buf,L"%s%04d : (please specify messagetxt)\r\n",emsg,id);
+	}
 
-// その之のログ文列（古中語）
-MessageArray msgj = {
-	L"// AYA request log\n// 入時：",
-	L"// 出時：",
-	//欠番
-	L"",
-	//
-	L"//方為術典入。\n",
-	L"//分析器報(@:術,$:天術,#:列)\n\n",
-	L"//數端告\n",
-	L"//數載",
-	L"//數存",
-	L"…成。\n\n",
-	L"//方論自\n",
-	L"//見自誤：方為急式…\n",
-	L"//見自誤：已為急法。\n",
-};
+	aya::string_t msg = (*ptr)[id];
+	aya::ws_replace(msg,L"\\n", L"\r\n");
 
+	if ( msg.substr(msg.size()-2) != L"\r\n" ) { //add last cr+lf
+		msg += L"\r\n";
+	}
+
+	return msg;
+}
+
+namespace ayamsg {
+
+	// fatal
+	MessageArray msgf;
+
+	// error
+	MessageArray msge;
+
+	// warning
+	MessageArray msgw;
+
+	// note
+	MessageArray msgn;
+
+	// other
+	MessageArray msgj;
+
+}

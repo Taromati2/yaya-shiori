@@ -461,14 +461,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	if ( cmd.compare(L"messagetxt") == 0 ) {//本土化
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
+
 		char cset = CHARSET_UTF8; //UTF8固定
+		
 		if ( param2.size() ) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
 			if ( cx != CHARSET_DEFAULT ) {
 				cset = cx;
 			}
 		}
-		return LoadMessageFromTxt(load_path + param1,cset);
+		return ayamsg::LoadMessageFromTxt(load_path + param1,cset);
 	}
 	// log
 	if ( cmd.compare(L"log") == 0 ) {
