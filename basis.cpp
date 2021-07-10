@@ -484,7 +484,10 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	}
 	// basepath
 	if ( cmd.compare(L"basepath") == 0 ) {
-		if(!_wchdir(param.c_str())){//successful
+		CDirEnum dirCheck(param);
+		CDirEnumEntry dirCheckTmp;
+
+		if ( dirCheck.next(dirCheckTmp) ) { //something exist in directory
 			#if defined(WIN32) || defined(_WIN32_WCE)
 			if(param[1]==L':')
 			#elif defined(POSIX)
