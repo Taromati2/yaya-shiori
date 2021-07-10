@@ -149,7 +149,7 @@
 *// Variable definition report\n
 *// Loading of variable value 
 *// Saving of variable value 
-*...Done.\n\n
+*// ...Done.\n\n
 *// Parsing of dictionary\n
 *// Dictionary error found : Emergency mode loading...\n
 *// Dictionary error found : Emergency mode loaded.\n

@@ -101,8 +101,6 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 			if ( ptr ) {
 				line=line.substr(1);
 				aya::ws_replace(line,L"\\n", L"\r\n");
-				if ( line.size()>2 && line.substr(line.size()-2) != L"\r\n" )//add last cr+lf
-					line += L"\r\n";
 				ptr->push_back(line);
 			}
 			continue;
