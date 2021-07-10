@@ -50,7 +50,7 @@ bool ayamsg::IsEmpty(void)
  */
 bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 {
-	FILE *fp = aya::w_fopen(file.c_str(), L"r");
+	FILE *fp = aya::w_fopen(file.c_str(), L"rb");
 
 	if (fp == NULL) {
 		return false;
@@ -58,7 +58,6 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 
 	MessageArray *ptr = NULL;
 	aya::string_t line;
-	aya::string_t type;
 
 	ClearMessageArrays();
 
@@ -71,7 +70,7 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 		CutCrLf(line);
 
 		if ( line.substr(0,3)==L"!!!" ) {
-			type = line.substr(3);
+			aya::string_t&type = line.substr(3);
 
 			if ( type == L"msgf" ) {
 				ptr = &msgf;
@@ -100,10 +99,11 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 		
 		if ( line.substr(0,1)==L"*" ) {
 			if ( ptr ) {
+				line=line.substr(1);
 				aya::ws_replace(line,L"\\n", L"\r\n");
-				if ( line.substr(line.size()-2) != L"\r\n" )//add last cr+lf
+				if ( line.size()>2 && line.substr(line.size()-2) != L"\r\n" )//add last cr+lf
 					line += L"\r\n";
-				ptr->push_back(line.substr(1));
+				ptr->push_back(line);
 			}
 			continue;
 		}
