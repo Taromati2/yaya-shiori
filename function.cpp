@@ -62,10 +62,6 @@ int	CFunction::Execute(CValue &result, const CValue &arg, CLocalVariable &lvar)
 	lvar.SetValue(L"_argc", t_argc);
 
 	// 実行
-	if (!pvm->calldepth().Add(name)) {
-		result.SetType(F_TAG_VOID);
-		return exitcode;
-	}
 	ExecuteInBrace(0, result, lvar, BRACE_DEFAULT, exitcode);
 	pvm->calldepth().Del();
 
@@ -268,11 +264,11 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 	bool isPseudoarray = false;
 
 	int	sz;
-	std::vector<yaya::string_t>	s_array;
+	std::vector<aya::string_t>	s_array;
 	if (value.IsString()) {
 		isPseudoarray = true;
 
-		yaya::string_t delimiter = VAR_DELIMITER;
+		aya::string_t delimiter = VAR_DELIMITER;
 		if (st0.cell_size() == 1) {
 			if (st0.cell()[0].value_GetType() == F_TAG_VARIABLE) {
 				delimiter = pvm->variable().GetDelimiter(st0.cell()[0].index);
@@ -617,11 +613,11 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 		max_len = i;
 
 	// 埋め込まれた要素とそれ以降の文字列に分割する
-	//yaya::string_t	s_value(cell.value_const().s_value.substr(0, max_len));
-	//yaya::string_t	d_value(cell.value_const().s_value.substr(max_len, len - max_len));
-	yaya::string_t::const_iterator it_split = cell.value_const().s_value.begin() + max_len;
-	yaya::string_t s_value(cell.value_const().s_value.begin(),it_split);
-	yaya::string_t d_value(it_split,cell.value_const().s_value.end());
+	//aya::string_t	s_value(cell.value_const().s_value.substr(0, max_len));
+	//aya::string_t	d_value(cell.value_const().s_value.substr(max_len, len - max_len));
+	aya::string_t::const_iterator it_split = cell.value_const().s_value.begin() + max_len;
+	aya::string_t s_value(cell.value_const().s_value.begin(),it_split);
+	aya::string_t d_value(it_split,cell.value_const().s_value.end());
 
 	// 埋め込まれた要素を数式に変換する　失敗なら全体が文字列
 	CStatement	t_state(ST_FORMULA, st.linecount);
@@ -632,7 +628,7 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 	}
 
 	// 埋め込み要素の値を取得して応答文字列を作成
-	yaya::string_t	result = GetFormulaAnswer(lvar, t_state).GetValueString();
+	aya::string_t	result = GetFormulaAnswer(lvar, t_state).GetValueString();
 	cell.emb_ansv()  = result;
 	cell.ansv()      = result + d_value;
 }
@@ -902,7 +898,7 @@ char	CFunction::Array(CCell &anscell, std::vector<int> &sid, CStatement &st, CLo
 int	CFunction::_in_(const CValue &src, const CValue &dst)
 {
 	if (src.IsString() && dst.IsString())
-		return (dst.s_value.find(src.s_value) != yaya::string_t::npos) ? 1 : 0;
+		return (dst.s_value.find(src.s_value) != aya::string_t::npos) ? 1 : 0;
 
 	return 0;
 }

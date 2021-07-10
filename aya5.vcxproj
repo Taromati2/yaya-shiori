@@ -33,10 +33,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
     <CodePage>932</CodePage>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -75,25 +76,25 @@
     <OutDir>.\Release_EXE\</OutDir>
     <IntDir>.\Release_EXE\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <TargetName>yaya</TargetName>
+    <TargetName>aya</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>.\Debug\</OutDir>
     <IntDir>.\Debug\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>yaya</TargetName>
+    <TargetName>aya</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>.\Release\</OutDir>
     <IntDir>.\Release\</IntDir>
-    <LinkIncremental>false</LinkIncremental>
-    <TargetName>yaya</TargetName>
+    <LinkIncremental>true</LinkIncremental>
+    <TargetName>aya</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug EXE|Win32'">
     <OutDir>.\Debug_EXE\</OutDir>
     <IntDir>.\Debug_EXE\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <TargetName>yaya</TargetName>
+    <TargetName>aya</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release EXE|Win32'">
     <Midl>
@@ -123,11 +124,11 @@
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>Release_EXE/yaya.exe</OutputFile>
+      <OutputFile>Release_EXE/aya.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <ProgramDatabaseFile>.\Release_EXE/yaya.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Release_EXE/aya.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Release_EXE/yaya.map</MapFileName>
+      <MapFileName>.\Release_EXE/aya.map</MapFileName>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -166,11 +167,11 @@
       <ShowProgress>NotSet</ShowProgress>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug/yaya.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug/aya.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Debug/yaya.map</MapFileName>
+      <MapFileName>.\Debug/aya.map</MapFileName>
       <BaseAddress>0x14900000</BaseAddress>
-      <ImportLibrary>.\Debug/yaya.lib</ImportLibrary>
+      <ImportLibrary>.\Debug/aya.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -188,11 +189,11 @@
       <HeaderFileName />
     </Midl>
     <ClCompile>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/execution-charset:.932 /source-charset:.932 %(AdditionalOptions)</AdditionalOptions>
       <Optimization>MaxSpeed</Optimization>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;AYA5_EXPORTS;WINVER=0x400;_WIN32_IE=0;_WIN32_WINNT=0x400;TIXML_USE_STL;__BBL_WSTRING_DEFAULT__;__BBL_USE_UNICODE_MAP_CP932__;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <PreprocessorDefinitions>_AFX_NO_MFC_CONTROLS_IN_DIALOGS;WIN32;NDEBUG;_WINDOWS;_USRDLL;AYA5_EXPORTS;WINVER=0x400;_WIN32_IE=0;_WIN32_WINNT=0x400;TIXML_USE_STL;__BBL_WSTRING_DEFAULT__;__BBL_USE_UNICODE_MAP_CP932__;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeaderOutputFile>.\Release/aya5.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
@@ -200,6 +201,12 @@
       <ProgramDataBaseFileName>.\Release/</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>
+      </MinimalRebuild>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -208,12 +215,16 @@
     <Link>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>D:\boost\libs\regex\build\vc6-stlport;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ProgramDatabaseFile>.\Release/yaya.pdb</ProgramDatabaseFile>
-      <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Release/yaya.map</MapFileName>
+      <ProgramDatabaseFile>.\Release/aya.pdb</ProgramDatabaseFile>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapFileName>.\Release/aya.map</MapFileName>
       <BaseAddress>0x13700000</BaseAddress>
-      <ImportLibrary>.\Release/yaya.lib</ImportLibrary>
+      <ImportLibrary>.\Release/aya.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -248,12 +259,12 @@
       <Culture>0x0411</Culture>
     </ResourceCompile>
     <Link>
-      <OutputFile>Debug_EXE/yaya.exe</OutputFile>
+      <OutputFile>Debug_EXE/aya.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <ProgramDatabaseFile>.\Debug_EXE/yaya.pdb</ProgramDatabaseFile>
+      <ProgramDatabaseFile>.\Debug_EXE/aya.pdb</ProgramDatabaseFile>
       <GenerateMapFile>true</GenerateMapFile>
-      <MapFileName>.\Debug_EXE/yaya.map</MapFileName>
+      <MapFileName>.\Debug_EXE/aya.map</MapFileName>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <Bscmake>
@@ -287,6 +298,7 @@
     <ClCompile Include="logexcode.cpp" />
     <ClCompile Include="manifest.cpp" />
     <ClCompile Include="md5c.c" />
+    <ClCompile Include="messages.cpp" />
     <ClCompile Include="misc.cpp" />
     <ClCompile Include="mt19937ar.cpp" />
     <ClCompile Include="parser0.cpp" />
@@ -303,9 +315,6 @@
     <ClCompile Include="value.cpp" />
     <ClCompile Include="valuesub.cpp" />
     <ClCompile Include="wsex.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="aya5.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="aya5.h" />
@@ -338,6 +347,9 @@
     <ClInclude Include="value.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="wsex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="aya5.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

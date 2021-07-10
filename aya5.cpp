@@ -27,7 +27,7 @@
 class CAyaVMWrapper;
 
 static std::vector<CAyaVMWrapper*> vm;
-static yaya::string_t modulename;
+static aya::string_t modulename;
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -43,7 +43,7 @@ private:
 	CAyaVM *vm;
 
 public:
-	CAyaVMWrapper(const yaya::string_t &path, yaya::global_t h, long len) {
+	CAyaVMWrapper(const aya::string_t &path, aya::global_t h, long len) {
 		vm = new CAyaVM();
 
 		vm->basis().SetModuleName(modulename,L"",L"normal");
@@ -90,7 +90,7 @@ public:
 		return vm->basis().IsSuppress() != 0;
 	}
 
-	yaya::global_t ExecuteRequest(yaya::global_t h, long *len, bool is_debug)
+	aya::global_t ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	{
 		if ( ! vm ) { return NULL; }
 		return vm->basis().ExecuteRequest(h,len,is_debug);
@@ -168,7 +168,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
  *  load
  * -----------------------------------------------------------------------
  */
-extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(yaya::global_t h, long len)
+extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(aya::global_t h, long len)
 {
 	if ( vm[0] ) { delete vm[0]; }
 
@@ -183,7 +183,7 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(yaya::global_t h, long len)
     return 1;
 }
 
-extern "C" DLLEXPORT long FUNCATTRIB multi_load(yaya::global_t h, long len)
+extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
 {
 	long id = 0;
 	
@@ -240,7 +240,7 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_unload(long id)
  *  request
  * -----------------------------------------------------------------------
  */
-extern "C" DLLEXPORT yaya::global_t FUNCATTRIB request(yaya::global_t h, long *len)
+extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len)
 {
 	if ( vm[0] ) {
 		return vm[0]->ExecuteRequest(h, len, false);
@@ -250,7 +250,7 @@ extern "C" DLLEXPORT yaya::global_t FUNCATTRIB request(yaya::global_t h, long *l
 	}
 }
 
-extern "C" DLLEXPORT yaya::global_t FUNCATTRIB multi_request(long id, yaya::global_t h, long *len)
+extern "C" DLLEXPORT aya::global_t FUNCATTRIB multi_request(long id, aya::global_t h, long *len)
 {
 	if ( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
 		return 0;
@@ -362,7 +362,7 @@ int main( int argc, char *argv[ ], char *envp[ ] )
 				fread(read_ptr,1,size,stdin);
 				read_ptr[size] = 0;
 				
-				yaya::global_t res = request(read_ptr,&size);
+				aya::global_t res = request(read_ptr,&size);
 
 				char write_header[64];
 				sprintf(write_header,"request:%d\r\n",size);
