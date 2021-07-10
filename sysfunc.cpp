@@ -5459,18 +5459,12 @@ CValue	CSystemFunction::GETSETTING(const CValue &arg, aya::string_t &d, int &l)
 
 	if (arg.array()[0].IsString()) {
 		const aya::string_t str = arg.array()[0].GetValueString();
-		
-		if ( str.compare(L"coreinfo.version") == 0 ) {
-			return CValue(aya::string_t(aya_version));
-		}
+
 		if ( str.compare(L"coreinfo.path") == 0 ) {
 			return CValue(vm.basis().GetRootPath());
 		}
 		if ( str.compare(L"coreinfo.name") == 0 ) {
 			return CValue(aya::string_t(aya_name));
-		}
-		if ( str.compare(L"coreinfo.author") == 0 ) {
-			return CValue(aya::string_t(aya_author));
 		}
 		if ( str.compare(L"coreinfo.savefile") == 0 ) {
 			return CValue(vm.basis().GetSavefilePath());
@@ -5483,16 +5477,12 @@ CValue	CSystemFunction::GETSETTING(const CValue &arg, aya::string_t &d, int &l)
 	}
 	else {
 		switch(arg.array()[0].GetValueInt()) {
-		case 0:	// AYAINFO_VERSION
-			return CValue(aya::string_t(aya_version));
 		case 1:	// AYAINFO_CHARSET
 			return CValue(static_cast<int>(vm.basis().GetDicCharset()));
 		case 2:	// AYAINFO_PATH
 			return CValue(vm.basis().GetRootPath());
 		case 3:	// AYAINFO_NAME
 			return CValue(aya::string_t(aya_name));
-		case 4:	// AYAINFO_AUTHOR
-			return CValue(aya::string_t(aya_author));
 		default:
 			break;
 		};
@@ -5768,7 +5758,8 @@ CValue	CSystemFunction::GETSYSTEMFUNCLIST(const CValue &arg, aya::string_t &/*d*
 	//絞りこみ文字列がない場合
 	if ( name.empty() ) {
 		for(auto i:sysfunc) {
-			result.array().push_back(CValueSub(i));
+			if(i[0])
+				result.array().push_back(CValueSub(i));
 		}
 	}
 	//ある場合
@@ -5776,7 +5767,7 @@ CValue	CSystemFunction::GETSYSTEMFUNCLIST(const CValue &arg, aya::string_t &/*d*
 		aya::string_t::size_type len = name.length();
 
 		for(auto i:sysfunc) {
-			if(name.compare(0,len,i,0,len) == 0 && lstrlenW(i)) {
+			if(name.compare(0,len,i,0,len) == 0 && i[0]) {
 				result.array().push_back(CValueSub(i));
 			}
 		}

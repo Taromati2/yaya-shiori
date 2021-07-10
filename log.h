@@ -91,8 +91,7 @@ protected:
 	HWND	GetCheckerWnd(void);
 #endif
 
-	void    AddErrorLogHistory(const aya::string_t &err);
-
+	void	AddErrorLogHistory(const aya::string_t &err);
 };
 
 //----
