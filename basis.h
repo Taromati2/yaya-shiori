@@ -54,7 +54,8 @@ class	CBasis
 public:
 	CAyaVM &vm;
 
-	aya::string_t	load_path;					// 上位モジュールからload時に渡されるパス
+	aya::string_t	base_path;					// 上位モジュールからload時に渡されるパス
+	aya::string_t	load_path;					// messagetxt\savefile\aya.txt etc.
 
 protected:
 	char	dic_charset;				// 文字コードセット（Shift_JIS/UTF-8/OSデフォルト）
@@ -108,7 +109,7 @@ public:
 #endif
 	const aya::string_t& GetLogPath(void) const  { return logpath; }
 	char	GetDicCharset(void)  { return dic_charset; }
-	const aya::string_t& GetRootPath(void) const { return load_path;    }
+	const aya::string_t& GetRootPath(void) const { return base_path;    }
 	aya::string_t GetSavefilePath(void) const { return load_path + modulename + L"_variable.cfg"; }
 	const aya::char_t* GetModeName(void) const { return modename.c_str(); }
 
