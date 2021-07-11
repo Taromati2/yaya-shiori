@@ -72,7 +72,7 @@ protected:
 	char	IsCipheredDic(const aya::string_t& filename);
 	void	SeparateFactor(std::vector<aya::string_t> &s, aya::string_t &line);
 	char	DefineFunctions(std::vector<aya::string_t> &s, const aya::string_t& dicfilename, int linecount, int &depth, int &targetfunction);
-	int		MakeFunction(const aya::string_t& name, int chtype, const aya::string_t& dicfilename);
+	int		MakeFunction(const aya::string_t& name, int chtype, const aya::string_t& dicfilename, int linecount);
 	char	StoreInternalStatement(int targetfunc, aya::string_t &str, int& depth, const aya::string_t& dicfilename, int linecount);
 	char	MakeStatement(int type, int targetfunc, aya::string_t &str, const aya::string_t& dicfilename, int linecount);
 	char	StructWhen(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, int linecount);

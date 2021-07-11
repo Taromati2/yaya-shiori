@@ -134,16 +134,15 @@ public:
 
 protected:
 	int					statelenm1;		// statementの長さ-1（1を減じているのは終端の"}"を処理しないためです）
+	int					linecount;		// 定義された行
 
 private:
 	CFunction(void);
 
 public:
-	CFunction(CAyaVM &vmr, const aya::string_t& n, int ct, const aya::string_t& df) : pvm(&vmr) , dupl(ct)
+	CFunction(CAyaVM &vmr, const aya::string_t& n, int ct, const aya::string_t& df, int lc) : pvm(&vmr) , name(n) , dupl(ct) , dicfilename(df) , linecount(lc)
 	{
-		name        = n;
 		namelen     = name.size();
-		dicfilename = df;
 	}
 
 	~CFunction(void) {}
@@ -154,8 +153,8 @@ public:
 	const CValue& GetFormulaAnswer(CLocalVariable &lvar, CStatement &st);
 
 	const aya::string_t&	GetFileName() const {return dicfilename;}
-	size_t	GetLineNumBegin() const	{ return statement.empty() ? 0 : statement[0].linecount;}
-	size_t	GetLineNumEnd() const	{ return statement.empty() ? 0 : statement[statement.size()-1].linecount;}
+	size_t	GetLineNumBegin() const { return linecount;}
+	size_t	GetLineNumEnd() const   { return statement.empty() ? 0 : statement[statement.size()-1].linecount;}
 
 protected:
 	int		ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, int type, int &exitcode);
