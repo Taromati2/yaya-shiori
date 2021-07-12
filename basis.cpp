@@ -345,10 +345,6 @@ void	CBasis::LoadBaseConfigureFile(std::vector<CDic1> &dics)
 	// ファイルを開く
 	aya::string_t	filename = load_path + modulename + config_file_name_trailer + L".txt";
 	LoadBaseConfigureFile_Base(filename,dics,dic_charset);
-
-	if ( ayamsg::IsEmpty() ) { //エラーメッセージテーブルが読めていない
-		SetParameter(L"messagetxt",msglang_for_compat == MSGLANG_JAPANESE ? L"messagetxt/japanese.txt" : L"messagetxt/english.txt");
-	}
 }
 void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1> &dics,char cset)
 {

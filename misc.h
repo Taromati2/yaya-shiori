@@ -86,11 +86,10 @@ class	CCallDepth
 {
 protected:
 	size_t	depth;
-	int	maxdepth;
+	size_t	maxdepth;
 	std::vector<aya::string_t> stack;
 
 public:
-	CCallDepth(void) { depth = 0;  }
 	CCallDepth(void) { depth = 0; maxdepth = CALLDEPTH_MAX; }
 
 	void	SetMaxDepth(int value) { maxdepth = value; }
