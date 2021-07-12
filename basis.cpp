@@ -344,13 +344,13 @@ void	CBasis::LoadBaseConfigureFile(std::vector<CDic1> &dics)
 
 	// ファイルを開く
 	aya::string_t	filename = load_path + modulename + config_file_name_trailer + L".txt";
-	LoadBaseConfigureFile_Base(filename,dics);
+	LoadBaseConfigureFile_Base(filename,dics,dic_charset);
 
 	if ( ayamsg::IsEmpty() ) { //エラーメッセージテーブルが読めていない
 		SetParameter(L"messagetxt",msglang_for_compat == MSGLANG_JAPANESE ? L"messagetxt/japanese.txt" : L"messagetxt/english.txt");
 	}
 }
-void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1> &dics)
+void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1> &dics,char cset)
 {
 	// ファイルを開く
 	FILE	*fp = aya::w_fopen(filename.c_str(), L"r");
@@ -369,7 +369,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 		line += 1;
 
 		// 1行読み込み
-		if (aya::ws_fgets(readline, fp, dic_charset, 0, line) == aya::WS_EOF) {
+		if (aya::ws_fgets(readline, fp, cset, 0, line) == aya::WS_EOF) {
 			// ファイルを閉じる
 			fclose(fp);
 			break;
@@ -406,17 +406,39 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 {
 	//include
 	if ( cmd.compare(L"include") == 0 ) {
-		auto filename = load_path + param;
-		LoadBaseConfigureFile_Base(filename,*dics);
+        aya::string_t param1, param2;
+		Split(param, param1, param2, L",");
+
+		aya::string_t filename = load_path + param1;
+
+		char cset = dic_charset;
+		if ( param2.size() ) {
+			char cx = Ccct::CharsetTextToID(param2.c_str());
+			if ( cx != CHARSET_DEFAULT ) {
+				cset = cx;
+			}
+		}
+		LoadBaseConfigureFile_Base(filename,*dics,cset);
 		return true;
 	}
 	if ( cmd.compare(L"includeEX") == 0 ) {
-		auto filename = load_path + param;
+		aya::string_t param1, param2;
+		Split(param, param1, param2, L",");
+
+		aya::string_t filename = load_path + param1;
+
+		char cset = dic_charset;
+		if ( param2.size() ) {
+			char cx = Ccct::CharsetTextToID(param2.c_str());
+			if ( cx != CHARSET_DEFAULT ) {
+				cset = cx;
+			}
+		}
 		auto load_path_bak=load_path;
 		load_path = filename.substr(0,std::max(filename.rfind('/'),filename.rfind('\\')));
 		auto base_path_bak=base_path;
 		base_path = load_path;
-		LoadBaseConfigureFile_Base(filename,*dics);
+		LoadBaseConfigureFile_Base(filename,*dics,cset);
 		load_path = load_path_bak;
 		base_path = base_path_bak;
 		return true;
