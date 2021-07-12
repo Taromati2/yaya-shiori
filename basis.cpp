@@ -57,6 +57,7 @@
 #endif
 ////////////////////////////////////////
 
+#undef max
 
 /* -----------------------------------------------------------------------
  * CBasisコンストラクタ
@@ -343,7 +344,7 @@ void	CBasis::LoadBaseConfigureFile(std::vector<CDic1> &dics)
 
 	// ファイルを開く
 	aya::string_t	filename = load_path + modulename + config_file_name_trailer + L".txt";
-	LoadBaseConfigureFile_Base(filename);
+	LoadBaseConfigureFile_Base(filename,dics);
 
 	if ( ayamsg::IsEmpty() ) { //エラーメッセージテーブルが読めていない
 		SetParameter(L"messagetxt",msglang_for_compat == MSGLANG_JAPANESE ? L"messagetxt/japanese.txt" : L"messagetxt/english.txt");
@@ -405,14 +406,14 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 {
 	//include
 	if ( cmd.compare(L"include") == 0 ) {
-		filename = load_path + param;
+		auto filename = load_path + param;
 		LoadBaseConfigureFile_Base(filename,*dics);
 		return true;
 	}
 	if ( cmd.compare(L"includeEX") == 0 ) {
-		filename = load_path + param;
+		auto filename = load_path + param;
 		auto load_path_bak=load_path;
-		load_path = get_path_from_file(filename);
+		load_path = filename.substr(0,std::max(filename.rfind('/'),filename.rfind('\\')));
 		auto base_path_bak=base_path;
 		base_path = load_path;
 		LoadBaseConfigureFile_Base(filename,*dics);

@@ -132,7 +132,9 @@ protected:
 	void	SetSuppress(void);
 	void	ResetSuppress(void);
 
-	void	LoadBaseConfigureFile(std::vector<CDic1> &dics);
+	void LoadBaseConfigureFile(std::vector<CDic1> &dics);
+
+    void LoadBaseConfigureFile_Base(aya::string_t filename, std::vector<CDic1> &dics);
 
 	void	RestoreArrayVariable(CValue &var, aya::string_t &value);
 };
