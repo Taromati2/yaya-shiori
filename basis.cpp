@@ -351,6 +351,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 	// ファイルを開く
 	FILE	*fp = aya::w_fopen(filename.c_str(), L"r");
 	if (fp == NULL) {
+		vm.logger().Error(E_E, 5, filename);
 		SetSuppress();
 		return;
 	}
@@ -431,7 +432,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 			}
 		}
 		auto load_path_bak=load_path;
-		load_path = filename.substr(0,std::max(filename.rfind('/'),filename.rfind('\\')));
+		load_path = filename.substr(0,std::max(filename.rfind('/'),filename.rfind('\\')))+L'/';
 		auto base_path_bak=base_path;
 		base_path = load_path;
 		LoadBaseConfigureFile_Base(filename,*dics,cset);
