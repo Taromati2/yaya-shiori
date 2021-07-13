@@ -60,13 +60,14 @@ public:
 
 	int		GetFunctionIndexFromName(const aya::string_t& str);
 
+	//changed to public, for preprocessglobaldefine
+	void	ExecDefinePreProcess(aya::string_t &str, const std::vector<CDefine>& defines);
+
 protected:
 	bool	ParseAfterLoad(const aya::string_t &dicfilename);
 	char	LoadDictionary1(const aya::string_t& filename, std::vector<CDefine>& gdefines, int charset);
 	char	GetPreProcess(aya::string_t& str, std::vector<CDefine>& defines, std::vector<CDefine>& gdefines, const aya::string_t& dicfilename,
 					int linecount);
-public://PREPROCESSGLOBALDEFINE
-	void	ExecDefinePreProcess(aya::string_t &str, const std::vector<CDefine>& defines);
 protected:
 	void	ExecInternalPreProcess(aya::string_t &str,const aya::string_t &file,int line);
 
