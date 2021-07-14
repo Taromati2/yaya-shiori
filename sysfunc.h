@@ -243,7 +243,7 @@ protected:
 
 	CValue	DICLOAD(const CValue &arg, aya::string_t &d, int &l);
 	CValue	GETFUNCINFO(const CValue &arg, aya::string_t &d, int &l);
-	CValue	PREPROCESSGLOBALDEFINE(const CValue &arg, aya::string_t &d, int &l);
+	CValue	PROCESSGLOBALDEFINE(const CValue &arg, aya::string_t &d, int &l);
 
 	CValue	RE_SPLIT_CORE(const CValue &arg, aya::string_t &d, int &l, const aya::char_t *fncname, size_t num);
 

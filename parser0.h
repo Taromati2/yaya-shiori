@@ -60,7 +60,7 @@ public:
 
 	int		GetFunctionIndexFromName(const aya::string_t& str);
 
-	//changed to public, for preprocessglobaldefine
+	//changed to public, for processglobaldefine
 	void	ExecDefinePreProcess(aya::string_t &str, const std::vector<CDefine>& defines);
 
 protected:
