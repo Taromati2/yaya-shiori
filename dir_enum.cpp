@@ -160,7 +160,7 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 		entry.name = t_wfile;
 		free(t_wfile);
 	}
-#elif defined(POSIX)
+#if defined(POSIX)
 	entry.name = widen(name_a);
 #endif
 
