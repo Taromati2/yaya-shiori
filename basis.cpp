@@ -405,7 +405,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 {
 	//include
 	if ( cmd.compare(L"include") == 0 ) {
-        aya::string_t param1, param2;
+		aya::string_t param1, param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t filename = load_path + param1;
@@ -730,7 +730,7 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 
 	vm.logger().Message(7);
 	vm.logger().Filename(filename);
-	FILE	*fp = aya::w_fopen((wchar_t *)filename.c_str(), L"w");
+	FILE	*fp = aya::w_fopen(filename.c_str(), L"w");
 	if (fp == NULL) {
 		vm.logger().Error(E_E, 57, filename);
 		return;
@@ -881,10 +881,10 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	//暗号化セーブファイル対応
 	if ( ayc ) {
 		filename += L".ays";
-		fp = aya::w_fopen((wchar_t *)filename.c_str(), L"r");
+		fp = aya::w_fopen(filename.c_str(), L"r");
 		if (!fp) {
 			filename.erase(filename.size()-4,4);
-			fp = aya::w_fopen((wchar_t *)filename.c_str(), L"r");
+			fp = aya::w_fopen(filename.c_str(), L"r");
 			if (!fp) {
 				vm.logger().Error(E_N, 0);
 				return;
@@ -895,10 +895,10 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 		}
 	}
 	else {
-		fp = aya::w_fopen((wchar_t *)filename.c_str(), L"r");
+		fp = aya::w_fopen(filename.c_str(), L"r");
 		if (!fp) {
 			filename += L".ays";
-			fp = aya::w_fopen((wchar_t *)filename.c_str(), L"r");
+			fp = aya::w_fopen(filename.c_str(), L"r");
 			if (!fp) {
 				vm.logger().Error(E_N, 0);
 				return;

@@ -254,7 +254,7 @@ char	CParser0::LoadDictionary1(const aya::string_t& filename, std::vector<CDefin
 	fix_filepath(file);
 #endif
 	// ファイルを開く
-	FILE	*fp = aya::w_fopen((wchar_t *)file.c_str(), L"r");
+	FILE	*fp = aya::w_fopen(file.c_str(), L"r");
 	if (fp == NULL) {
 		vm.logger().Error(E_E, 5, file);
 		return 2;
