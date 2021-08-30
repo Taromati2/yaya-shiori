@@ -9,5 +9,3 @@
 
 const aya::char_t *aya_name    = L"AYA";
 
-
-

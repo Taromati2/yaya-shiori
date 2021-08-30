@@ -41,12 +41,12 @@ public:
 class	CCell
 {
 public:
-	aya::string_t	name;			// この項の"名前"（thisがローカル変数の時に使用します）
+	aya::string_t	name;			// この項の"名前"（thisがローカル変数/関数の時に使用します）
 	int		index;					// 位置番号（thisが変数/ローカル変数/関数の際に使用します）
 	int		depth;					// {}入れ子の深さ（thisがローカル変数の時に使用します）
 
 private:
-	int     m_type;									// m_valueにタイプしか格納しない場合に使用
+	int		m_type;									// m_valueにタイプしか格納しない場合に使用
 
 	mutable std_shared_ptr<CValue> m_value;		// 値（thisがリテラル値の際に使用します）
 	mutable std_shared_ptr<CValue> m_ansv;		// 値（thisが変数/ローカル変数/関数の際に、その内容/返値を格納します）

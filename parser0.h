@@ -56,7 +56,10 @@ public:
 	}
 	char	Parse(int charset, const std::vector<CDic1>& dics);
 	char	ParseEmbedString(aya::string_t& str, CStatement &st, const aya::string_t &dicfilename, int linecount);
-	int		DynamicLoadDictionary(const aya::string_t& filename, int charset);
+
+	int		DynamicLoadDictionary(const aya::string_t& dicfilename, int charset);
+	int		DynamicUnloadDictionary(const aya::string_t& dicfilename);
+	int		DynamicUndefFunc(const aya::string_t& funcname);
 
 	//changed to public, for processglobaldefine
 	void	ExecDefinePreProcess(aya::string_t &str, const std::vector<CDefine>& defines);
@@ -66,7 +69,7 @@ protected:
 	char	LoadDictionary1(const aya::string_t& filename, std::vector<CDefine>& gdefines, int charset);
 	char	GetPreProcess(aya::string_t& str, std::vector<CDefine>& defines, std::vector<CDefine>& gdefines, const aya::string_t& dicfilename,
 					int linecount);
-protected:
+
 	void	ExecInternalPreProcess(aya::string_t &str,const aya::string_t &file,int line);
 
 	char	IsCipheredDic(const aya::string_t& filename);
@@ -96,8 +99,6 @@ protected:
 	char	MakeCompleteConvertionWhenToIf(const aya::string_t& dicfilename);
 
 	char	IsDicFileAlreadyExist(const aya::string_t& dicfilename);
-
-	void	RemoveFunctionAndDefineByName(const aya::string_t& dicfilename);
 };
 
 //----
