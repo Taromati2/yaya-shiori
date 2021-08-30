@@ -48,7 +48,7 @@ public:
 
 		vm->basis().SetModuleName(modulename,L"",L"normal");
 
-		vm->Load();
+		vm->load();
 
 		vm->basis().SetPath(h, len);
 		vm->basis().Configure();
@@ -60,7 +60,7 @@ public:
 
 			vme->basis().SetModuleName(modulename,L"_emerg",L"emergency");
 
-			vme->Load();
+			vme->load();
 
 			vme->basis().SetPath(h, len);
 			vme->basis().Configure();
@@ -80,7 +80,7 @@ public:
 	virtual ~CAyaVMWrapper() {
 		vm->basis().Termination();
 
-		vm->Unload();
+		vm->unload();
 
 		delete vm;
 	}
@@ -93,7 +93,14 @@ public:
 	aya::global_t ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	{
 		if ( ! vm ) { return NULL; }
-		return vm->basis().ExecuteRequest(h,len,is_debug);
+		
+		vm->request_before();
+
+		aya::global_t r = vm->basis().ExecuteRequest(h,len,is_debug);
+
+		vm->request_after();
+
+		return r;
 	}
 
 	void SetLogRcvWnd(long hwnd)

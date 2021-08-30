@@ -913,7 +913,7 @@ CValue	CSystemFunction::ISFUNC(const CValue &arg, aya::string_t &d, int &l)
 		return CValue(0);
 	}
 
-	int	i = vm.parser0().GetFunctionIndexFromName(arg.array()[0].s_value);
+	int	i = vm.function_exec().GetFunctionIndexFromName(arg.array()[0].s_value);
 	if(i != -1)
 		return CValue(1);
 
@@ -3183,7 +3183,7 @@ CValue CSystemFunction::GETFUNCINFO(const CValue &arg, aya::string_t &d, int &l)
 
 	aya::string_t name = arg.array()[0].GetValueString();
 
-	int index = vm.parser0().GetFunctionIndexFromName(name);
+	int index = vm.function_exec().GetFunctionIndexFromName(name);
 
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"GETFUNCINFO", d, l);
@@ -3192,7 +3192,7 @@ CValue CSystemFunction::GETFUNCINFO(const CValue &arg, aya::string_t &d, int &l)
 	}
 
 	CValue result(F_TAG_ARRAY, 0/*dmy*/);
-	const CFunction *it = &vm.function()[size_t(index)];
+	const CFunction *it = &vm.function_exec().func[size_t(index)];
 
 	result.array().push_back(CValueSub(it->GetFileName()));
 	result.array().push_back(CValueSub((int)it->GetLineNumBegin()));
@@ -5787,7 +5787,7 @@ CValue	CSystemFunction::GETFUNCLIST(const CValue &arg, aya::string_t &/*d*/, int
 
 	//絞りこみ文字列がない場合
 	if ( name.empty() ) {
-		for(std::vector<CFunction>::iterator it = vm.function().begin(); it != vm.function().end(); it++) {
+		for(std::vector<CFunction>::iterator it = vm.function_exec().func.begin(); it != vm.function_exec().func.end(); it++) {
 			result.array().push_back(CValueSub(it->name));
 		}
 	}
@@ -5795,7 +5795,7 @@ CValue	CSystemFunction::GETFUNCLIST(const CValue &arg, aya::string_t &/*d*/, int
 	else {
 		aya::string_t::size_type len = name.length();
 
-		for(std::vector<CFunction>::iterator it = vm.function().begin(); it != vm.function().end(); it++) {
+		for(std::vector<CFunction>::iterator it = vm.function_exec().func.begin(); it != vm.function_exec().func.end(); it++) {
 			if(name.compare(0,len,it->name,0,len) == 0) {
 				result.array().push_back(CValueSub(it->name));
 			}

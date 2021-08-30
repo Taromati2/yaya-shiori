@@ -183,4 +183,18 @@ protected:
 
 //----
 
+class CFunctionDef
+{
+private:
+	aya::indexmap map;
+
+public:
+	std::vector<CFunction> func;
+	
+	int	GetFunctionIndexFromName(const aya::string_t& str);
+	void BuildFunctionMap(void);
+};
+
+//----
+
 #endif
