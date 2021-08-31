@@ -101,10 +101,10 @@ extern pid_t __cdecl _getpid(void);
 __forceinline int UNISTD_stime(const time_t *tp ){
 	FILETIME ft;
 	SYSTEMTIME st;
-    LONGLONG ll = Int32x32To64(*tp, 10000000) + 116444736000000000;
-    ft.dwLowDateTime = (DWORD) ll;
-    ft.dwHighDateTime = (unsigned __int64)ll >>32;
-    FileTimeToSystemTime(&ft,&st);
+	LONGLONG ll = Int32x32To64(*tp, 10000000) + 116444736000000000;
+	ft.dwLowDateTime = (DWORD) ll;
+	ft.dwHighDateTime = (unsigned __int64)ll >>32;
+	FileTimeToSystemTime(&ft,&st);
 	return SetSystemTime(&st);
 }
 

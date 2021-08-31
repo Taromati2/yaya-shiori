@@ -11,7 +11,7 @@
 std::string lc(const std::string& fname) {
 	std::string result;
 	for (std::string::const_iterator ite = fname.begin(); ite != fname.end(); ite++) {
-		if (*ite >= 'A' && *ite <= 'Z') {
+		if(*ite >= 'A' && *ite <= 'Z') {
 			result += (*ite + 0x20);
 		}
 		else {
@@ -23,7 +23,7 @@ std::string lc(const std::string& fname) {
 
 std::string get_fname(const std::string& fpath) {
 	std::string::size_type slash_pos = fpath.rfind('/');
-	if (slash_pos == std::string::npos) {
+	if(slash_pos == std::string::npos) {
 		return fpath;
 	}
 	else {
@@ -33,7 +33,7 @@ std::string get_fname(const std::string& fpath) {
 
 std::string get_extension(const std::string& fname) {
 	std::string::size_type period_pos = fname.rfind('.');
-	if (period_pos == std::string::npos) {
+	if(period_pos == std::string::npos) {
 		return std::string();
 	}
 	else {
@@ -43,7 +43,7 @@ std::string get_extension(const std::string& fname) {
 
 std::string drop_extension(const std::string& fname) {
 	std::string::size_type period_pos = fname.rfind('.');
-	if (period_pos == std::string::npos) {
+	if(period_pos == std::string::npos) {
 		return fname;
 	}
 	else {
@@ -64,7 +64,7 @@ std::string::size_type file_content_search(const std::string& file, const std::s
 
 	while (is.good()) {
 		len = is.read(buf, sizeof buf).gcount();
-		if (len == 0) {
+		if(len == 0) {
 			break;
 		}
 		content.append(buf,(size_t)len);
@@ -88,18 +88,18 @@ std::string::size_type bm_search(const std::string& world, const std::string& da
 	for (std::string::size_type i = 0;
 			i <= limit;
 			i += skip[static_cast<unsigned char>(world[i+data_len-1])]) {
-		if (world[i+data_len-1] != data[data_len-1]) {
+		if(world[i+data_len-1] != data[data_len-1]) {
 			continue;
 		}
 
 		bool matched = true;
 		for (std::string::size_type j = 0; j < data_len; j++) {
-			if (world[i+j] != data[j]) {
+			if(world[i+j] != data[j]) {
 				matched = false;
 				break;
 			}
 		}
-		if (matched) {
+		if(matched) {
 			return i;
 		}
 	}
@@ -127,13 +127,13 @@ std::string narrow(const std::wstring& str) {
 void fix_filepath(std::string& str) {
 	// \は/にし、重複した/を消して一つにする。
 	for (std::string::iterator ite = str.begin(); ite != str.end(); ite++) {
-		if (*ite == '\\') {
+		if(*ite == '\\') {
 			*ite = '/';
 		}
 	}
 	while (true) {
 		std::string::size_type pos = str.find("//");
-		if (pos == std::string::npos) {
+		if(pos == std::string::npos) {
 			break;
 		}
 		str.erase(pos, 1);
@@ -143,13 +143,13 @@ void fix_filepath(std::string& str) {
 void fix_filepath(std::wstring& str) {
 	// \は/にし、重複した/を消して一つにする。
 	for (std::wstring::iterator ite = str.begin(); ite != str.end(); ite++) {
-		if (*ite == L'\\') {
+		if(*ite == L'\\') {
 			*ite = L'/';
 		}
 	}
 	while (true) {
 		std::wstring::size_type pos = str.find(L"//");
-		if (pos == std::wstring::npos) {
+		if(pos == std::wstring::npos) {
 			break;
 		}
 		str.erase(pos, 1);

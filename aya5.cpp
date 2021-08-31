@@ -53,7 +53,7 @@ public:
 		vm->basis().SetPath(h, len);
 		vm->basis().Configure();
 
-		if ( vm->basis().IsSuppress() ) {
+		if( vm->basis().IsSuppress() ) {
 			vm->logger().Message(10,E_E);
 
 			CAyaVM *vme = new CAyaVM();
@@ -67,7 +67,7 @@ public:
 
 			vme->logger().Message(11,E_E);
 
-			if ( ! vme->basis().IsSuppress() ) {
+			if( ! vme->basis().IsSuppress() ) {
 				vme->logger().SetErrorLogHistory(vm->logger().GetErrorLogHistory()); //エラーログを引き継ぐ
 
 				delete vm;
@@ -86,13 +86,13 @@ public:
 	}
 
 	bool IsSuppress(void) {
-		if ( ! vm ) { return true; }
+		if( ! vm ) { return true; }
 		return vm->basis().IsSuppress() != 0;
 	}
 
 	aya::global_t ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	{
-		if ( ! vm ) { return NULL; }
+		if( ! vm ) { return NULL; }
 		
 		vm->request_before();
 
@@ -105,7 +105,7 @@ public:
 
 	void SetLogRcvWnd(long hwnd)
 	{
-		if ( ! vm ) { return; }
+		if( ! vm ) { return; }
 		vm->basis().SetLogRcvWnd(hwnd);
 	}
 
@@ -120,7 +120,7 @@ public:
 	~CAyaVMPrepare(void) {
 		size_t n = vm.size();
 		for ( size_t i = 0 ; i < n ; ++i ) {
-			if ( vm[i] ) {
+			if( vm[i] ) {
 				delete vm[i];
 			}
 		}
@@ -161,7 +161,7 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
 {
 	// モジュールの主ファイル名を取得
 	// NT系ではいきなりUNICODEで取得できるが、9x系を考慮してMBCSで取得してからUCS-2へ変換
-	if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+	if(ul_reason_for_call == DLL_PROCESS_ATTACH) {
 		AYA_InitModule(hModule);
 	}
 
@@ -177,17 +177,17 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
  */
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(aya::global_t h, long len)
 {
-	if ( vm[0] ) { delete vm[0]; }
+	if( vm[0] ) { delete vm[0]; }
 
 	vm[0] = new CAyaVMWrapper(modulename,h,len);
 
 #if defined(WIN32) || defined(_WIN32_WCE)
 	::GlobalFree(h);
 #elif defined(POSIX)
-    free(h);
+	free(h);
 #endif
 
-    return 1;
+	return 1;
 }
 
 extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
@@ -196,12 +196,12 @@ extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
 	
 	long n = (long)vm.size();
 	for ( long i = 1 ; i < n ; ++i ) { //1から 0番は従来用
-		if ( vm[i] == NULL ) {
+		if( vm[i] == NULL ) {
 			id = i;
 		}
 	}
 
-	if ( id <= 0 ) {
+	if( id <= 0 ) {
 		vm.push_back(NULL);
 		id = (long)vm.size() - 1;
 	}
@@ -211,7 +211,7 @@ extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
 #if defined(WIN32) || defined(_WIN32_WCE)
 	::GlobalFree(h);
 #elif defined(POSIX)
-    free(h);
+	free(h);
 #endif
 
 	return id;
@@ -223,17 +223,17 @@ extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
  */
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB unload()
 {
-	if ( vm[0] ) {
+	if( vm[0] ) {
 		delete vm[0];
 		vm[0] = NULL;
 	}
 
-    return 1;
+	return 1;
 }
 
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_unload(long id)
 {
-	if ( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
+	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
 		return 0;
 	}
 
@@ -249,7 +249,7 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_unload(long id)
  */
 extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len)
 {
-	if ( vm[0] ) {
+	if( vm[0] ) {
 		return vm[0]->ExecuteRequest(h, len, false);
 	}
 	else {
@@ -259,11 +259,11 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len
 
 extern "C" DLLEXPORT aya::global_t FUNCATTRIB multi_request(long id, aya::global_t h, long *len)
 {
-	if ( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
+	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
 		return 0;
 	}
 
-	if ( vm[id] ) {
+	if( vm[id] ) {
 		return vm[id]->ExecuteRequest(h, len, false);
 	}
 	else {
@@ -280,10 +280,10 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB multi_request(long id, aya::global
 #if defined(WIN32)
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB logsend(long hwnd)
 {
-	if ( vm[0] ) {
+	if( vm[0] ) {
 		vm[0]->SetLogRcvWnd(hwnd);
 	}
-	else if ( vm.size() >= 2 && vm[1] ) {
+	else if( vm.size() >= 2 && vm[1] ) {
 		vm[1]->SetLogRcvWnd(hwnd);
 	}
 
@@ -317,8 +317,8 @@ int main( int argc, char *argv[ ], char *envp[ ] )
 			fread(buf,1,1,stdin);
 			bufstr += static_cast<char>(buf[0]);
 
-			if ( bufstr.size() >= 2 ) {
-				if ( strcmp(bufstr.c_str() + bufstr.size() - 2,"\r\n") == 0 ) { //改行検出
+			if( bufstr.size() >= 2 ) {
+				if( strcmp(bufstr.c_str() + bufstr.size() - 2,"\r\n") == 0 ) { //改行検出
 					break;
 				}
 			}
@@ -326,16 +326,16 @@ int main( int argc, char *argv[ ], char *envp[ ] )
 
 		const char* bufptr = bufstr.c_str();
 
-		if ( strncmp(bufptr,"load:",5) == 0 ) {
+		if( strncmp(bufptr,"load:",5) == 0 ) {
 			bufptr += 5;
 			long size = atoi(bufptr);
-			if ( size > 0 ) {
+			if( size > 0 ) {
 				char *read_ptr = (char*)::GlobalAlloc(GMEM_FIXED,size+1);
 				fread(read_ptr,1,size,stdin);
 				read_ptr[size] = 0;
 
 				char *p = strstr(read_ptr,"\r\n");
-				if ( p ) { *p = 0; size -= 2; }
+				if( p ) { *p = 0; size -= 2; }
 				
 				load(read_ptr,size);
 			}
@@ -344,10 +344,10 @@ int main( int argc, char *argv[ ], char *envp[ ] )
 			fwrite(result,1,strlen(result),stdout);
 			fflush(stdout);
 		}
-		else if ( strncmp(bufptr,"unload:",7) == 0 ) {
+		else if( strncmp(bufptr,"unload:",7) == 0 ) {
 			bufptr += 7;
 			long size = atoi(bufptr);
-			if ( size > 0 ) {
+			if( size > 0 ) {
 				char *read_ptr = (char*)malloc(size);
 				fread(read_ptr,1,size,stdin);
 				free(read_ptr); //データまとめて破棄
@@ -360,11 +360,11 @@ int main( int argc, char *argv[ ], char *envp[ ] )
 			fflush(stdout);
 			break;
 		}
-		else if ( (strncmp(bufptr,"request:",8) == 0) ) {
+		else if( (strncmp(bufptr,"request:",8) == 0) ) {
 			bufptr += 8;
 			
 			long size = atoi(bufptr);
-			if ( size > 0 ) {
+			if( size > 0 ) {
 				char *read_ptr = (char*)::GlobalAlloc(GMEM_FIXED,size+1);
 				fread(read_ptr,1,size,stdin);
 				read_ptr[size] = 0;

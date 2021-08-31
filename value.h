@@ -149,10 +149,10 @@ public:
 		i_value = rhs.i_value;
 		d_value = rhs.d_value;
 
-		if ( type == F_TAG_ARRAY ) {
+		if( type == F_TAG_ARRAY ) {
 			m_array = rhs.m_array;
 		}
-		else if ( type == F_TAG_STRING ) {
+		else if( type == F_TAG_STRING ) {
 			s_value = rhs.s_value;
 		}
 	}
@@ -163,12 +163,12 @@ public:
 		i_value = rhs.i_value;
 		d_value = rhs.d_value;
 
-		if ( type == F_TAG_ARRAY ) {
+		if( type == F_TAG_ARRAY ) {
 			m_array = rhs.m_array;
 		}
 		else {
 			m_array.reset();
-			if ( type == F_TAG_STRING ) {
+			if( type == F_TAG_STRING ) {
 				s_value = rhs.s_value;
 			}
 		}
@@ -234,7 +234,7 @@ public:
 		case F_TAG_DOUBLE: return (d_value == 0.0) ? 0 : 1;
 		case F_TAG_STRING: return (s_value == L"") ? 0 : 1;
 		case F_TAG_ARRAY:
-			if ( m_array.get() ) {
+			if( m_array.get() ) {
 				return m_array->size() != 0;
 			}
 			else {
@@ -306,7 +306,7 @@ public:
 
 	//////////////////////////////////////////////
 	CValueArray::size_type array_size(void) const {
-		if ( ! m_array.get() ) {
+		if( ! m_array.get() ) {
 			return 0;
 		}
 		else {
@@ -317,16 +317,16 @@ public:
 		return m_array;
 	}
 	const CValueArray& array(void) const {
-		if ( ! m_array.get() ) {
+		if( ! m_array.get() ) {
 			m_array.reset(new CValueArray);
 		}
 		return *m_array;
 	}
 	CValueArray& array(void) {
-		if ( ! m_array.get() ) {
+		if( ! m_array.get() ) {
 			m_array.reset(new CValueArray);
 		}
-		else if ( m_array.use_count() >= 2 ) {
+		else if( m_array.use_count() >= 2 ) {
 			CValueArray *pV = m_array.get();
 			m_array.reset(new CValueArray(*pV));
 		}

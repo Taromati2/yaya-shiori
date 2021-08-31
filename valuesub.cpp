@@ -64,10 +64,10 @@ int	CValueSub::GetValueInt(void) const
 		return i_value;
 	case F_TAG_DOUBLE:
 		{
-			if ( d_value > static_cast<double>(INT_MAX) ) {
+			if( d_value > static_cast<double>(INT_MAX) ) {
 				return INT_MAX;
 			}
-			else if ( d_value < static_cast<double>(INT_MIN) ) {
+			else if( d_value < static_cast<double>(INT_MIN) ) {
 				return INT_MIN;
 			}
 			else {
@@ -209,7 +209,7 @@ CValueSub &CValueSub::operator =(const CValue &v)
 int CValueSub::CalcEscalationTypeNum(const int rhs) const
 {
 	int result = type > rhs ? type : rhs;
-	if ( result != F_TAG_STRING ) { return result; }
+	if( result != F_TAG_STRING ) { return result; }
 
 	switch ( type <= rhs ? type : rhs ) {
 	case F_TAG_VOID:
@@ -257,7 +257,7 @@ CValueSub CValueSub::operator +(const CValueSub &value) const
 void CValueSub::operator +=(const CValueSub &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t != type ) {
+	if( t != type ) {
 		*this = operator+(value);
 		return;
 	}
@@ -331,7 +331,7 @@ CValueSub CValueSub::operator /(const CValueSub &value) const
 	case F_TAG_INT:
 		{
 			int denom = value.GetValueInt();
-			if ( denom ) {
+			if( denom ) {
 				return CValueSub(GetValueInt() / denom);
 			}
 			else {
@@ -341,7 +341,7 @@ CValueSub CValueSub::operator /(const CValueSub &value) const
 	case F_TAG_DOUBLE:
 		{
 			double denom = value.GetValueDouble();
-			if ( denom ) {
+			if( denom ) {
 				return CValueSub(GetValueDouble() / denom);
 			}
 			else {
@@ -371,7 +371,7 @@ CValueSub CValueSub::operator %(const CValueSub &value) const
 	case F_TAG_DOUBLE:
 		{
 			int denom = value.GetValueInt();
-			if ( denom ) {
+			if( denom ) {
 				return CValueSub(GetValueInt() % denom);
 			}
 			else {
@@ -399,13 +399,13 @@ int CValueSub::Compare(const CValueSub &value) const
 {
 	int t = CalcEscalationTypeStr(value.type);
 
-	if (t == F_TAG_INT) {
+	if(t == F_TAG_INT) {
 		return GetValueInt() == value.GetValueInt();
 	}
-	else if (t == F_TAG_DOUBLE) {
+	else if(t == F_TAG_DOUBLE) {
 		return GetValueDouble() == value.GetValueDouble();
 	}
-	else if (t == F_TAG_STRING) {
+	else if(t == F_TAG_STRING) {
 		return GetValueString() == value.GetValueString();
 	}
 	else {
@@ -417,13 +417,13 @@ bool CValueSub::Less(const CValueSub &value) const
 {
 	int t = CalcEscalationTypeStr(value.type);
 
-	if (t == F_TAG_INT) {
+	if(t == F_TAG_INT) {
 		return GetValueInt() < value.GetValueInt();
 	}
-	else if (t == F_TAG_DOUBLE) {
+	else if(t == F_TAG_DOUBLE) {
 		return GetValueDouble() < value.GetValueDouble();
 	}
-	else if (t == F_TAG_STRING) {
+	else if(t == F_TAG_STRING) {
 		return GetValueString() < value.GetValueString();
 	}
 	return false;

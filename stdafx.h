@@ -22,7 +22,7 @@
 #endif
 
 // VC8 Secure C 関数対策
-#if (_MSC_VER >= 1400)
+#if(_MSC_VER >= 1400)
 # pragma warning(disable : 4996)
 #endif
 

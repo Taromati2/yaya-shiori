@@ -52,7 +52,7 @@ namespace aya {
 	typedef std::map<aya::string_t,int> indexmap;
 
 	template<class T> void shared_ptr_deep_copy(const std_shared_ptr<T> &from,std_shared_ptr<T> &to) {
-		if ( from.get() ) {
+		if( from.get() ) {
 			to.reset(new T(*from));
 		}
 		else {

@@ -39,12 +39,12 @@
  */
 int	CFile1::Open(void)
 {
-	if (fp != NULL)
+	if(fp != NULL)
 		return 1;
 
 	fp = aya::w_fopen(name.c_str(), (wchar_t *)mode.c_str());
 
-	if ( ! fp ) {
+	if( ! fp ) {
 		size = 0;
 		return 0;
 	}
@@ -70,7 +70,7 @@ int	CFile1::Open(void)
  */
 int	CFile1::Close(void)
 {
-	if (fp) {
+	if(fp) {
 		fclose(fp);
 		fp = NULL;
 		return 1;
@@ -89,12 +89,12 @@ int	CFile1::Close(void)
  */
 int	CFile1::Write(const aya::string_t &istr)
 {
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	// 文字列をマルチバイト文字コードに変換
 	char	*t_istr = Ccct::Ucs2ToMbcs(istr, charset);
-	if (t_istr == NULL)
+	if(t_istr == NULL)
 		return 0;
 
 	long	len = (long)strlen(t_istr);
@@ -116,7 +116,7 @@ int	CFile1::Write(const aya::string_t &istr)
  */
 int	CFile1::WriteBin(const aya::string_t &istr, const aya::char_t alt)
 {
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	size_t len = istr.size();
@@ -126,7 +126,7 @@ int	CFile1::WriteBin(const aya::string_t &istr, const aya::char_t alt)
 	
 	//altを0に置き換えつつデータ構築
 	for ( size_t i = 0 ; i < len ; ++i ) {
-		if ( istr[i] == alt ) {
+		if( istr[i] == alt ) {
 			t_istr[i] = 0;
 		}
 		else {
@@ -151,15 +151,15 @@ int	CFile1::WriteBin(const aya::string_t &istr, const aya::char_t alt)
  */
 int	CFile1::WriteDecode(const aya::string_t &istr, const aya::string_t &type)
 {
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	std::string out;
 
-	if ( wcsicmp(type.c_str(),L"base64") == 0 ) {
+	if( wcsicmp(type.c_str(),L"base64") == 0 ) {
 		DecodeBase64(out,istr.c_str(),istr.length());
 	}
-	else if ( wcsicmp(type.c_str(),L"form") == 0 ) {
+	else if( wcsicmp(type.c_str(),L"form") == 0 ) {
 		DecodeURL(out,istr.c_str(),istr.length(),true);
 	}
 	else {
@@ -183,10 +183,10 @@ int	CFile1::Read(aya::string_t &ostr)
 {
 	ostr = L"";
 
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
-	if (aya::ws_fgets(ostr, fp, charset, 0, bomcheck, false) == aya::WS_EOF)
+	if(aya::ws_fgets(ostr, fp, charset, 0, bomcheck, false) == aya::WS_EOF)
 		return -1;
 
 	bomcheck++;
@@ -205,7 +205,7 @@ int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
 {
 	ostr = L"";
 
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	if(len<1){ //0=デフォルトサイズ指定
@@ -217,17 +217,17 @@ int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
 
 	while ( true ) {
 		size_t lenread = len - read;
-		if ( lenread > sizeof(f_buffer) ) {
+		if( lenread > sizeof(f_buffer) ) {
 			lenread = sizeof(f_buffer);
 		}
 
 		size_t done = fread(f_buffer,1,lenread,fp);
-		if ( ! done ) {
+		if( ! done ) {
 			break;
 		}
 
 		for ( size_t i = 0 ; i < done ; ++i ) {
-			if ( f_buffer[i] == 0 ) {
+			if( f_buffer[i] == 0 ) {
 				ostr.append(1,alt);
 			}
 			else {
@@ -236,7 +236,7 @@ int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
 		}
 
 		read += done;
-		if ( done < lenread ) { break; }
+		if( done < lenread ) { break; }
 	}
 
 	return read;
@@ -253,7 +253,7 @@ int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &typ
 {
 	ostr = L"";
 
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	if(len<1){ //0=デフォルトサイズ指定
@@ -265,29 +265,29 @@ int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &typ
 
 	aya::string_t s;
 	int enc_type = 0;
-	if ( wcsicmp(type.c_str(),L"base64") == 0 ) {
+	if( wcsicmp(type.c_str(),L"base64") == 0 ) {
 		enc_type = 1;
 	}
-	else if ( wcsicmp(type.c_str(),L"form") == 0 ) {
+	else if( wcsicmp(type.c_str(),L"form") == 0 ) {
 		enc_type = 2;
 	}
 
 	while ( true ) {
 		size_t lenread = len - read;
-		if ( lenread > sizeof(f_buffer) ) {
+		if( lenread > sizeof(f_buffer) ) {
 			lenread = sizeof(f_buffer);
 		}
 
 		size_t done = fread(f_buffer,1,lenread,fp);
-		if ( ! done ) {
+		if( ! done ) {
 			break;
 		}
 
 		s.erase();
-		if ( enc_type == 1 ) { //b64
+		if( enc_type == 1 ) { //b64
 			EncodeBase64(s,f_buffer,done);
 		}
-		else if ( enc_type == 2 ) { //form
+		else if( enc_type == 2 ) { //form
 			EncodeURL(s,f_buffer,done,true);
 		}
 		else {
@@ -296,7 +296,7 @@ int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &typ
 		ostr += s;
 
 		read += done;
-		if ( done < lenread ) { break; }
+		if( done < lenread ) { break; }
 	}
 
 	return read;
@@ -309,7 +309,7 @@ int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &typ
  * -----------------------------------------------------------------------
  */
 int CFile1::FSeek(int offset,int origin){
-	if (fp == NULL)
+	if(fp == NULL)
 		return 0;
 
 	int result=::fseek(fp,offset,origin);
@@ -329,7 +329,7 @@ int CFile1::FSeek(int offset,int origin){
  * -----------------------------------------------------------------------
  */
 int CFile1::FTell(){
-	if (fp == NULL)
+	if(fp == NULL)
 		return -1;
 
 	int result=::ftell(fp);

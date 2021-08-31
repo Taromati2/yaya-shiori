@@ -37,7 +37,7 @@
 CValue	CDuplEvInfo::Choice(CAyaVM &vm,int areanum, const std::vector<CVecValue> &values, int mode)
 {
 	// 領域毎の候補数と総数を更新　変化があった場合は巡回順序を初期化する
-	if (UpdateNums(areanum, values))
+	if(UpdateNums(areanum, values))
 		InitRoundOrder(vm,mode);
 
 	// 値の取得と巡回制御
@@ -47,7 +47,7 @@ CValue	CDuplEvInfo::Choice(CAyaVM &vm,int areanum, const std::vector<CVecValue> 
 
 	// 巡回位置を進める　巡回が完了したら巡回順序を初期化する
 	index++;
-	if (index >= static_cast<int>(roundorder.size()) )
+	if(index >= static_cast<int>(roundorder.size()) )
 		InitRoundOrder(vm,mode);
 
 	return result;
@@ -65,22 +65,22 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 	roundorder.clear();
 	roundorder.reserve(total);
 
-    if (mode == CHOICETYPE_NONOVERLAP) {
+	if(mode == CHOICETYPE_NONOVERLAP) {
 		for(int i = 0; i < total; ++i) {
-			if ( i != lastroundorder ) {
+			if( i != lastroundorder ) {
 				roundorder.push_back(i);
 			}
 		}
 
 		//緊急時エラー回避用
-		if ( ! roundorder.size() ) {
+		if( ! roundorder.size() ) {
 			roundorder.push_back(0);
 		}
 
 		int n = roundorder.size();
 		for ( int i = 0 ; i < n ; ++i ) {
 			int s = vm.genrand_int(n);
-			if ( i != s ) {
+			if( i != s ) {
 				int tmp = roundorder[i];
 				roundorder[i] = roundorder[s];
 				roundorder[s] = tmp;
@@ -115,8 +115,8 @@ char	CDuplEvInfo::UpdateNums(int areanum, const std::vector<CVecValue> &values)
 		int	t_num = values[i].array.size();
 		num.push_back(t_num);
 		total *= t_num;
-		if (i <= bef_numlenm1)
-			if (bef_num[i] != t_num)
+		if(i <= bef_numlenm1)
+			if(bef_num[i] != t_num)
 				changed = 1;
 	}
 
@@ -137,10 +137,10 @@ CValue	CDuplEvInfo::GetValue(CAyaVM &vm,int areanum, const std::vector<CVecValue
 	
 	vm.sysfunction().SetLso(t_index);
 
-	if (areanum) {
+	if(areanum) {
 		aya::string_t	result;
 		for ( int i = 0; i <= areanum; i++ ) {
-			if ( num[i] ) {
+			if( num[i] ) {
 				int	next = t_index/num[i];
 				result += values[i].array[t_index - next*(num[i])].GetValueString();
 				t_index = next;

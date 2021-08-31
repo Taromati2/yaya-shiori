@@ -87,7 +87,7 @@ public:
 		return m_value;
 	}
 	const CValue &value_const(void) const {
-		if ( ! m_value.get() ) {
+		if( ! m_value.get() ) {
 			return emptyvalue;
 		}
 		return *m_value;
@@ -96,10 +96,10 @@ public:
 		return value_const();
 	}
 	CValue &value(void) {
-		if ( ! m_value.get() ) {
+		if( ! m_value.get() ) {
 			m_value.reset(new CValue);
 		}
-		else if ( m_value.use_count() >= 2 ) {
+		else if( m_value.use_count() >= 2 ) {
 			CValue *pV = m_value.get();
 			m_value.reset(new CValue(*pV));
 		}
@@ -222,7 +222,7 @@ public:
 	void	Erase(const aya::string_t &name)
 	{
 		int	index = GetIndex(name);
-		if (index >= 0) {
+		if(index >= 0) {
 			var[index].Erase();
 		}
 	}

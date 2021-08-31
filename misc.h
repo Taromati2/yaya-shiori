@@ -98,7 +98,7 @@ public:
 	void	Init(void) { depth = 0; }
 
 	char	Add(const aya::string_t &str) {
-		if (maxdepth && depth > maxdepth)
+		if(maxdepth && depth > maxdepth)
 			return 0;
 
 		depth++;
@@ -107,7 +107,7 @@ public:
 	}
 
 	void	Del(void) {
-		if ( depth ) {
+		if( depth ) {
 			depth--;
 			stack.erase(stack.end()-1);
 		}

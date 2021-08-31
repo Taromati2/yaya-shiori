@@ -67,7 +67,7 @@
 
 #define ARRAY_SIZE(X)  		(sizeof(X)/sizeof(X[0]))
 #define ARRAY_END(X)   		(X +ARRAY_SIZE(X))
-#define AD_LIBTIUM(XXX)		if (!(XXX)) ; else (*(XXX))
+#define AD_LIBTIUM(XXX)		if(!(XXX)) ; else (*(XXX))
 #define SET_FORWARD(XXX)	XXX = XXX
 
 //inline unsigned char & unsignize(char & X) {
@@ -144,16 +144,16 @@ class bbl_table {
 //	}
 	const bbl_code operator[](int index) const {
 		assert(0 <= index);
-		if (0xFFFF < index) {
+		if(0xFFFF < index) {
 			return 0;
 		}
 		bbl_code result = 0;
 		const int high = index >> 8;
 		const bbl_code * const * const X_wire = value[high];
-		if (X_wire) {
+		if(X_wire) {
 			const int mid = (index & 0xFF) >>5;
 			const bbl_code * const X_line = X_wire[mid];
-			if (X_line) {
+			if(X_line) {
 				const int low = index & 0x1F;
 				result = X_line[low];
 			}
@@ -237,7 +237,7 @@ namespace bbl_transmap {
 	//	open(TXT, "CP932.TXT");
 	//	open(CSV, "> cp932.csv");
 	//	while($line = <TXT>) {
-	//		if ($line =~ /^(0x.*)\t(0x.*)\t#[\t\s]*(.*)/) {
+	//		if($line =~ /^(0x.*)\t(0x.*)\t#[\t\s]*(.*)/) {
 	//			print CSV "$1, $2,\t\x2F\x2F\t$3\n";
 	//		}
 	//	}
@@ -299,7 +299,7 @@ namespace bbl_transmap {
 	//	open(TXT, "SHIFTJIS.TXT");
 	//	open(CSV, "> utc.csv");
 	//	while($line = <TXT>) {
-	//		if ($line =~ /^(0x.*)\t(0x.*)\t#[\t\s]*(.*)/) {
+	//		if($line =~ /^(0x.*)\t(0x.*)\t#[\t\s]*(.*)/) {
 	//			print CSV "$1, $2,\t\x2F\x2F\t$3\n";
 	//		}
 	//	}
@@ -334,7 +334,7 @@ namespace bbl_transmap {
 	//	open(TXT, "JAPANESE.TXT");
 	//	open(CSV, "> apple.csv");
 	//	while($line = <TXT>) {
-	//		if ($line =~ /^(0x.*)\t(0x.*)\t*#(.*)/) {
+	//		if($line =~ /^(0x.*)\t(0x.*)\t*#(.*)/) {
 	//			$sjis = $1;
 	//			$unicode_values = $2;
 	//			$comment = $3;
@@ -524,17 +524,17 @@ void ansi_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			bbl_char current_char = unsignize(untranslated_buffer.at(i));
-			if (current_char <= 0x7F) {
+			if(current_char <= 0x7F) {
 				unicode[j++] = current_char;
 			} else {
 				append_broken_char(&j, unicode);
@@ -569,21 +569,21 @@ void unicode_to_ansi_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			wchar_t current_wchar = unsignize(untranslated_buffer.at(i));
-			if (current_wchar <= 0x7F) {
+			if(current_wchar <= 0x7F) {
 				ansi[j++] = (unsigned char)current_wchar;
 			} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-				if (!is_private_use_area(current_wchar)) {
+				if(!is_private_use_area(current_wchar)) {
 					append_broken_char(&j, ansi);
 				}
 #else
@@ -672,43 +672,43 @@ void sjis_to_euc_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length - i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_sjis_lead_byte(next_char)) {
+		if(1 == rest_length && is_sjis_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_sjis_lead_byte(lead_char)) {
+			if(is_sjis_lead_byte(lead_char)) {
 			//	漢字(全角文字)・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
-					if (lead_char < 0xFA) {
+				if(0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
+					if(lead_char < 0xFA) {
 						lead_char <<= 1;
 						lead_char &= 0xFF;
-						if (trail_char <= 0x9E) {
-							if (lead_char <= 0x3E) {
+						if(trail_char <= 0x9E) {
+							if(lead_char <= 0x3E) {
 								lead_char -= 0x61;
 							} else {
 								lead_char += 0x1F;
 							}
-							if (0x80 <= trail_char) {
+							if(0x80 <= trail_char) {
 								trail_char += 0x60;
 							} else {
 								trail_char += 0x61;
 							}
 						} else {
-							if (lead_char <= 0x3E) {
+							if(lead_char <= 0x3E) {
 								lead_char -= 0x60;
 							} else {
 								lead_char += 0x20;
@@ -721,7 +721,7 @@ void sjis_to_euc_engine::translate() {
 					} else {
 						bbl_code sjis_code = lead_char *0x100 +trail_char;
 						bbl_code euc_code = bbl_transmap::sjis_euc[sjis_code];
-						if (0 != euc_code) {
+						if(0 != euc_code) {
 							euc[j++] = euc_code /0x100;
 							euc[j++] = euc_code & 0xFF;
 							i+=2;
@@ -734,7 +734,7 @@ void sjis_to_euc_engine::translate() {
 					append_broken_char(&j, euc);
 					++i;
 				}
-			} else if (0xA1 <= lead_char && lead_char <= 0xDF) {
+			} else if(0xA1 <= lead_char && lead_char <= 0xDF) {
 			//	半角カナ・・・
 				euc[j++] = 0x8E;
 				euc[j++] = lead_char;
@@ -806,51 +806,51 @@ void euc_to_sjis_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		unsigned char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_euc_lead_byte(next_char)) {
+		if(1 == rest_length && is_euc_lead_byte(next_char)) {
 			break;
 		}
-		if (rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
+		if(rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_euc_lead_byte(lead_char)) {
+			if(is_euc_lead_byte(lead_char)) {
 			//	漢字(全角文字) or 半角カナ・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x8E == lead_char && 0xA1 <= trail_char && trail_char <= 0xDF) {
+				if(0x8E == lead_char && 0xA1 <= trail_char && trail_char <= 0xDF) {
 				//	半角カナ・・・
 					sjis[j++] = trail_char;
 					i+=2;
-				} else if (0x80 <= trail_char) {
+				} else if(0x80 <= trail_char) {
 					bbl_code euc_code = lead_char *0x100 +trail_char;
-					if (!(0xF9A1 <= euc_code && euc_code <= 0xFCFE)) {
-						if (lead_char & 0x01) {
+					if(!(0xF9A1 <= euc_code && euc_code <= 0xFCFE)) {
+						if(lead_char & 0x01) {
 							lead_char >>= 1;
-							if (lead_char < 0x6F) {
+							if(lead_char < 0x6F) {
 								lead_char += 0x31;
 							} else {
 								lead_char += 0x71;
 							}
-							if (trail_char > 0xDF) {
+							if(trail_char > 0xDF) {
 								trail_char -= 0x60;
 							} else {
 								trail_char -= 0x61;
 							}
 						} else {
 							lead_char >>= 1;
-							if (lead_char <= 0x6F) {
+							if(lead_char <= 0x6F) {
 								lead_char += 0x30;
 							} else {
 								lead_char += 0x70;
@@ -862,7 +862,7 @@ void euc_to_sjis_engine::translate() {
 						i+=2;
 					} else {
 						bbl_code sjis_code = bbl_transmap::euc_sjis[euc_code];
-						if (0 != sjis_code) {
+						if(0 != sjis_code) {
 							sjis[j++] = sjis_code /0x100;
 							sjis[j++] = sjis_code & 0xFF;
 							i+=2;
@@ -875,10 +875,10 @@ void euc_to_sjis_engine::translate() {
 					append_broken_char(&j, sjis);
 					++i;
 				}
-			} else if (is_euc_aux_lead_byte(lead_char)) {
+			} else if(is_euc_aux_lead_byte(lead_char)) {
 			//	補助漢字・・・
 				unsigned int k = i +2;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				//	SJIS には補助漢字を格納できない。
@@ -913,30 +913,30 @@ void sjis_cp932_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		unsigned char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_sjis_lead_byte(next_char)) {
+		if(1 == rest_length && is_sjis_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_sjis_lead_byte(lead_char)) {
+			if(is_sjis_lead_byte(lead_char)) {
 			//	漢字(全角文字)・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
+				if(0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
 					bbl_code sjis_code = lead_char *0x100 +trail_char;
 					bbl_code unicode_code = bbl_transmap::cp932_unicode[sjis_code];
-					if (0 != unicode_code) {
+					if(0 != unicode_code) {
 						unicode[j++] = (wchar_t)unicode_code;
 						i+=2;
 					} else {
@@ -947,7 +947,7 @@ void sjis_cp932_to_unicode_engine::translate() {
 					append_broken_char(&j, unicode);
 					++i;
 				}
-			} else if (0xA1 <= lead_char && lead_char <= 0xDF) {
+			} else if(0xA1 <= lead_char && lead_char <= 0xDF) {
 			//	半角カナ・・・
 				bbl_code unicode_code = bbl_transmap::cp932_unicode[lead_char];
 				unicode[j++] = (wchar_t)unicode_code;
@@ -986,29 +986,29 @@ void unicode_to_sjis_cp932_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			wchar_t current_wchar = unsignize(untranslated_buffer.at(i));
 			bool is_broken_char = false;
 			bbl_code sjis_code;
-			if (current_wchar <= 0x7F) {
+			if(current_wchar <= 0x7F) {
 				sjis_code = current_wchar;
 			} else {
 				sjis_code = bbl_transmap::unicode_cp932[current_wchar];
-				if (0 == sjis_code) {
+				if(0 == sjis_code) {
 					is_broken_char = true;
 				}
 			}
 
-			if (!is_broken_char) {
-				if (sjis_code <= 0xFF) {
+			if(!is_broken_char) {
+				if(sjis_code <= 0xFF) {
 					sjis[j++] = (unsigned char)sjis_code;
 				} else {
 					sjis[j++] = sjis_code >> 8;
@@ -1016,7 +1016,7 @@ void unicode_to_sjis_cp932_engine::translate() {
 				}
 			} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-				if (!is_private_use_area(current_wchar)) {
+				if(!is_private_use_area(current_wchar)) {
 					append_broken_char(&j, sjis);
 				}
 #else
@@ -1048,30 +1048,30 @@ void sjis_utc_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		unsigned char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_sjis_lead_byte(next_char)) {
+		if(1 == rest_length && is_sjis_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_sjis_lead_byte(lead_char)) {
+			if(is_sjis_lead_byte(lead_char)) {
 			//	漢字(全角文字)・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
+				if(0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
 					bbl_code sjis_code = lead_char *0x100 +trail_char;
 					bbl_code unicode_code = bbl_transmap::utc_unicode[sjis_code];
-					if (0 != unicode_code) {
+					if(0 != unicode_code) {
 						unicode[j++] = (wchar_t)unicode_code;
 						i+=2;
 					} else {
@@ -1085,7 +1085,7 @@ void sjis_utc_to_unicode_engine::translate() {
 			} else {
 			//	半角カナ＆その他の半角・・・
 				bbl_code unicode_code = bbl_transmap::utc_unicode[lead_char];
-				if (0 != unicode_code) {
+				if(0 != unicode_code) {
 					unicode[j++] = (wchar_t)unicode_code;
 				} else {
 					unicode[j++] = lead_char;
@@ -1121,27 +1121,27 @@ void unicode_to_sjis_utc_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			wchar_t current_wchar = unsignize(untranslated_buffer.at(i));
 			bool is_broken_char = false;
 			bbl_code sjis_code = bbl_transmap::unicode_utc[current_wchar];
-			if (0 == sjis_code) {
-				if (current_wchar <= 0x7F) {
+			if(0 == sjis_code) {
+				if(current_wchar <= 0x7F) {
 					sjis_code = current_wchar;
 				} else {
 					is_broken_char = true;
 				}
 			}
 
-			if (!is_broken_char) {
-				if (sjis_code <= 0xFF) {
+			if(!is_broken_char) {
+				if(sjis_code <= 0xFF) {
 					sjis[j++] = (unsigned char)sjis_code;
 				} else {
 					sjis[j++] = sjis_code >> 8;
@@ -1149,7 +1149,7 @@ void unicode_to_sjis_utc_engine::translate() {
 				}
 			} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-				if (!is_private_use_area(current_wchar)) {
+				if(!is_private_use_area(current_wchar)) {
 					append_broken_char(&j, sjis);
 				}
 #else
@@ -1181,35 +1181,35 @@ void sjis_apple_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		unsigned char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_sjis_lead_byte(next_char)) {
+		if(1 == rest_length && is_sjis_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_sjis_lead_byte(lead_char)) {
+			if(is_sjis_lead_byte(lead_char)) {
 			//	漢字(全角文字)・・・
 				const unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
+				if(0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
 					bbl_code sjis_code = lead_char *0x100 +trail_char;
 					bbl_code unicode_code = bbl_transmap::apple_unicode[sjis_code];
-					if (0 != unicode_code) {
+					if(0 != unicode_code) {
 						unicode[j++] = (wchar_t)unicode_code;
 						i+=2;
 					} else {
 						bbl_wstring unicode_string = bbl_transmap::apple_unicode_n[sjis_code];
-						if (0 < unicode_string.length()) {
+						if(0 < unicode_string.length()) {
 							append_token(&j, unicode, unicode_string);
 							i+=2;
 						} else {
@@ -1224,11 +1224,11 @@ void sjis_apple_to_unicode_engine::translate() {
 			} else {
 			//	半角カナ＆その他の半角・・・
 				bbl_code unicode_code = bbl_transmap::apple_unicode[lead_char];
-				if (0 != unicode_code) {
+				if(0 != unicode_code) {
 					unicode[j++] = (wchar_t)unicode_code;
 				} else {
 					bbl_wstring unicode_string = bbl_transmap::apple_unicode_n[lead_char];
-					if (0 < unicode_string.length()) {
+					if(0 < unicode_string.length()) {
 						append_token(&j, unicode, unicode_string);
 					} else {
 						unicode[j++] = lead_char;
@@ -1264,11 +1264,11 @@ void unicode_to_sjis_apple_engine::translate() {
 		unsigned int j, rest_length;
 		j = 0;
 		rest_length = untranslated_length -i;
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
@@ -1300,18 +1300,18 @@ void unicode_to_sjis_apple_engine::translate() {
 			}
 
 			const unsigned int k = i +code_length -1;
-			if (untranslated_length <= k) {
+			if(untranslated_length <= k) {
 				break;
 			}
 
 			bool is_broken_char = false;
 			bbl_code sjis_code = bbl_transmap::unicode_n_apple[untranslated_buffer.substr(i, code_length)];
-			if (0 == sjis_code) {
+			if(0 == sjis_code) {
 				code_length = 1;
-				if (2 == code_length) {
+				if(2 == code_length) {
 					sjis_code = bbl_transmap::unicode_apple[current_wchar];
-					if (0 == sjis_code) {
-						if (current_wchar <= 0x7F) {
+					if(0 == sjis_code) {
+						if(current_wchar <= 0x7F) {
 							sjis_code = current_wchar;
 						} else {
 							is_broken_char = true;
@@ -1322,8 +1322,8 @@ void unicode_to_sjis_apple_engine::translate() {
 				}
 			}
 
-			if (!is_broken_char) {
-				if (sjis_code <= 0xFF) {
+			if(!is_broken_char) {
+				if(sjis_code <= 0xFF) {
 					sjis[j++] = (unsigned char)sjis_code;
 				} else {
 					sjis[j++] = sjis_code >> 8;
@@ -1331,7 +1331,7 @@ void unicode_to_sjis_apple_engine::translate() {
 				}
 			} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-				if (!is_private_use_area(current_wchar)) {
+				if(!is_private_use_area(current_wchar)) {
 					append_broken_char(&j, sjis);
 				}
 #else
@@ -1352,7 +1352,7 @@ void unicode_to_sjis_apple_engine::flush() {
 //		typedef	bbl_string	to_string_type;
 
 	const unsigned int rest_length = untranslated_buffer.length();
-	if (1 == rest_length) {
+	if(1 == rest_length) {
 		to_string_type::value_type sjis[8];
 		unsigned int i = 0, j = 0;
 
@@ -1360,16 +1360,16 @@ void unicode_to_sjis_apple_engine::flush() {
 		bool is_broken_char = false;
 
 		bbl_code sjis_code = bbl_transmap::unicode_apple[current_wchar];
-		if (0 == sjis_code) {
-			if (current_wchar <= 0x7F) {
+		if(0 == sjis_code) {
+			if(current_wchar <= 0x7F) {
 				sjis_code = current_wchar;
 				sjis[j++] = (unsigned char)sjis_code;
 			} else {
 				is_broken_char = true;
 			}
 		}
-		if (!is_broken_char) {
-			if (sjis_code <= 0xFF) {
+		if(!is_broken_char) {
+			if(sjis_code <= 0xFF) {
 				sjis[j++] = (unsigned char)sjis_code;
 			} else {
 				sjis[j++] = sjis_code >> 8;
@@ -1378,7 +1378,7 @@ void unicode_to_sjis_apple_engine::flush() {
 			untranslated_buffer = bbl_term::get_empty();
 		} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-			if (!is_private_use_area(current_wchar)) {
+			if(!is_private_use_area(current_wchar)) {
 				append_broken_char(&j, sjis);
 			}
 #else
@@ -1388,7 +1388,7 @@ void unicode_to_sjis_apple_engine::flush() {
 		sjis[j] = '\0';
 		translated_buffer += sjis;
 	} else {
-		if (1 < rest_length) {
+		if(1 < rest_length) {
 			to_string_type::value_type sjis[8];
 			unsigned int j = 0;
 			append_broken_char(&j, sjis);
@@ -1445,25 +1445,25 @@ void unicode_to_utf8_engine::translate() {
 		unsigned int j, rest_length;
 		j = 0;
 		rest_length = untranslated_length -i;
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_code current_wchar = unsignize(untranslated_buffer.at(i));
 #if	defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-			if (2 == get_base_wstring_size()) {
+			if(2 == get_base_wstring_size()) {
 #endif	//  defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
 #if	!defined(__UNICODE_CHAR_SIZE_4__)
-				if (0xD800 <= current_wchar && current_wchar <= 0xDBFF) {
+				if(0xD800 <= current_wchar && current_wchar <= 0xDBFF) {
 					unsigned int k = i +1;
-					if (untranslated_length <= k) {
+					if(untranslated_length <= k) {
 						break;
 					}
 					bbl_code trail_wchar = unsignize(untranslated_buffer.at(k));
-					if (0xDC00 <= trail_wchar && trail_wchar <= 0xDFFF) {
+					if(0xDC00 <= trail_wchar && trail_wchar <= 0xDFFF) {
 						current_wchar = ((current_wchar -0xD800) +0x0040) *0x400 +(trail_wchar -0xDC00);
 						++i;
 					}
@@ -1472,25 +1472,25 @@ void unicode_to_utf8_engine::translate() {
 #if	defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
 			}
 #endif	//  defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-			if (current_wchar < 0x80) {
+			if(current_wchar < 0x80) {
 				utf8[j++] = (unsigned char)current_wchar;
 				++i;
-			} else if (current_wchar < 0x800) {
+			} else if(current_wchar < 0x800) {
 				utf8[j++] = 0xC0 | (current_wchar >> 6);
 				utf8[j++] = 0x80 | 0x3F & current_wchar;
 				++i;
-			} else if (current_wchar < 0x10000) {
+			} else if(current_wchar < 0x10000) {
 				utf8[j++] = 0xE0 | (current_wchar >> 12);
 				utf8[j++] = 0x80 | 0x3F & (current_wchar >> 6);
 				utf8[j++] = 0x80 | 0x3F & current_wchar;
 				++i;
-			} else if (current_wchar < 0x200000) {
+			} else if(current_wchar < 0x200000) {
 				utf8[j++] = 0xF0 | (current_wchar >> 18);
 				utf8[j++] = 0x80 | 0x3F & (current_wchar >> 12);
 				utf8[j++] = 0x80 | 0x3F & (current_wchar >> 6);
 				utf8[j++] = 0x80 | 0x3F & current_wchar;
 				++i;
-			} else if (current_wchar < 0x400000) {
+			} else if(current_wchar < 0x400000) {
 				assert(false);	//	多分どっかがバグってるか、文字が壊れている。
 				utf8[j++] = 0xF8 | (current_wchar >> 24);
 				utf8[j++] = 0x80 | 0x3F & (current_wchar >> 18);
@@ -1530,22 +1530,22 @@ void utf8_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (rest_length < get_utf8_char_length(next_char)) {
+		if(rest_length < get_utf8_char_length(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
 			int char_length = get_utf8_char_length(lead_char);
-			if (1 <= char_length) {
-				if (untranslated_length < i +char_length) {
+			if(1 <= char_length) {
+				if(untranslated_length < i +char_length) {
 					break;
 				}
 				bbl_code current_code = utf8_lead_mask[char_length] & lead_char;
@@ -1553,10 +1553,10 @@ void utf8_to_unicode_engine::translate() {
 					current_code <<= 6;
 					current_code |= 0x3F & unsignize(untranslated_buffer.at(i +k));
 				}
-				if (current_code <= 0xFFFF) {
+				if(current_code <= 0xFFFF) {
 					unicode[j++] = (wchar_t)current_code;
 				} else {
-					if (current_code <= 0x10FFFF) {
+					if(current_code <= 0x10FFFF) {
 						const bbl_code lead_char = ((current_code-0x10000) /0x400) |0xD800;
 						const bbl_code trail_char = (current_code &0x3FF) |0xDC00;
 						unicode[j++] = (wchar_t)lead_char;
@@ -1611,43 +1611,43 @@ void sjis_to_jis_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_sjis_lead_byte(next_char)) {
+		if(1 == rest_length && is_sjis_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_sjis_lead_byte(lead_char)) {
+			if(is_sjis_lead_byte(lead_char)) {
 			//	漢字(全角文字)・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
 				bool is_broken_char = false;
-				if (0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
-					if (lead_char < 0xFA) {
-						if (jis_K2 != status) {
+				if(0x40 <= trail_char && trail_char <= 0xFC && trail_char != 0x7F) {
+					if(lead_char < 0xFA) {
+						if(jis_K2 != status) {
 							next_status = jis_K2;
 							break;
 						}
-						if (lead_char < 0xA0) {
+						if(lead_char < 0xA0) {
 							lead_char -= 0x70;
 						} else {
 							lead_char -= 0xB0;
 						}
-						if (0x80 <= trail_char) {
+						if(0x80 <= trail_char) {
 							trail_char--;
 						}
 						lead_char <<= 1;
-						if (0x9E <= trail_char) {
+						if(0x9E <= trail_char) {
 							trail_char -= 0x5E;
 						} else {
 							--lead_char;
@@ -1659,8 +1659,8 @@ void sjis_to_jis_engine::translate() {
 					} else {
 						bbl_code sjis_code = lead_char *0x100 +trail_char;
 						bbl_code euc_code = bbl_transmap::sjis_euc[sjis_code];
-						if (0 != euc_code) {
-							if (jis_K2 != status) {
+						if(0 != euc_code) {
+							if(jis_K2 != status) {
 								next_status = jis_K2;
 								break;
 							}
@@ -1675,17 +1675,17 @@ void sjis_to_jis_engine::translate() {
 				} else {
 					is_broken_char = true;
 				}
-				if (is_broken_char) {
-					if (jis_ascii != status) {
+				if(is_broken_char) {
+					if(jis_ascii != status) {
 						next_status = jis_ascii;
 						break;
 					}
 					append_broken_char(&j, jis);
 					++i;
 				}
-			} else if (0xA1 <= lead_char && lead_char <= 0xDF) {
+			} else if(0xA1 <= lead_char && lead_char <= 0xDF) {
 			//	半角カナ・・・
-				if (jis_K1 != status) {
+				if(jis_K1 != status) {
 					next_status = jis_K1;
 					break;
 				}
@@ -1693,7 +1693,7 @@ void sjis_to_jis_engine::translate() {
 				++i;
 			} else {
 			//	その他の半角・・・
-				if (jis_ascii != status) {
+				if(jis_ascii != status) {
 					next_status = jis_ascii;
 					break;
 				}
@@ -1703,7 +1703,7 @@ void sjis_to_jis_engine::translate() {
 		}
 		jis[j] = '\0';
 		translated_buffer += jis;
-		if (next_status != status) {
+		if(next_status != status) {
 			switch(next_status) {
 				case jis_ascii:
 					translated_buffer += (jis_S != status) ? jis_KO_ascii: jis_SO;
@@ -1761,40 +1761,40 @@ void euc_to_jis_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_euc_lead_byte(next_char)) {
+		if(1 == rest_length && is_euc_lead_byte(next_char)) {
 			break;
 		}
-		if (rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
+		if(rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_euc_lead_byte(lead_char)) {
+			if(is_euc_lead_byte(lead_char)) {
 			//	漢字(全角文字) or 半角カナ・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
 				bool is_broken_char = false;
-				if (0x8E == lead_char && 0xA1 <= trail_char && trail_char <= 0xDF) {
+				if(0x8E == lead_char && 0xA1 <= trail_char && trail_char <= 0xDF) {
 				//	半角カナ・・・
-					if (jis_K1 != status) {
+					if(jis_K1 != status) {
 						next_status = jis_K1;
 						break;
 					}
 					jis[j++] = trail_char -0x80;
 					i+=2;
-				} else if (0x80 <= trail_char) {
-					if (jis_K2 != status) {
+				} else if(0x80 <= trail_char) {
+					if(jis_K2 != status) {
 						next_status = jis_K2;
 						break;
 					}
@@ -1804,25 +1804,25 @@ void euc_to_jis_engine::translate() {
 				} else {
 					is_broken_char = true;
 				}
-				if (is_broken_char) {
-					if (jis_ascii != status) {
+				if(is_broken_char) {
+					if(jis_ascii != status) {
 						next_status = jis_ascii;
 						break;
 					}
 					append_broken_char(&j, jis);
 					++i;
 				}
-			} else if (is_euc_aux_lead_byte(lead_char)) {
+			} else if(is_euc_aux_lead_byte(lead_char)) {
 			//	補助漢字・・・
 				unsigned int k = i +2;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char second_char = unsignize(untranslated_buffer.at(i +1));
 				bbl_char third_char = unsignize(untranslated_buffer.at(i +2));
 
-				if (0x80 <= second_char && 0x80 <= third_char) {
-					if (jis_K3_aux != status) {
+				if(0x80 <= second_char && 0x80 <= third_char) {
+					if(jis_K3_aux != status) {
 						next_status = jis_K3_aux;
 						break;
 					}
@@ -1830,7 +1830,7 @@ void euc_to_jis_engine::translate() {
 					jis[j++] = third_char & 0x7F;
 					i+=3;
 				} else {
-					if (jis_ascii != status) {
+					if(jis_ascii != status) {
 						next_status = jis_ascii;
 						break;
 					}
@@ -1839,7 +1839,7 @@ void euc_to_jis_engine::translate() {
 				}
 			} else {
 			//	その他の半角・・・
-				if (jis_ascii != status) {
+				if(jis_ascii != status) {
 					next_status = jis_ascii;
 					break;
 				}
@@ -1849,7 +1849,7 @@ void euc_to_jis_engine::translate() {
 		}
 		jis[j] = '\0';
 		translated_buffer += jis;
-		if (next_status != status) {
+		if(next_status != status) {
 			switch(next_status) {
 				case jis_ascii:
 					translated_buffer += (jis_S != status) ? jis_KO_ascii: jis_SO;
@@ -1914,33 +1914,33 @@ void euc_to_unicode_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (1 == rest_length && is_euc_lead_byte(next_char)) {
+		if(1 == rest_length && is_euc_lead_byte(next_char)) {
 			break;
 		}
-		if (rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
+		if(rest_length < 3 && is_euc_aux_lead_byte(next_char)) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if (is_euc_lead_byte(lead_char)) {
+			if(is_euc_lead_byte(lead_char)) {
 			//	漢字(全角文字) or 半角カナ・・・
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-				if (0x40 <= trail_char && trail_char <= 0xFE && trail_char != 0x7F) {
+				if(0x40 <= trail_char && trail_char <= 0xFE && trail_char != 0x7F) {
 					bbl_code euc_code = lead_char *0x100 +trail_char;
 					bbl_code unicode_code = bbl_transmap::euc2_unicode[euc_code];
-					if (0 != unicode_code) {
+					if(0 != unicode_code) {
 						unicode[j++] = (wchar_t)unicode_code;
 						i+=2;
 					} else {
@@ -1951,10 +1951,10 @@ void euc_to_unicode_engine::translate() {
 					append_broken_char(&j, unicode);
 					++i;
 				}
-			} else if (is_euc_aux_lead_byte(lead_char)) {
+			} else if(is_euc_aux_lead_byte(lead_char)) {
 			//	補助漢字・・・
 				unsigned int k = i +2;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char second_char = unsignize(untranslated_buffer.at(i +1));
@@ -1969,7 +1969,7 @@ void euc_to_unicode_engine::translate() {
 
 				bbl_code unicode_code = bbl_transmap::euc3_unicode[euc_code];
 
-				if (0 != unicode_code) {
+				if(0 != unicode_code) {
 					unicode[j++] = (wchar_t)unicode_code;
 					i+=3;
 				} else {
@@ -2010,31 +2010,31 @@ void unicode_to_euc_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
 
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			wchar_t current_wchar = unsignize(untranslated_buffer.at(i));
 			bool is_broken_char = false;
 			bbl_code euc_code;
-			if (current_wchar <= 0x7F) {
+			if(current_wchar <= 0x7F) {
 				euc_code = current_wchar;
 			} else {
 				euc_code = bbl_transmap::unicode_euc[current_wchar];
-				if (0 == euc_code) {
+				if(0 == euc_code) {
 					is_broken_char = true;
 				}
 			}
 
-			if (!is_broken_char) {
-				if (euc_code <= 0xFF) {
+			if(!is_broken_char) {
+				if(euc_code <= 0xFF) {
 					euc[j++] = (unsigned char)euc_code;
-				} else if (euc_code <= 0xFFFF) {
+				} else if(euc_code <= 0xFFFF) {
 					euc[j++] = euc_code >> 8;
 					euc[j++] = 0xFF & euc_code;
 				} else {
@@ -2045,7 +2045,7 @@ void unicode_to_euc_engine::translate() {
 				}
 			} else {
 #if !defined(__BBL_DISABLE_DISPEL_PRIVATE_USE_AREA__)
-				if (!is_private_use_area(current_wchar)) {
+				if(!is_private_use_area(current_wchar)) {
 					append_broken_char(&j, euc);
 				}
 #else
@@ -2077,51 +2077,51 @@ void jis_to_sjis_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
-		if (1 == rest_length && (jis_K2 == status || jis_S == status)) {
+		if(1 == rest_length && (jis_K2 == status || jis_S == status)) {
 			break;
 		}
-		if (rest_length < 3 && jis_K3_aux == status) {
+		if(rest_length < 3 && jis_K3_aux == status) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (rest_length < 3 && '\x1B' == next_char) {
+		if(rest_length < 3 && '\x1B' == next_char) {
 			break;
 		}
-		if (rest_length < 4 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
+		if(rest_length < 4 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if ('\x1B' == lead_char) {
-				if (untranslated_length <= i +2) {
+			if('\x1B' == lead_char) {
+				if(untranslated_length <= i +2) {
 					break;
 				}
 				const bbl_string status_mark = untranslated_buffer.substr(i, 3);
-				if (jis_KO_ascii == status_mark) {
+				if(jis_KO_ascii == status_mark) {
 					status = jis_ascii;
 					i += 3;
-				} else if (jis_KO_roma == status_mark) {
+				} else if(jis_KO_roma == status_mark) {
 					status = jis_ascii;
 					i += 3;
-				} else if (jis_KI_2byte == status_mark) {
+				} else if(jis_KI_2byte == status_mark) {
 					status = jis_K2;
 					i += 3;
-				} else if (jis_KI_1byte == status_mark) {
+				} else if(jis_KI_1byte == status_mark) {
 					status = jis_K1;
 					i += 3;
 				} else {
-					if (untranslated_length <= i +3 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
+					if(untranslated_length <= i +3 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
 						break;
 					}
 					const bbl_string status_mark = untranslated_buffer.substr(i, 4);
-					if (jis_KI_3byte_aux == status_mark) {
+					if(jis_KI_3byte_aux == status_mark) {
 						status = jis_K3_aux;
 						i += 4;
 					} else {
@@ -2130,26 +2130,26 @@ void jis_to_sjis_engine::translate() {
 				}
 				break;
 			}
-			if ('\x0E' == lead_char) {
+			if('\x0E' == lead_char) {
 				status = jis_ascii;
 				++i;
 				break;
 			}
-			if ('\x0F' == lead_char) {
+			if('\x0F' == lead_char) {
 				status = jis_S;
 				++i;
 				break;
 			}
 
-			if (jis_K2 == status) {
+			if(jis_K2 == status) {
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
 				bbl_code euc_code = (lead_char *0x100 +trail_char) | 0x8080;
-				if (!(0xF9A1 <= euc_code && euc_code <= 0xFCFE)) {
-					if (lead_char & 0x01) {
+				if(!(0xF9A1 <= euc_code && euc_code <= 0xFCFE)) {
+					if(lead_char & 0x01) {
 						trail_char += 0x1F;
 						if(0x7F <= trail_char) {
 							++trail_char;
@@ -2158,7 +2158,7 @@ void jis_to_sjis_engine::translate() {
 						trail_char += 0x7E;
 					}
 					lead_char = (lead_char -0x21) /2 +0x81;
-					if (0xA0 <= lead_char) {
+					if(0xA0 <= lead_char) {
 						lead_char += 0x40;
 					}
 					sjis[j++] = lead_char;
@@ -2166,7 +2166,7 @@ void jis_to_sjis_engine::translate() {
 					i += 2;
 				} else {
 					bbl_code sjis_code = bbl_transmap::euc_sjis[euc_code];
-					if (0 != sjis_code) {
+					if(0 != sjis_code) {
 						sjis[j++] = sjis_code /0x100;
 						sjis[j++] = sjis_code & 0xFF;
 						i+=2;
@@ -2175,15 +2175,15 @@ void jis_to_sjis_engine::translate() {
 						++i;
 					}
 				}
-			} else if (jis_K3_aux == status) {
+			} else if(jis_K3_aux == status) {
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				//	SJIS には補助漢字を格納できない。
 				append_broken_char(&j, sjis);
 				i+=2;
-			} else if (jis_ascii == status) {
+			} else if(jis_ascii == status) {
 				sjis[j++] = lead_char;
 				++i;
 			} else {
@@ -2222,48 +2222,48 @@ void jis_to_euc_engine::translate() {
 		j = 0;
 		rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
-		if (1 == rest_length && (jis_K2 == status || jis_S == status)) {
+		if(1 == rest_length && (jis_K2 == status || jis_S == status)) {
 			break;
 		}
-		if (rest_length < 3 && jis_K3_aux == status) {
+		if(rest_length < 3 && jis_K3_aux == status) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (rest_length < 3 && '\x1B' == next_char) {
+		if(rest_length < 3 && '\x1B' == next_char) {
 			break;
 		}
-		if (rest_length < 4 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
+		if(rest_length < 4 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if ('\x1B' == lead_char) {
-				if (untranslated_length <= i +2) {
+			if('\x1B' == lead_char) {
+				if(untranslated_length <= i +2) {
 					break;
 				}
 				const bbl_string status_mark = untranslated_buffer.substr(i, 3);
-				if (jis_KO_ascii == status_mark) {
+				if(jis_KO_ascii == status_mark) {
 					status = jis_ascii;
 					i += 3;
-				} else if (jis_KI_2byte == status_mark) {
+				} else if(jis_KI_2byte == status_mark) {
 					status = jis_K2;
 					i += 3;
-				} else if (jis_KI_1byte == status_mark) {
+				} else if(jis_KI_1byte == status_mark) {
 					status = jis_K1;
 					i += 3;
 				} else {
-					if (untranslated_length <= i +3 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
+					if(untranslated_length <= i +3 && '\x1B' == next_char && '$' == next_char && '(' == next_char) {
 						break;
 					}
 					const bbl_string status_mark = untranslated_buffer.substr(i, 4);
-					if (jis_KI_3byte_aux == status_mark) {
+					if(jis_KI_3byte_aux == status_mark) {
 						status = jis_K3_aux;
 						i += 4;
 					} else {
@@ -2272,29 +2272,29 @@ void jis_to_euc_engine::translate() {
 				}
 				break;
 			}
-			if ('\x0E' == lead_char) {
+			if('\x0E' == lead_char) {
 				status = jis_ascii;
 				++i;
 				break;
 			}
-			if ('\x0F' == lead_char) {
+			if('\x0F' == lead_char) {
 				status = jis_S;
 				++i;
 				break;
 			}
 
-			if (jis_K2 == status) {
+			if(jis_K2 == status) {
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
 				euc[j++] = lead_char |0x80;
 				euc[j++] = trail_char |0x80;
 				i += 2;
-			} else if (jis_K3_aux == status) {
+			} else if(jis_K3_aux == status) {
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
 				bbl_char trail_char = unsignize(untranslated_buffer.at(k));
@@ -2302,7 +2302,7 @@ void jis_to_euc_engine::translate() {
 				euc[j++] = lead_char |0x80;
 				euc[j++] = trail_char |0x80;
 				i += 2;
-			} else if (jis_ascii == status) {
+			} else if(jis_ascii == status) {
 				euc[j++] = lead_char;
 				++i;
 			} else {
@@ -2341,54 +2341,54 @@ void jis_to_iso2022jp_engine::translate() {
 		unsigned int j, rest_length;
 		j = 0; rest_length = untranslated_length -i;
 
-		if (rest_length <= 0) {
+		if(rest_length <= 0) {
 			break;
 		}
-		if (1 == rest_length && (jis_K2 == from_status || jis_S == from_status)) {
+		if(1 == rest_length && (jis_K2 == from_status || jis_S == from_status)) {
 			break;
 		}
 		bbl_char next_char = unsignize(untranslated_buffer.at(i));
-		if (rest_length < 3 && '\x1B' == next_char) {
+		if(rest_length < 3 && '\x1B' == next_char) {
 			break;
 		}
 		while(true) {
-			if (untranslated_length <= i || translate_buffer_size <= j) {
+			if(untranslated_length <= i || translate_buffer_size <= j) {
 				break;
 			}
 
 			bbl_char lead_char = unsignize(untranslated_buffer.at(i));
-			if ('\x1B' == lead_char) {
-				if (untranslated_length <= i +2) {
+			if('\x1B' == lead_char) {
+				if(untranslated_length <= i +2) {
 					break;
 				}
 				bbl_string status_mark = untranslated_buffer.substr(i, 3);
-				if (jis_KO_ascii == status_mark) {
+				if(jis_KO_ascii == status_mark) {
 					from_status = jis_ascii;
-				} else if (jis_KI_2byte == status_mark) {
+				} else if(jis_KI_2byte == status_mark) {
 					from_status = jis_K2;
-				} else if (jis_KI_1byte == status_mark) {
+				} else if(jis_KI_1byte == status_mark) {
 					from_status = jis_K1;
 				}
 				i += 3;
 				break;
 			}
-			if ('\x0E' == lead_char) {
+			if('\x0E' == lead_char) {
 				from_status = jis_ascii;
 				++i;
 				break;
 			}
-			if ('\x0F' == lead_char) {
+			if('\x0F' == lead_char) {
 				from_status = jis_S;
 				++i;
 				break;
 			}
 
-			if (jis_K2 == from_status) {
+			if(jis_K2 == from_status) {
 				unsigned int k = i +1;
-				if (untranslated_length <= k) {
+				if(untranslated_length <= k) {
 					break;
 				}
-				if (jis_K2 != to_status) {
+				if(jis_K2 != to_status) {
 					next_status = jis_K2;
 					break;
 				}
@@ -2396,8 +2396,8 @@ void jis_to_iso2022jp_engine::translate() {
 				iso2022jp[j++] = lead_char;
 				iso2022jp[j++] = trail_char;
 				i += 2;
-			} else if (jis_ascii == from_status) {
-				if (jis_ascii != to_status) {
+			} else if(jis_ascii == from_status) {
+				if(jis_ascii != to_status) {
 					next_status = jis_ascii;
 					break;
 				}
@@ -2405,23 +2405,23 @@ void jis_to_iso2022jp_engine::translate() {
 				++i;
 			} else {
 				assert(jis_K1 == from_status || jis_S == from_status);
-				if (0x21 <= lead_char && lead_char <= 0x5F) {
+				if(0x21 <= lead_char && lead_char <= 0x5F) {
 					bbl_code iso2022jp_code = bbl_transmap::half_to_full_jis1[lead_char];
-					if (0 == iso2022jp_code) {
+					if(0 == iso2022jp_code) {
 						iso2022jp_code = bbl_transmap::half_to_full_jis_map3[lead_char -0x21];
 					} else {
 						unsigned int k = i +1;
-						if (untranslated_length <= k) {
+						if(untranslated_length <= k) {
 							break;
 						}
 						bbl_char trail_char = unsignize(untranslated_buffer.at(k));
-						if (0x5E != trail_char) {
-							if (0x5F == trail_char) {
+						if(0x5E != trail_char) {
+							if(0x5F == trail_char) {
 								iso2022jp_code = bbl_transmap::half_to_full_jis2[lead_char];
 							} else {
 								iso2022jp_code = 0;
 							}
-							if (0 == iso2022jp_code) {
+							if(0 == iso2022jp_code) {
 								iso2022jp_code = bbl_transmap::half_to_full_jis_map3[lead_char -0x21];
 							} else {
 								++i;
@@ -2430,7 +2430,7 @@ void jis_to_iso2022jp_engine::translate() {
 							++i;
 						}
 					}
-					if (jis_K2 != to_status) {
+					if(jis_K2 != to_status) {
 						next_status = jis_K2;
 						break;
 					}
@@ -2438,7 +2438,7 @@ void jis_to_iso2022jp_engine::translate() {
 					iso2022jp[j++] = iso2022jp_code & 0xFF;
 					++i;
 				} else {
-					if (jis_ascii != to_status) {
+					if(jis_ascii != to_status) {
 						next_status = jis_ascii;
 						break;
 					}
@@ -2449,7 +2449,7 @@ void jis_to_iso2022jp_engine::translate() {
 		}
 		iso2022jp[j] = '\0';
 		translated_buffer += iso2022jp;
-		if (next_status != to_status) {
+		if(next_status != to_status) {
 			switch(next_status) {
 				case jis_ascii:
 					translated_buffer += (jis_S != to_status) ? jis_KO_ascii: jis_SO;
@@ -2476,13 +2476,13 @@ void jis_to_iso2022jp_engine::flush() {
 //		typedef	bbl_string	from_string_type;
 //		typedef	bbl_string	to_string_type;
 
-	if (jis_K1 == from_status || jis_S == from_status) {
+	if(jis_K1 == from_status || jis_S == from_status) {
 		unsigned int rest_length = untranslated_buffer.length();
-		if (1 <= rest_length) {
+		if(1 <= rest_length) {
 			assert(1 == rest_length);
 			bbl_char lead_char = unsignize(untranslated_buffer.at(0));
-			if (0x21 <= lead_char && lead_char <= 0x5F) {
-				if (jis_K2 != to_status) {
+			if(0x21 <= lead_char && lead_char <= 0x5F) {
+				if(jis_K2 != to_status) {
 					to_status = jis_K2;
 					translated_buffer += jis_KI_2byte;
 				}
@@ -2529,12 +2529,12 @@ const bbl_wstring WORD_to_unicode(const bbl_binary &X) {
 	const unsigned int result_length = length /sizeof(BASE_ALIGN);
 
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 		bbl_wstring result((const bbl_wstring::value_type *)X.data(), result_length);
 
-		if (result_length *sizeof(BASE_ALIGN) < length) {
+		if(result_length *sizeof(BASE_ALIGN) < length) {
 			result += bbl_term::get_broken_char();
 		}
 		return result;
@@ -2549,7 +2549,7 @@ const bbl_wstring WORD_to_unicode(const bbl_binary &X) {
 			result[i] = (bbl_wstring::value_type)*source++;
 		}
 
-		if (result_length *sizeof(BASE_ALIGN) < length) {
+		if(result_length *sizeof(BASE_ALIGN) < length) {
 			result += bbl_term::get_broken_char();
 		}
 		return result;
@@ -2565,7 +2565,7 @@ const bbl_binary unicode_to_WORD(const bbl_wstring &X) {
 	const unsigned int length = X.length();
 	const unsigned int result_length = length *sizeof(BASE_ALIGN);
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 		return bbl_binary((const bbl_binary::value_type *)X.data(), result_length);
@@ -2579,7 +2579,7 @@ const bbl_binary unicode_to_WORD(const bbl_wstring &X) {
 		bbl_binary result(result_length, 0);
 		unsigned int i = 0;
 #if		defined(__UNKNOWN_ENDIAN_COMPUTER__)
-		if (base_endian::little_endian == get_base_endian()) {
+		if(base_endian::little_endian == get_base_endian()) {
 #endif
 #if		defined(__UNKNOWN_ENDIAN_COMPUTER__) || defined(__LITTLE_ENDIAN_COMPUTER__)
 			while(i < result_length) {
@@ -2623,7 +2623,7 @@ const bbl_wstring cross_WORD_to_unicode(const bbl_binary &X) {
 	for(unsigned int i = 0; i < result_length; ++i) {
 		result[i] = (bbl_wstring::value_type)WORD_cross_endian(*source++);
 	}
-	if (result_length *sizeof(BASE_ALIGN) < length) {
+	if(result_length *sizeof(BASE_ALIGN) < length) {
 		result += bbl_term::get_broken_char();
 	}
 	return result;
@@ -2638,7 +2638,7 @@ const bbl_binary unicode_to_cross_WORD(const bbl_wstring &X) {
 	bbl_binary result(result_length, 0);
 	unsigned int i = 0;
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 		while(i < result_length) {
@@ -2654,7 +2654,7 @@ const bbl_binary unicode_to_cross_WORD(const bbl_wstring &X) {
 
 		assert(4 == get_base_wstring_size());
 #	if		defined(__UNKNOWN_ENDIAN_COMPUTER__)
-		if (base_endian::little_endian == get_base_endian()) {
+		if(base_endian::little_endian == get_base_endian()) {
 #	endif
 #	if		defined(__UNKNOWN_ENDIAN_COMPUTER__) || defined(__LITTLE_ENDIAN_COMPUTER__)
 			while(i < result_length) {
@@ -2698,12 +2698,12 @@ const bbl_wstring DWORD_to_unicode(const bbl_binary &X) {
 	const unsigned int length = X.length();
 	const unsigned int result_length = length /sizeof(BASE_ALIGN);
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_4__)
 		bbl_wstring result((const bbl_wstring::value_type *)X.data(), result_length);
 
-		if (result_length *sizeof(BASE_ALIGN) < length) {
+		if(result_length *sizeof(BASE_ALIGN) < length) {
 			result += bbl_term::get_broken_char();
 		}
 		return result;
@@ -2718,7 +2718,7 @@ const bbl_wstring DWORD_to_unicode(const bbl_binary &X) {
 			result[i] = (bbl_wstring::value_type)*source++;
 		}
 
-		if (result_length *sizeof(BASE_ALIGN) < length) {
+		if(result_length *sizeof(BASE_ALIGN) < length) {
 			result += bbl_term::get_broken_char();
 		}
 		return result;
@@ -2734,7 +2734,7 @@ const bbl_binary unicode_to_DWORD(const bbl_wstring &X) {
 	const unsigned int length = X.length();
 	const unsigned int result_length = length *sizeof(BASE_ALIGN);
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_4__)
 		return bbl_binary((const bbl_binary::value_type *)X.data(), result_length);
@@ -2748,7 +2748,7 @@ const bbl_binary unicode_to_DWORD(const bbl_wstring &X) {
 		bbl_binary result(result_length, 0);
 		unsigned int i = 0;
 #if		defined(__UNKNOWN_ENDIAN_COMPUTER__)
-		if (base_endian::little_endian == get_base_endian()) {
+		if(base_endian::little_endian == get_base_endian()) {
 #endif
 #if		defined(__UNKNOWN_ENDIAN_COMPUTER__) || defined(__LITTLE_ENDIAN_COMPUTER__)
 			while(i < result_length) {
@@ -2790,7 +2790,7 @@ const bbl_wstring cross_DWORD_to_unicode(const bbl_binary &X) {
 	for(unsigned int i = 0; i < result_length; ++i) {
 		result[i] = (bbl_wstring::value_type)DWORD_cross_endian(*source++);
 	}
-	if (result_length *sizeof(BASE_ALIGN) < length) {
+	if(result_length *sizeof(BASE_ALIGN) < length) {
 		result += bbl_term::get_broken_char();
 	}
 	return result;
@@ -2804,7 +2804,7 @@ const bbl_binary unicode_to_cross_DWORD(const bbl_wstring &X) {
 	bbl_binary result(result_length, 0);
 	unsigned int i = 0;
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-	if (sizeof(BASE_ALIGN) == get_base_wstring_size()) {
+	if(sizeof(BASE_ALIGN) == get_base_wstring_size()) {
 #endif
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_4__)
 		while(i < result_length) {
@@ -2821,7 +2821,7 @@ const bbl_binary unicode_to_cross_DWORD(const bbl_wstring &X) {
 #if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 		assert(2 == get_base_wstring_size());
 #	if		defined(__UNKNOWN_ENDIAN_COMPUTER__)
-		if (base_endian::little_endian == get_base_endian()) {
+		if(base_endian::little_endian == get_base_endian()) {
 #	endif
 #	if		defined(__UNKNOWN_ENDIAN_COMPUTER__) || defined(__LITTLE_ENDIAN_COMPUTER__)
 			while(i < result_length) {
@@ -2872,7 +2872,7 @@ inline void binary_engine_flush(unsigned int mask, from_string_type &untranslate
 	unsigned int pack_length = rest_length & ~mask;
 	translated_buffer += core_translater(untranslated_buffer.substr(0, pack_length));
 	untranslated_buffer.erase();
-	if (rest_length != pack_length) {
+	if(rest_length != pack_length) {
 		translated_buffer += bbl_term::get_broken_char();
 	}
 }
@@ -3056,13 +3056,13 @@ int cross_base_encoding(int X_base_encoding) {
 		case utf16:
 			return utf16le;
 		case utf16le:
-			if (base_endian::little_endian == get_base_endian()) {
+			if(base_endian::little_endian == get_base_endian()) {
 				return utf16le;
 			} else {
 				return utf16be;
 			}
 		case utf16be:
-			if (base_endian::big_endian == get_base_endian()) {
+			if(base_endian::big_endian == get_base_endian()) {
 				return utf16le;
 			} else {
 				return utf16be;
@@ -3071,13 +3071,13 @@ int cross_base_encoding(int X_base_encoding) {
 		case utf32:
 			return utf32le;
 		case utf32le:
-			if (base_endian::little_endian == get_base_endian()) {
+			if(base_endian::little_endian == get_base_endian()) {
 				return utf32le;
 			} else {
 				return utf32be;
 			}
 		case utf32be:
-			if (base_endian::big_endian == get_base_endian()) {
+			if(base_endian::big_endian == get_base_endian()) {
 				return utf32le;
 			} else {
 				return utf32be;
@@ -3601,7 +3601,7 @@ template<class method> typename method::return_type call_method_sw(method X) {
 #if	defined(__BBL_USE_BINARY__)
 #	if	defined(__BBL_USE_UTF32__)
 #		if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-			if (2 == get_base_wstring_size()) {
+			if(2 == get_base_wstring_size()) {
 #		endif
 #		if		defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 				return method_selector<WORD_to_unicode_engine>::call_method(X);
@@ -3667,7 +3667,7 @@ template<class method> typename method::return_type call_method_ws(method X) {
 #if	defined(__BBL_USE_BINARY__)
 #	if	defined(__BBL_USE_UTF32__)
 #		if	defined(__UNICODE_CHAR_SIZE_UNKNOWN__)
-			if (2 == get_base_wstring_size()) {
+			if(2 == get_base_wstring_size()) {
 #		endif
 #		if	defined(__UNICODE_CHAR_SIZE_UNKNOWN__) || defined(__UNICODE_CHAR_SIZE_2__)
 				return method_selector<unicode_to_WORD_engine>::call_method(X);
@@ -3815,7 +3815,7 @@ const bbl_binary code_aspect("\x00\x0F\x1B"
 
 bbl_binary::size_type get_aspect_position(const bbl_binary &X) {
 	bbl_binary::size_type pos = X.find_first_of(code_aspect);
-	if (bbl_binary::npos == pos) {
+	if(bbl_binary::npos == pos) {
 		return pos;
 	} else {
 		return pos & ~0x3;
@@ -3836,13 +3836,13 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 	const unsigned int length = org_X.length();
 	const unsigned int scan_size = (length < max_scan_size) ? length: max_scan_size;
 
-	if (0 == scan_size) {
+	if(0 == scan_size) {
 		return analyze_result(base_encoding::unknown, base_encoding::binary);
 	}
 
 	bbl_binary head_X;
 	const bbl_binary *pre_X;
-	if (length < max_scan_size) {
+	if(length < max_scan_size) {
 		pre_X = &org_X;
 	} else {
 		head_X = org_X.substr(0, max_scan_size);
@@ -3860,24 +3860,24 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		const bbl_binary head_4bytes = X.substr(0, (length < 4) ? length: 4);
 
 		//	4bytes marks
-		if (0 == head_4bytes.find(utf32be_BOM)) {
+		if(0 == head_4bytes.find(utf32be_BOM)) {
 			assert(0 != bbl_binary::npos);
 			return base_encoding::utf32be;
 		}
-		if (0 == head_4bytes.find(utf32le_BOM)) {
+		if(0 == head_4bytes.find(utf32le_BOM)) {
 			return base_encoding::utf32le;
 		}
 
 		//	3bytes mark
-		if (0 == head_4bytes.find(utf8_FEFF)) {
+		if(0 == head_4bytes.find(utf8_FEFF)) {
 			return base_encoding::utf8;
 		}
 
 		//	2bytes marks
-		if (0 == head_4bytes.find(utf16be_BOM)) {
+		if(0 == head_4bytes.find(utf16be_BOM)) {
 			return base_encoding::utf16be;
 		}
-		if (0 == head_4bytes.find(utf16le_BOM)) {
+		if(0 == head_4bytes.find(utf16le_BOM)) {
 			return base_encoding::utf16le;
 		}
 
@@ -3891,7 +3891,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		//
 
 		const bbl_binary::size_type pNULNUL = X.find(bbl_binary("\x00\x00", 2));
-		if (bbl_string::npos != pNULNUL) {
+		if(bbl_string::npos != pNULNUL) {
 			switch(pNULNUL %4) {
 				case 0:
 					return analyze_result(base_encoding::utf32be, base_encoding::binary);
@@ -3902,8 +3902,8 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 
 		/*
 		const bbl_binary::size_type pNUL = X.find("\x00");
-		if (bbl_string::npos != pNUL) {
-			if (0 == pNULNUL % 2) {
+		if(bbl_string::npos != pNUL) {
+			if(0 == pNULNUL % 2) {
 				return base_encoding::utf16be;
 			} else {
 				return base_encoding::utf16le;
@@ -3911,7 +3911,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		}
 		*/
 
-		if (//bbl_string::npos != X.find(jis_KO_ascii) ||
+		if(//bbl_string::npos != X.find(jis_KO_ascii) ||
 			bbl_string::npos != X.find(jis_KI_2byte) ||
 			bbl_string::npos != X.find(jis_KI_1byte) ||
 			bbl_string::npos != X.find(jis_KI_3byte_aux)) {
@@ -3950,20 +3950,20 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		  public:
 			void scan_char(const bbl_char &X) {
 				babel::bbl_score_map &score_map = babel::bbl_scoremap::sjis_score;
-				if (0x00 == X || 0xFD <= X) {
+				if(0x00 == X || 0xFD <= X) {
 					on_error();
 					return;
 				}
-				if (encode_scorer::neutral == mode) {
+				if(encode_scorer::neutral == mode) {
 					current_code = X;
-					if (babel::is_sjis_lead_byte(X)) {
+					if(babel::is_sjis_lead_byte(X)) {
 						mode = encode_scorer::first_byte;
 					} else {
 						up_point += (int)score_map[current_code];
 					}
 				} else {
 					assert(encode_scorer::first_byte == mode);
-					if (babel::is_sjis_trail_byte(X)) {
+					if(babel::is_sjis_trail_byte(X)) {
 						current_code *= 0x100;
 						current_code += X;
 						up_point += score_map[current_code];
@@ -3978,16 +3978,16 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		  public:
 			void scan_char(const bbl_char &X) {
 				babel::bbl_score_map &score_map = babel::bbl_scoremap::euc_score;
-				if (0x00 == X) {
+				if(0x00 == X) {
 					on_error();
 					return;
 				}
-				if (encode_scorer::neutral == mode) {
+				if(encode_scorer::neutral == mode) {
 					current_code = X;
-					if (babel::is_euc_lead_byte(X)) {
+					if(babel::is_euc_lead_byte(X)) {
 					//	漢字(全角文字) or 半角カナの１バイト目・・・
 						mode = encode_scorer::first_byte;
-					} else if (babel::is_euc_aux_lead_byte(X)) {
+					} else if(babel::is_euc_aux_lead_byte(X)) {
 					//	補助漢字・・・
 						mode = -2;
 					} else {
@@ -3995,8 +3995,8 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 						//	up_point += score_map[current_code];
 					}
 				} else {
-					if (encode_scorer::first_byte == mode) {
-						if (babel::is_euc_trail_byte(X)) {
+					if(encode_scorer::first_byte == mode) {
+						if(babel::is_euc_trail_byte(X)) {
 						//	漢字(全角文字) or 半角カナの２バイト目・・・
 							current_code *= 0x100;
 							current_code += X;
@@ -4005,7 +4005,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 						} else {
 							on_error();
 						}
-					} else if (mode < 0) {
+					} else if(mode < 0) {
 					//	補助漢字・・・
 						++mode;
 						//	補助漢字が得点することはないので得点の処理は行わない。
@@ -4027,13 +4027,13 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 #	if defined(__BBL_USING_STATIC_TABLE__)
 				babel::bbl_score_map &score_map = babel::bbl_scoremap::unicode_score;
 #	endif	//	defined(__BBL_USING_STATIC_TABLE__)
-				if (0x00 == X) {
+				if(0x00 == X) {
 					on_error();
 					return;
 				}
-				if (encode_scorer::neutral == mode) {
+				if(encode_scorer::neutral == mode) {
 					int char_length = babel::get_utf8_char_length(X);
-					if (0 == char_length) {
+					if(0 == char_length) {
 						on_error();
 					} else {
 #	if defined(__BBL_USING_STDMAP_TABLE__)
@@ -4044,14 +4044,14 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 						current_code = babel::utf8_lead_mask[char_length] & X;
 #	endif	//	defined(__BBL_USING_STATIC_TABLE__)
 						mode = 1 -char_length;
-						if (encode_scorer::neutral == mode) {
+						if(encode_scorer::neutral == mode) {
 							//	SJIS 以外で１バイト文字が得点することはないのでコメントアウト
 							//	up_point += score_map[current_code];
 						}
 					}
 				} else {
 					assert(mode < 0);
-					if (0x80 == (0xC0 & X)) {
+					if(0x80 == (0xC0 & X)) {
 #	if defined(__BBL_USING_STDMAP_TABLE__)
 						current_code *= 0x100;
 						current_code += X;
@@ -4061,7 +4061,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 						current_code |= (0x3F & X);
 #	endif	//	defined(__BBL_USING_STATIC_TABLE__)
 						++mode;
-						if (encode_scorer::neutral == mode) {
+						if(encode_scorer::neutral == mode) {
 //#	if defined(__BBL_USING_STDMAP_TABLE__)
 							up_point += score_map[current_code];
 //#	endif	//	defined(__BBL_USING_STDMAP_TABLE__)
@@ -4087,7 +4087,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		unsigned int even_null_count = 0;
 		unsigned int odd_null_count = 0;
 		const bbl_binary::size_type start_pos = get_aspect_position(X);
-		if (bbl_binary::npos == start_pos) {
+		if(bbl_binary::npos == start_pos) {
 			return base_encoding::ansi;
 		}
 //		const unsigned int scan_size = (length < core_scan_size) ? length: core_scan_size;
@@ -4097,10 +4097,10 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 			sjis_monitor.scan_char(current_char);
 			euc_monitor.scan_char(current_char);
 			utf8_monitor.scan_char(current_char);
-			if (current_char & 0x80) {
+			if(current_char & 0x80) {
 				++over0x80_count;
-			} else if (!current_char) {
-				if (0 == i %2) {
+			} else if(!current_char) {
+				if(0 == i %2) {
 					++even_null_count;
 				} else {
 					++odd_null_count;
@@ -4125,19 +4125,19 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 		};
 		analyze_result_maker result_maker;
 
-		if (0 < even_null_count +odd_null_count) {
-//			if (0 == even_null_count && 0 == odd_null_count) {
+		if(0 < even_null_count +odd_null_count) {
+//			if(0 == even_null_count && 0 == odd_null_count) {
 				result_maker.set_is_binary();
 //			}
-			if (even_null_count < odd_null_count) {
+			if(even_null_count < odd_null_count) {
 				return result_maker(base_encoding::utf16le);
 			} else {
 				return result_maker(base_encoding::utf16be);
 			}
 		}
 
-		if (0 == over0x80_count) {
-			if (//bbl_string::npos != X.find(jis_SO) ||
+		if(0 == over0x80_count) {
+			if(//bbl_string::npos != X.find(jis_SO) ||
 				bbl_string::npos != X.find(jis_SI)) {
 				return base_encoding::jis;
 			} else {
@@ -4161,20 +4161,20 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 //			std::cout << "utf8_point = " << utf8_point << std::endl;
 //		//}
 
-		if (sjis_point == euc_point && sjis_point == utf8_point) {
+		if(sjis_point == euc_point && sjis_point == utf8_point) {
 
 			//
 			//	改行コードのチェック
 			//
-			if (bbl_binary::npos != X.find("\n")) {
-				if (bbl_binary::npos != X.find("\r\n") || bbl_binary::npos != X.find("\n\r")) {
+			if(bbl_binary::npos != X.find("\n")) {
+				if(bbl_binary::npos != X.find("\r\n") || bbl_binary::npos != X.find("\n\r")) {
 					//	windows/dos sjis
 					return base_encoding::sjis;
 				} else {
 					//	unix euc
 					return base_encoding::euc;
 				}
-			} else if (bbl_binary::npos != X.find("\r")) {
+			} else if(bbl_binary::npos != X.find("\r")) {
 				//	apple sjis
 				return base_encoding::sjis;
 			}
@@ -4189,8 +4189,8 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 			const char *sjis_names[] = {"Shift_JIS", "shift_jis", "sjis", "Shift-JIS", "shift-jis", "SJIS"};
 			for(i = sjis_names; i < ARRAY_END(sjis_names); ++i) {
 				bbl_binary::size_type pos = X.find(*i);
-				if (bbl_binary::npos != pos) {
-					if (bbl_binary::npos == sjis_pos || pos < sjis_pos) {
+				if(bbl_binary::npos != pos) {
+					if(bbl_binary::npos == sjis_pos || pos < sjis_pos) {
 						sjis_pos = pos;
 					}
 				}
@@ -4198,50 +4198,50 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 			const char *euc_names[] = {"EUC", "euc"};
 			for(i = euc_names; i < ARRAY_END(euc_names); ++i) {
 				bbl_binary::size_type pos = X.find(*i);
-				if (bbl_binary::npos != pos) {
-					if (bbl_binary::npos == euc_pos || pos < euc_pos) {
+				if(bbl_binary::npos != pos) {
+					if(bbl_binary::npos == euc_pos || pos < euc_pos) {
 						euc_pos = pos;
 					}
 				}
 			}
-			if (bbl_binary::npos != utf8_pos) {
-				if ((bbl_binary::npos == sjis_pos || utf8_pos < sjis_pos) &&
+			if(bbl_binary::npos != utf8_pos) {
+				if((bbl_binary::npos == sjis_pos || utf8_pos < sjis_pos) &&
 					(bbl_binary::npos == euc_pos || utf8_pos < euc_pos)) {
 					return base_encoding::utf8;
 				}
 			}
-			if (bbl_binary::npos != sjis_pos) {
-				if (bbl_binary::npos == euc_pos || sjis_pos < euc_pos) {
+			if(bbl_binary::npos != sjis_pos) {
+				if(bbl_binary::npos == euc_pos || sjis_pos < euc_pos) {
 					return base_encoding::sjis;
 				}
 			}
-			if (bbl_binary::npos != euc_pos) {
+			if(bbl_binary::npos != euc_pos) {
 				return base_encoding::euc;
 			}
 
 			//	お手上げ
 			return get_base_encoding();
 		}
-		if (euc_point < sjis_point) {
-			if (utf8_point <= sjis_point) {
-				if (1 <= sjis_monitor.down_point *100 /scan_size) {
+		if(euc_point < sjis_point) {
+			if(utf8_point <= sjis_point) {
+				if(1 <= sjis_monitor.down_point *100 /scan_size) {
 					result_maker.set_is_binary();
 				}
 				return result_maker(base_encoding::sjis);
 			} else {
-				if (1 <= utf8_monitor.down_point *100 /scan_size) {
+				if(1 <= utf8_monitor.down_point *100 /scan_size) {
 					result_maker.set_is_binary();
 				}
 				return result_maker(base_encoding::utf8);
 			}
 		} else {
-			if (utf8_point <= euc_point) {
-				if (1 <= euc_monitor.down_point *100 /scan_size) {
+			if(utf8_point <= euc_point) {
+				if(1 <= euc_monitor.down_point *100 /scan_size) {
 					result_maker.set_is_binary();
 				}
 				return result_maker(base_encoding::euc);
 			} else {
-				if (1 <= utf8_monitor.down_point *100 /scan_size) {
+				if(1 <= utf8_monitor.down_point *100 /scan_size) {
 					result_maker.set_is_binary();
 				}
 				return result_maker(base_encoding::utf8);
@@ -4258,7 +4258,7 @@ analyze_base_encoding(const bbl_binary &org_X, const unsigned int max_scan_size)
 
 void init_babel() {
 static bool initialized = false;
-	if (initialized) {
+	if(initialized) {
 		return;
 	} else {
 		initialized = true;
@@ -4287,10 +4287,10 @@ static bool initialized = false;
 	while(i < ARRAY_END(bbl_transmap::cp932_map)) {
 		sjis = *i++;
 		unicode = *i++;
-		if (cp932_unicode_end == bbl_transmap::cp932_unicode.find(sjis)) {
+		if(cp932_unicode_end == bbl_transmap::cp932_unicode.find(sjis)) {
 			bbl_transmap::cp932_unicode.insert(bbl_pair(sjis, unicode));
 		}
-		if (unicode_cp932_end == bbl_transmap::unicode_cp932.find(unicode)) {
+		if(unicode_cp932_end == bbl_transmap::unicode_cp932.find(unicode)) {
 			bbl_transmap::unicode_cp932.insert(bbl_pair(unicode, sjis));
 		}
 	}
@@ -4305,7 +4305,7 @@ static bool initialized = false;
 		euc = *i++;
 		unicode = *i++;
 		bbl_transmap::euc_unicode.insert(bbl_pair(euc, unicode));
-		if (unicode_euc_end == bbl_transmap::unicode_euc.find(unicode)) {
+		if(unicode_euc_end == bbl_transmap::unicode_euc.find(unicode)) {
 			bbl_transmap::unicode_euc.insert(bbl_pair(unicode, euc));
 		}
 	}
@@ -4321,7 +4321,7 @@ static bool initialized = false;
 		sjis = *i++;
 		unicode = *i++;
 		bbl_transmap::utc_unicode.insert(bbl_pair(sjis, unicode));
-		if (unicode_utc_end == bbl_transmap::unicode_utc.find(unicode)) {
+		if(unicode_utc_end == bbl_transmap::unicode_utc.find(unicode)) {
 			bbl_transmap::unicode_utc.insert(bbl_pair(unicode, sjis));
 		}
 	}
@@ -4336,11 +4336,11 @@ static bool initialized = false;
 	while(i < ARRAY_END(bbl_transmap::appll_map)) {
 		sjis = *i++;
 		unicode = *i++;
-		if (0x0000 == *i) {
+		if(0x0000 == *i) {
 			++i;
 
 			bbl_transmap::apple_unicode.insert(bbl_pair(sjis, unicode));
-			if (unicode_apple_end == bbl_transmap::unicode_apple.find(unicode)) {
+			if(unicode_apple_end == bbl_transmap::unicode_apple.find(unicode)) {
 				bbl_transmap::unicode_apple.insert(bbl_pair(unicode, sjis));
 			}
 		} else {
@@ -4354,7 +4354,7 @@ static bool initialized = false;
 			bbl_wstring unicode_n(primary_unicode_n);
 
 			bbl_transmap::apple_unicode_n.insert(bbl_pair_1_n(sjis, unicode_n));
-			if (unicode_n_apple_end == bbl_transmap::unicode_n_apple.find(unicode_n)) {
+			if(unicode_n_apple_end == bbl_transmap::unicode_n_apple.find(unicode_n)) {
 				bbl_transmap::unicode_n_apple.insert(bbl_pair_n_1(unicode_n, sjis));
 			}
 		}

@@ -35,7 +35,7 @@ CDirEnum::CDirEnum(const aya::string_t &ep)
 
 CDirEnum::~CDirEnum()
 {
-	if ( is_init ) {
+	if( is_init ) {
 #if defined(WIN32)
 		::FindClose(dh);
 #elif defined(POSIX)
@@ -57,16 +57,16 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 #endif
 
 	while ( true ) {
-		if ( ! is_init ) {
+		if( ! is_init ) {
 #if defined(WIN32)
 			aya::string_t tmp_str = enumpath + L"\\*.*";
 
-			if ( isUnicode ) {
+			if( isUnicode ) {
 				WIN32_FIND_DATAW w32FindData;
 
 				dh = ::FindFirstFileW(tmp_str.c_str(),&w32FindData);
 
-				if ( dh == INVALID_HANDLE_VALUE ) { return false; }
+				if( dh == INVALID_HANDLE_VALUE ) { return false; }
 
 				is_init = true;
 
@@ -77,13 +77,13 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 				WIN32_FIND_DATAA w32FindData;
 
 				char *s_filestr = Ccct::Ucs2ToMbcs(tmp_str, CHARSET_DEFAULT);
-				if ( ! s_filestr ) { return false; }
+				if( ! s_filestr ) { return false; }
 
 				dh = ::FindFirstFileA(s_filestr,&w32FindData);
 				free(s_filestr);
 				s_filestr = NULL;
 
-				if ( dh == INVALID_HANDLE_VALUE ) { return false; }
+				if( dh == INVALID_HANDLE_VALUE ) { return false; }
 
 				is_init = true;
 
@@ -97,10 +97,10 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 			fix_filepath(path);
 
 			dh = opendir(path.c_str());
-			if ( ! dh ) { return false; }
+			if( ! dh ) { return false; }
 
 			struct dirent* ent = readdir(dh);
-			if ( ! ent ) { closedir(dh); return false; }
+			if( ! ent ) { closedir(dh); return false; }
 
 			is_init = true;
 	
@@ -112,16 +112,16 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 		else {
 #if defined(WIN32)
 
-			if ( isUnicode ) {
+			if( isUnicode ) {
 				WIN32_FIND_DATAW w32FindData;
-				if ( ::FindNextFileW(dh,&w32FindData) == 0 ) { return false; }
+				if( ::FindNextFileW(dh,&w32FindData) == 0 ) { return false; }
 
 				name_w = w32FindData.cFileName;
 				isdir = (w32FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 			}
 			else {
 				WIN32_FIND_DATAA w32FindData;
-				if ( ::FindNextFileA(dh,&w32FindData) == 0 ) { return false; }
+				if( ::FindNextFileA(dh,&w32FindData) == 0 ) { return false; }
 
 				name_a = w32FindData.cFileName;
 				isdir = (w32FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
@@ -130,7 +130,7 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 #elif defined(POSIX)
 
 			struct dirent* ent = readdir(dh);
-			if ( ! ent ) { return false; }
+			if( ! ent ) { return false; }
 
 			name_a = ent->d_name;
 			isdir = ent->d_type == DT_DIR;
@@ -138,24 +138,24 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 #endif
 		}
 
-		if ( isUnicode ) {
-			if (name_w != L"." && name_w != L"..") {
+		if( isUnicode ) {
+			if(name_w != L"." && name_w != L"..") {
 				break;
 			}
 		}
 		else {
-			if (name_a != "." && name_a != "..") {
+			if(name_a != "." && name_a != "..") {
 				break;
 			}
 		}
 	}
 
-	if ( isUnicode ) {
+	if( isUnicode ) {
 		entry.name = name_w;
 	}
 	else {
 		aya::char_t *t_wfile = Ccct::MbcsToUcs2(name_a, CHARSET_DEFAULT);
-		if (! t_wfile ) { return false; }
+		if(! t_wfile ) { return false; }
 
 		entry.name = t_wfile;
 		free(t_wfile);

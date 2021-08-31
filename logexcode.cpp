@@ -39,7 +39,7 @@ void	CLogExCode::OutExecutionCodeForCheck(void)
 {
 	vm.logger().Message(4);
 
-    aya::string_t tmpstr;
+	aya::string_t tmpstr;
 	int	i = 0;
 	for(std::vector<CFunction>::iterator it = vm.function_parse().func.begin(); it != vm.function_parse().func.end(); it++, i++) {
 		// 関数の定義番号
@@ -83,7 +83,7 @@ void	CLogExCode::OutExecutionCodeForCheck(void)
 				indent += OUTDIC_INDENT;
 				break;
 			case ST_CLOSE:
-				if (indent.size() >= OUTDIC_INDENT_SIZE)
+				if(indent.size() >= OUTDIC_INDENT_SIZE)
 					indent.erase(indent.size() - OUTDIC_INDENT_SIZE, OUTDIC_INDENT_SIZE);
 				vm.logger().Write(indent);
 				vm.logger().Write(L"}\n");
@@ -275,9 +275,9 @@ void	CLogExCode::OutExecutionCodeForCheck(void)
 void	CLogExCode::StructCellString(std::vector<CCell> *cellvector, aya::string_t &formula)
 {
 	formula = L"";
-    aya::string_t	tmpstr;
+	aya::string_t	tmpstr;
 	for(std::vector<CCell>::iterator it = cellvector->begin(); it != cellvector->end(); it++) {
-		if (it->value_GetType() >= F_TAG_ORIGIN &&
+		if(it->value_GetType() >= F_TAG_ORIGIN &&
 			it->value_GetType() < F_TAG_FUNCPARAM) {
 			formula += formulatag[it->value_GetType()];
 			formula += L" ";
@@ -349,26 +349,26 @@ void	CLogExCode::StructCellString(std::vector<CCell> *cellvector, aya::string_t 
 void	CLogExCode::StructSerialString(CStatement *st, aya::string_t &formula)
 {
 	formula = L"";
-    aya::string_t	tmpstr;
+	aya::string_t	tmpstr;
 
-	if ( st->serial_size() ) { //高速化用
+	if( st->serial_size() ) { //高速化用
 		for(std::vector<CSerial>::iterator it = st->serial().begin(); it != st->serial().end(); it++) {
-			if (it != st->serial().begin())
+			if(it != st->serial().begin())
 				formula += L" | ";
 
 			int	type = st->cell()[it->tindex].value_const().GetType();
 
-			if (type == F_TAG_FUNCPARAM)
+			if(type == F_TAG_FUNCPARAM)
 				formula += L"@(";
-			else if (type == F_TAG_SYSFUNCPARAM)
+			else if(type == F_TAG_SYSFUNCPARAM)
 				formula += L"$(" ;
-			else if (type == F_TAG_ARRAYORDER)
+			else if(type == F_TAG_ARRAYORDER)
 				formula += L"#(" ;
-			else if (type >= F_TAG_ORIGIN && type < F_TAG_ORIGIN_VALUE) {
+			else if(type >= F_TAG_ORIGIN && type < F_TAG_ORIGIN_VALUE) {
 				formula += formulatag[type];
 				formula += L"(";
 			}
-			else if (type >= F_TAG_ORIGIN_VALUE) {
+			else if(type >= F_TAG_ORIGIN_VALUE) {
 				formula += L"direct" ;
 				continue;
 			}
@@ -378,7 +378,7 @@ void	CLogExCode::StructSerialString(CStatement *st, aya::string_t &formula)
 			}
 
 			for(std::vector<int>::iterator it2 = it->index.begin(); it2 != it->index.end(); it2++) {
-				if (it2 != it->index.begin())
+				if(it2 != it->index.begin())
 					formula += L",";
 				tmpstr = aya::ws_itoa(*it2);
 				formula += tmpstr;
@@ -398,7 +398,7 @@ void	CLogExCode::OutVariableInfoForCheck(void)
 {
 	vm.logger().Message(5);
 
-    aya::string_t	tmpstr;
+	aya::string_t	tmpstr;
 	aya::string_t	t_str;
 	size_t	var_num = vm.variable().GetNumber();
 	for(size_t	i = 0; i < var_num; i++) {
@@ -450,7 +450,7 @@ void	CLogExCode::OutVariableInfoForCheck(void)
 void	CLogExCode::StructArrayString(const CValueArray &vs, aya::string_t &enlist)
 {
 	enlist = L"";
-    aya::string_t	tmpstr;
+	aya::string_t	tmpstr;
 	for(CValueArray::const_iterator it = vs.begin(); it != vs.end(); it++) {
 		switch(it->GetType()) {
 		case F_TAG_INT:

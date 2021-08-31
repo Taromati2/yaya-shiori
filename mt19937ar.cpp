@@ -14,16 +14,16 @@
    modification, are permitted provided that the following conditions
    are met:
 
-     1. Redistributions of source code must retain the above copyright
-        notice, this list of conditions and the following disclaimer.
+	 1. Redistributions of source code must retain the above copyright
+		notice, this list of conditions and the following disclaimer.
 
-     2. Redistributions in binary form must reproduce the above copyright
-        notice, this list of conditions and the following disclaimer in the
-        documentation and/or other materials provided with the distribution.
+	 2. Redistributions in binary form must reproduce the above copyright
+		notice, this list of conditions and the following disclaimer in the
+		documentation and/or other materials provided with the distribution.
 
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
-        permission.
+	 3. The names of its contributors may not be used to endorse or promote 
+		products derived from this software without specific prior written 
+		permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -63,17 +63,17 @@ static unsigned long *next;  */
 /* initializes state[N] with a seed */
 void init_genrand(MersenneTwister &rs,unsigned long s)
 {
-    int j;
-    rs.state[0]= s & 0xffffffffUL;
-    for (j=1; j<N; j++) {
-        rs.state[j] = (1812433253UL * (rs.state[j-1] ^ (rs.state[j-1] >> 30)) + j); 
-        /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
-        /* In the previous versions, MSBs of the seed affect   */
-        /* only MSBs of the array rs.state[].                        */
-        /* 2002/01/09 modified by Makoto Matsumoto             */
-        rs.state[j] &= 0xffffffffUL;  /* for >32 bit machines */
-    }
-    rs.left = 1; /*rs.initf = 1;*/
+	int j;
+	rs.state[0]= s & 0xffffffffUL;
+	for (j=1; j<N; j++) {
+		rs.state[j] = (1812433253UL * (rs.state[j-1] ^ (rs.state[j-1] >> 30)) + j); 
+		/* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
+		/* In the previous versions, MSBs of the seed affect   */
+		/* only MSBs of the array rs.state[].                        */
+		/* 2002/01/09 modified by Makoto Matsumoto             */
+		rs.state[j] &= 0xffffffffUL;  /* for >32 bit machines */
+	}
+	rs.left = 1; /*rs.initf = 1;*/
 }
 
 /* initialize by an array with array-length */
@@ -82,144 +82,144 @@ void init_genrand(MersenneTwister &rs,unsigned long s)
 /* slight change for C++, 2004/2/26 */
 void init_by_array(MersenneTwister &rs,const unsigned long init_key[], const int key_length)
 {
-    int i, j, k;
-    init_genrand(rs,19650218UL);
-    i=1; j=0;
-    k = (N>key_length ? N : key_length);
-    for (; k; k--) {
-        rs.state[i] = (rs.state[i] ^ ((rs.state[i-1] ^ (rs.state[i-1] >> 30)) * 1664525UL))
-          + init_key[j] + j; /* non linear */
-        rs.state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
-        i++; j++;
-        if (i>=N) { rs.state[0] = rs.state[N-1]; i=1; }
-        if (j>=key_length) j=0;
-    }
-    for (k=N-1; k; k--) {
-        rs.state[i] = (rs.state[i] ^ ((rs.state[i-1] ^ (rs.state[i-1] >> 30)) * 1566083941UL))
-          - i; /* non linear */
-        rs.state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
-        i++;
-        if (i>=N) { rs.state[0] = rs.state[N-1]; i=1; }
-    }
+	int i, j, k;
+	init_genrand(rs,19650218UL);
+	i=1; j=0;
+	k = (N>key_length ? N : key_length);
+	for (; k; k--) {
+		rs.state[i] = (rs.state[i] ^ ((rs.state[i-1] ^ (rs.state[i-1] >> 30)) * 1664525UL))
+		  + init_key[j] + j; /* non linear */
+		rs.state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+		i++; j++;
+		if(i>=N) { rs.state[0] = rs.state[N-1]; i=1; }
+		if(j>=key_length) j=0;
+	}
+	for (k=N-1; k; k--) {
+		rs.state[i] = (rs.state[i] ^ ((rs.state[i-1] ^ (rs.state[i-1] >> 30)) * 1566083941UL))
+		  - i; /* non linear */
+		rs.state[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
+		i++;
+		if(i>=N) { rs.state[0] = rs.state[N-1]; i=1; }
+	}
 
-    rs.state[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
-    rs.left = 1; /*rs.initf = 1;*/
+	rs.state[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
+	rs.left = 1; /*rs.initf = 1;*/
 }
 
 static void next_state(MersenneTwister &rs)
 {
-    unsigned long *p=rs.state;
-    int j;
+	unsigned long *p=rs.state;
+	int j;
 
-    /* if init_genrand() has not been called, */
-    /* a default initial seed is used         */
-    //if (rs.initf==0) init_genrand(rs,5489UL);
+	/* if init_genrand() has not been called, */
+	/* a default initial seed is used         */
+	//if(rs.initf==0) init_genrand(rs,5489UL);
 
-    rs.left = N;
-    rs.next = rs.state;
-    
-    for (j=N-M+1; --j; p++) 
-        *p = p[M] ^ TWIST(p[0], p[1]);
+	rs.left = N;
+	rs.next = rs.state;
+	
+	for (j=N-M+1; --j; p++) 
+		*p = p[M] ^ TWIST(p[0], p[1]);
 
-    for (j=M; --j; p++) 
-        *p = p[M-N] ^ TWIST(p[0], p[1]);
+	for (j=M; --j; p++) 
+		*p = p[M-N] ^ TWIST(p[0], p[1]);
 
-    *p = p[M-N] ^ TWIST(p[0], rs.state[0]);
+	*p = p[M-N] ^ TWIST(p[0], rs.state[0]);
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
 unsigned long genrand_int32(MersenneTwister &rs)
 {
-    unsigned long y;
+	unsigned long y;
 
-    if (--rs.left == 0) next_state(rs);
-    y = *rs.next++;
+	if(--rs.left == 0) next_state(rs);
+	y = *rs.next++;
 
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
 
-    return y;
+	return y;
 }
 
 /* generates a random number on [0,0x7fffffff]-interval */
 long genrand_int31(MersenneTwister &rs)
 {
-    unsigned long y;
+	unsigned long y;
 
-    if (--rs.left == 0) next_state(rs);
-    y = *rs.next++;
+	if(--rs.left == 0) next_state(rs);
+	y = *rs.next++;
 
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
 
-    return (long)(y>>1);
+	return (long)(y>>1);
 }
 
 /* generates a random number on [0,1]-real-interval */
 double genrand_real1(MersenneTwister &rs)
 {
-    unsigned long y;
+	unsigned long y;
 
-    if (--rs.left == 0) next_state(rs);
-    y = *rs.next++;
+	if(--rs.left == 0) next_state(rs);
+	y = *rs.next++;
 
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
 
-    return (double)y * (1.0/4294967295.0); 
-    /* divided by 2^32-1 */ 
+	return (double)y * (1.0/4294967295.0); 
+	/* divided by 2^32-1 */ 
 }
 
 /* generates a random number on [0,1)-real-interval */
 double genrand_real2(MersenneTwister &rs)
 {
-    unsigned long y;
+	unsigned long y;
 
-    if (--rs.left == 0) next_state(rs);
-    y = *rs.next++;
+	if(--rs.left == 0) next_state(rs);
+	y = *rs.next++;
 
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
 
-    return (double)y * (1.0/4294967296.0); 
-    /* divided by 2^32 */
+	return (double)y * (1.0/4294967296.0); 
+	/* divided by 2^32 */
 }
 
 /* generates a random number on (0,1)-real-interval */
 double genrand_real3(MersenneTwister &rs)
 {
-    unsigned long y;
+	unsigned long y;
 
-    if (--rs.left == 0) next_state(rs);
-    y = *rs.next++;
+	if(--rs.left == 0) next_state(rs);
+	y = *rs.next++;
 
-    /* Tempering */
-    y ^= (y >> 11);
-    y ^= (y << 7) & 0x9d2c5680UL;
-    y ^= (y << 15) & 0xefc60000UL;
-    y ^= (y >> 18);
+	/* Tempering */
+	y ^= (y >> 11);
+	y ^= (y << 7) & 0x9d2c5680UL;
+	y ^= (y << 15) & 0xefc60000UL;
+	y ^= (y >> 18);
 
-    return ((double)y + 0.5) * (1.0/4294967296.0); 
-    /* divided by 2^32 */
+	return ((double)y + 0.5) * (1.0/4294967296.0); 
+	/* divided by 2^32 */
 }
 
 /* generates a random number on [0,1) with 53-bit resolution*/
 double genrand_res53(MersenneTwister &rs) 
 { 
-    unsigned long a=genrand_int32(rs)>>5, b=genrand_int32(rs)>>6; 
-    return(a*67108864.0+b)*(1.0/9007199254740992.0); 
+	unsigned long a=genrand_int32(rs)>>5, b=genrand_int32(rs)>>6; 
+	return(a*67108864.0+b)*(1.0/9007199254740992.0); 
 } 
 /* These real versions are due to Isaku Wada, 2002/01/09 added */
 

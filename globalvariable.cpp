@@ -40,10 +40,10 @@ int	CGlobalVariable::Make(const aya::string_t &name, char erased)
 {
 	// 既に存在するか調べ、存在していたらそれを返す
 	aya::indexmap::const_iterator it = varmap.find(name);
-	if ( it != varmap.end() ) {
+	if( it != varmap.end() ) {
 		int idx = it->second;
-		if (!vm.basis().IsRun()) {
-			if (erased)
+		if(!vm.basis().IsRun()) {
+			if(erased)
 				var[idx].Erase();
 			else
 				var[idx].Enable();
@@ -53,7 +53,7 @@ int	CGlobalVariable::Make(const aya::string_t &name, char erased)
 
 	// 作成
 	CVariable	addvariable(name);
-	if (erased)
+	if(erased)
 		addvariable.Erase();
 	else
 		addvariable.Enable();
@@ -77,7 +77,7 @@ size_t	CGlobalVariable::GetMacthedLongestNameLength(const aya::string_t &name)
 
 	for(std::vector<CVariable>::iterator it = var.begin(); it != var.end(); it++) {
 		size_t	len = it->name.size();
-		if (!it->IsErased() && max_len < len && !name.compare(0,len,it->name,0,len))
+		if(!it->IsErased() && max_len < len && !name.compare(0,len,it->name,0,len))
 			max_len = len;
 	}
 
@@ -94,7 +94,7 @@ size_t	CGlobalVariable::GetMacthedLongestNameLength(const aya::string_t &name)
 int		CGlobalVariable::GetIndex(const aya::string_t &name)
 {
 	aya::indexmap::const_iterator it = varmap.find(name);
-	if ( it != varmap.end() ) {
+	if( it != varmap.end() ) {
 		int idx = it->second;
 		return var[idx].IsErased() ? -1 : idx;
 	}

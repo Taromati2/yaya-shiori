@@ -52,7 +52,7 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 {
 	FILE *fp = aya::w_fopen(file.c_str(), L"rb");
 
-	if (fp == NULL) {
+	if(fp == NULL) {
 		return false;
 	}
 
@@ -63,28 +63,28 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 
 	while ( true )
 	{
-		if (aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) == aya::WS_EOF) {
+		if(aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) == aya::WS_EOF) {
 			break;
 		}
 
 		CutCrLf(line);
 
-		if ( line.substr(0,3)==L"!!!" ) {
+		if( line.substr(0,3)==L"!!!" ) {
 			aya::string_t&type = line.substr(3);
 
-			if ( type == L"msgf" ) {
+			if( type == L"msgf" ) {
 				ptr = &msgf;
 			}
-			else if ( type == L"msge" ) {
+			else if( type == L"msge" ) {
 				ptr = &msge;
 			}
-			else if ( type == L"msgw" ) {
+			else if( type == L"msgw" ) {
 				ptr = &msgw;
 			}
-			else if ( type == L"msgn" ) {
+			else if( type == L"msgn" ) {
 				ptr = &msgn;
 			}
-			else if ( type == L"msgj" ) {
+			else if( type == L"msgj" ) {
 				ptr = &msgj;
 			}
 			else {
@@ -93,12 +93,12 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 			continue;
 		}
 		
-		if ( line.substr(0,2)==L"//" ) {
+		if( line.substr(0,2)==L"//" ) {
 			continue;
 		}
 		
-		if ( line.substr(0,1)==L"*" ) {
-			if ( ptr ) {
+		if( line.substr(0,1)==L"*" ) {
+			if( ptr ) {
 				line=line.substr(1);
 				aya::ws_replace(line,L"\\n", L"\r\n");
 				ptr->push_back(line);
@@ -122,19 +122,19 @@ const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 	ayamsg::MessageArray *ptr;
 	aya::char_t *emsg;
 
-	if (mode == E_F) {
+	if(mode == E_F) {
 		ptr = &ayamsg::msgf;
 		emsg = L"fatal F";
 	}
-	else if (mode == E_E) {
+	else if(mode == E_E) {
 		ptr = &ayamsg::msge;
 		emsg = L"error E";
 	}
-	else if (mode == E_W) {
+	else if(mode == E_W) {
 		ptr = &ayamsg::msgw;
 		emsg = L"warning W";
 	}
-	else if (mode == E_N) {
+	else if(mode == E_N) {
 		ptr = &ayamsg::msgn;
 		emsg = L"note N";
 	}
@@ -143,7 +143,7 @@ const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 		emsg = L"//msg M";
 	}
 
-	if ( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
+	if( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
 		aya::char_t buf[64] = L"";
 		aya::snprintf(buf,63,L"%04d",id);
 

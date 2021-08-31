@@ -38,32 +38,32 @@
  */
 bool CFile::ProcessOpenMode(aya::string_t &t_mode)
 {
-	if (!t_mode.compare(L"read"))
+	if(!t_mode.compare(L"read"))
 		t_mode = L"r";
-	else if (!t_mode.compare(L"write"))
+	else if(!t_mode.compare(L"write"))
 		t_mode = L"w";
-	else if (!t_mode.compare(L"append"))
+	else if(!t_mode.compare(L"append"))
 		t_mode = L"a";
-	else if (!t_mode.compare(L"read_binary"))
+	else if(!t_mode.compare(L"read_binary"))
 		t_mode = L"rb";
-	else if (!t_mode.compare(L"write_binary"))
+	else if(!t_mode.compare(L"write_binary"))
 		t_mode = L"wb";
-	else if (!t_mode.compare(L"append_binary"))
+	else if(!t_mode.compare(L"append_binary"))
 		t_mode = L"ab";
-	if (!t_mode.compare(L"read_random"))
+	if(!t_mode.compare(L"read_random"))
 		t_mode = L"r+";
-	else if (!t_mode.compare(L"write_random"))
+	else if(!t_mode.compare(L"write_random"))
 		t_mode = L"w+";
-	else if (!t_mode.compare(L"append_random"))
+	else if(!t_mode.compare(L"append_random"))
 		t_mode = L"a+";
-	else if (!t_mode.compare(L"read_binary_random"))
+	else if(!t_mode.compare(L"read_binary_random"))
 		t_mode = L"rb+";
-	else if (!t_mode.compare(L"write_binary_random"))
+	else if(!t_mode.compare(L"write_binary_random"))
 		t_mode = L"wb+";
-	else if (!t_mode.compare(L"append_binary_random"))
+	else if(!t_mode.compare(L"append_binary_random"))
 		t_mode = L"ab+";
 
-	if (
+	if(
 		t_mode.compare(L"r") &&
 		t_mode.compare(L"w") &&
 		t_mode.compare(L"a") &&
@@ -95,19 +95,19 @@ bool CFile::ProcessOpenMode(aya::string_t &t_mode)
 int	CFile::Add(const aya::string_t &name, const aya::string_t &mode)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return 2;
 	}
 
 	aya::string_t	t_mode = mode;
-	if ( ! ProcessOpenMode(t_mode) ) {
+	if( ! ProcessOpenMode(t_mode) ) {
 		return 0;
 	}
 
 	filelist.push_back(CFile1(name, charset, t_mode));
 	it = filelist.end();
 	it--;
-	if (!it->Open()) {
+	if(!it->Open()) {
 		filelist.erase(it);
 		return 0;
 	}
@@ -125,7 +125,7 @@ int	CFile::Add(const aya::string_t &name, const aya::string_t &mode)
 int	CFile::Delete(const aya::string_t &name)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		int	result = it->Close();
 		it = filelist.erase(it);
 		return result;
@@ -154,7 +154,7 @@ void	CFile::DeleteAll(void)
 int	CFile::Write(const aya::string_t &name, const aya::string_t &istr)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->Write(istr);
 	}
 
@@ -171,12 +171,12 @@ int	CFile::Write(const aya::string_t &name, const aya::string_t &istr)
 int	CFile::WriteBin(const aya::string_t &name, const aya::string_t &istr, const aya::char_t alt)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->WriteBin(istr,alt);
 	}
 
 	CFile1 tempfile(name, charset, L"wb");
-	if ( ! tempfile.Open() ) {
+	if( ! tempfile.Open() ) {
 		return 0;
 	}
 	int result = tempfile.WriteBin(istr,alt);
@@ -196,12 +196,12 @@ int	CFile::WriteBin(const aya::string_t &name, const aya::string_t &istr, const 
 int CFile::WriteDecode(const aya::string_t &name, const aya::string_t &istr, const aya::string_t &type)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->WriteDecode(istr,type);
 	}
 
 	CFile1 tempfile(name, charset, L"wb");
-	if ( ! tempfile.Open() ) {
+	if( ! tempfile.Open() ) {
 		return 0;
 	}
 	int result = tempfile.WriteDecode(istr,type);
@@ -221,7 +221,7 @@ int CFile::WriteDecode(const aya::string_t &name, const aya::string_t &istr, con
 int	CFile::Read(const aya::string_t &name, aya::string_t &ostr)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->Read(ostr);
 	}
 
@@ -238,12 +238,12 @@ int	CFile::Read(const aya::string_t &name, aya::string_t &ostr)
 int	CFile::ReadBin(const aya::string_t &name, aya::string_t &ostr, size_t len, aya::char_t alt)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->ReadBin(ostr,len,alt);
 	}
 
 	CFile1 tempfile(name, charset, L"rb");
-	if ( ! tempfile.Open() ) {
+	if( ! tempfile.Open() ) {
 		return 0;
 	}
 	int result = tempfile.ReadBin(ostr,len,alt);
@@ -261,12 +261,12 @@ int	CFile::ReadBin(const aya::string_t &name, aya::string_t &ostr, size_t len, a
 int	CFile::ReadEncode(const aya::string_t &name, aya::string_t &ostr, size_t len, const aya::string_t &type)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->ReadEncode(ostr,len,type);
 	}
 
 	CFile1 tempfile(name, charset, L"rb");
-	if ( ! tempfile.Open() ) {
+	if( ! tempfile.Open() ) {
 		return 0;
 	}
 	int result = tempfile.ReadEncode(ostr,len,type);
@@ -283,7 +283,7 @@ int	CFile::ReadEncode(const aya::string_t &name, aya::string_t &ostr, size_t len
 long CFile::Size(const aya::string_t &name)
 {
 	std::list<CFile1>::const_iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->Size();
 	}
 
@@ -301,13 +301,13 @@ int CFile::FSeek(const aya::string_t &name,int offset,const aya::string_t &s_mod
 {
 	int mode;
 
-	if (s_mode.compare(L"SEEK_CUR")==0 || s_mode.compare(L"current")==0){
+	if(s_mode.compare(L"SEEK_CUR")==0 || s_mode.compare(L"current")==0){
 		mode=SEEK_CUR;
 	}
-	else if (s_mode.compare(L"SEEK_END")==0 || s_mode.compare(L"end")==0){
+	else if(s_mode.compare(L"SEEK_END")==0 || s_mode.compare(L"end")==0){
 		mode=SEEK_END;
 	}
-	else if (s_mode.compare(L"SEEK_SET")==0 || s_mode.compare(L"start")==0){
+	else if(s_mode.compare(L"SEEK_SET")==0 || s_mode.compare(L"start")==0){
 		mode=SEEK_SET;
 	}
 	else{
@@ -315,7 +315,7 @@ int CFile::FSeek(const aya::string_t &name,int offset,const aya::string_t &s_mod
 	}
 
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->FSeek(offset,mode);
 	}
 
@@ -332,7 +332,7 @@ int CFile::FSeek(const aya::string_t &name,int offset,const aya::string_t &s_mod
 int CFile::FTell(const aya::string_t &name)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
-	if ( it != filelist.end() ) {
+	if( it != filelist.end() ) {
 		return it->FTell();
 	}
 

@@ -99,7 +99,7 @@ void	CBasis::SetModuleName(const aya::string_t &s,const aya::char_t *trailer,con
 	modulename = s;
 	modename = mode;
 
-	if (trailer) {
+	if(trailer) {
 		config_file_name_trailer = trailer;
 	}
 	else {
@@ -126,7 +126,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	base_path = wcpath;
 
 	//最後が\でも/でもなければ足す
-	if (!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
+	if(!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
 		base_path += L"\\";
 	}
 
@@ -142,7 +142,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	//free(h); //load側で開放
 	h = NULL;
 	// スラッシュで終わってなければ付ける。
-	if (!path.length() || path[path.length() - 1] != L'/') {
+	if(!path.length() || path[path.length() - 1] != L'/') {
 		path += L'/';
 	}
 	// モジュールハンドルの取得は出来ないので、力技で位置を知る。
@@ -151,27 +151,27 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	// ただし対応する*.txtが無ければdllの中身は見ずに次へ行く。
 	modulename = L"aya";
 	DIR* dh = opendir(narrow(path).c_str());
-	if (dh == NULL) {
+	if(dh == NULL) {
 		std::cerr << narrow(path) << "is not a directory!" << std::endl;
 	exit(1);
 	}
 	while (true) {
 	struct dirent* ent = readdir(dh);
-	if (ent == NULL) {
-	    break; // もう無い
+	if(ent == NULL) {
+		break; // もう無い
 	}
 	std::string fname(ent->d_name, strlen(ent->d_name)/*ent->d_namlen*/);	// by umeici. 2005/1/16 5.6.0.232
-	if (lc(get_extension(fname)) == "dll") {
+	if(lc(get_extension(fname)) == "dll") {
 		std::string txt_file = narrow(path) + change_extension(fname, "txt");
-	    struct stat sb;
-	    if (!::stat(txt_file.c_str(), &sb)) {
+		struct stat sb;
+		if(!::stat(txt_file.c_str(), &sb)) {
 		// txtファイルがあるので、中身を見てみる。
-		if (file_content_search(narrow(path) + fname, "aya.dll") != std::string::npos) {
-		    // これはAYAのDLLである。
-		    modulename = widen(drop_extension(fname));
-		    break;
+		if(file_content_search(narrow(path) + fname, "aya.dll") != std::string::npos) {
+			// これはAYAのDLLである。
+			modulename = widen(drop_extension(fname));
+			break;
 		}
-	    }
+		}
 	}
 	}
 	closedir(dh);
@@ -212,31 +212,31 @@ void	CBasis::Configure(void)
 	std::vector<CDic1>	dics;
 	LoadBaseConfigureFile(dics);
 	// 基礎設定ファイル読み取りで重篤なエラーが発生した場合はここで終了
-	if (suppress)
+	if(suppress)
 		return;
 
 	// ロギングを開始
 	SetLogger();
 
 	// 辞書読み込みと構文解析
-	if (vm.parser0().Parse(dic_charset, dics))
+	if(vm.parser0().Parse(dic_charset, dics))
 		SetSuppress();
 
 	{
 		CLogExCode logex(vm);
 
-		if (checkparser)
+		if(checkparser)
 			logex.OutExecutionCodeForCheck();
 
 		// 前回終了時に保存した変数を復元
 		RestoreVariable();
 
-		if (checkparser)
+		if(checkparser)
 			logex.OutVariableInfoForCheck();
 	}
 
 	// ここまでの処理で重篤なエラーが発生した場合はここで終了
-	if (suppress)
+	if(suppress)
 		return;
 
 	// 外部ライブラリとファイルの文字コードを初期化
@@ -257,7 +257,7 @@ void	CBasis::Configure(void)
 void	CBasis::Termination(void)
 {
 	// 動作抑止されていなければ終了時の処理を実行
-	if (!suppress) {
+	if(!suppress) {
 		// unload
 		ExecuteUnload();
 		// ロードしているすべてのライブラリをunload
@@ -265,7 +265,7 @@ void	CBasis::Termination(void)
 		// 開いているすべてのファイルを閉じる
 		vm.files().DeleteAll();
 		// 変数の保存
-		if (auto_save) {
+		if(auto_save) {
 			SaveVariable();
 		}
 	}
@@ -351,7 +351,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 {
 	// ファイルを開く
 	FILE	*fp = aya::w_fopen(filename.c_str(), L"r");
-	if (fp == NULL) {
+	if(fp == NULL) {
 		vm.logger().Error(E_E, 5, filename);
 		SetSuppress();
 		return;
@@ -367,7 +367,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 		line += 1;
 
 		// 1行読み込み
-		if (aya::ws_fgets(readline, fp, cset, 0, line) == aya::WS_EOF) {
+		if(aya::ws_fgets(readline, fp, cset, 0, line) == aya::WS_EOF) {
 			// ファイルを閉じる
 			fclose(fp);
 			break;
@@ -382,12 +382,12 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 		comment.Process_Tail(readline);
 		
 		// 空行、もしくは全体がコメント行だった場合は次の行へ
-		if (!readline.size()) {
+		if(!readline.size()) {
 			continue;
 		}
 
 		// パラメータを設定
-		if (Split(readline, cmd, param, L",")) {
+		if(Split(readline, cmd, param, L",")) {
 			SetParameter(cmd, param, &dics);
 		}
 		else {
@@ -404,16 +404,16 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, std::vector<CDic1> *dics)
 {
 	//include
-	if (!cmd.compare(L"include")) {
+	if(!cmd.compare(L"include")) {
 		aya::string_t param1, param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t filename = load_path + param1;
 
 		char cset = dic_charset;
-		if (param2.size()) {
+		if(param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if (cx != CHARSET_DEFAULT) {
+			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -421,16 +421,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	//includeEX
-	else if (!cmd.compare(L"includeEX")) {
+	else if(!cmd.compare(L"includeEX")) {
 		aya::string_t param1, param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t filename = load_path + param1;
 
 		char cset = dic_charset;
-		if (param2.size()) {
+		if(param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if (cx != CHARSET_DEFAULT) {
+			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -449,16 +449,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// dic
-	else if (!cmd.compare(L"dic") && dics) {
+	else if(!cmd.compare(L"dic") && dics) {
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t	filename = base_path + param1;
 
 		char cset = dic_charset;
-		if (param2.size()) {
+		if(param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if (cx != CHARSET_DEFAULT) {
+			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -466,7 +466,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// dicdir
-	else if (!cmd.compare(L"dicdir") && dics) {
+	else if(!cmd.compare(L"dicdir") && dics) {
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
@@ -478,7 +478,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		while (ef.next(entry)) {
 			aya::string_t relpath_and_cs = param1 + L"\\" + entry.name + L"," + param2;
 
-			if (entry.isdir) {
+			if(entry.isdir) {
 				SetParameter(L"dicdir",relpath_and_cs,dics);
 			}
 			else {
@@ -489,26 +489,26 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// messagetxt
-	else if (!cmd.compare(L"messagetxt")) {//本土化
+	else if(!cmd.compare(L"messagetxt")) {//本土化
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
 		char cset = CHARSET_UTF8; //UTF8固定
 		
-		if (param2.size()) {
+		if(param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if (cx != CHARSET_DEFAULT) {
+			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
-		if (ayamsg::LoadMessageFromTxt(load_path + param1,cset)) {
+		if(ayamsg::LoadMessageFromTxt(load_path + param1,cset)) {
 			messagetxt_path = load_path + param1;
 		}
 		return true;
 	}
 	// log
-	else if (!cmd.compare(L"log")) {
-		if (param.empty()) {
+	else if(!cmd.compare(L"log")) {
+		if(param.empty()) {
 			logpath.erase();
 		}
 		else {
@@ -517,11 +517,11 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// basepath
-	else if (!cmd.compare(L"basepath")) {
+	else if(!cmd.compare(L"basepath")) {
 		CDirEnum dirCheck(param);
 		CDirEnumEntry dirCheckTmp;
 
-		if (dirCheck.next(dirCheckTmp)) { //something exist in directory
+		if(dirCheck.next(dirCheckTmp)) { //something exist in directory
 			#if defined(WIN32) || defined(_WIN32_WCE)
 			if(param[1]==L':')
 			#elif defined(POSIX)
@@ -532,7 +532,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				base_path += param;
 
 			//最後が\でも/でもなければ足す
-			if (!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
+			if(!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
 				#if defined(WIN32) || defined(_WIN32_WCE)
 				base_path += L"\\";
 				#elif defined(POSIX)
@@ -546,22 +546,22 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		}
 	}
 	// iolog
-	else if (!cmd.compare(L"iolog")) {
+	else if(!cmd.compare(L"iolog")) {
 		iolog = param.compare(L"off") != 0;
 		return true;
 	}
 	// セーブデータ暗号化
-	else if (!cmd.compare(L"save.encode")) {
+	else if(!cmd.compare(L"save.encode")) {
 		encode_savefile = !param.compare(L"on");
 		return true;
 	}
 	// 自動セーブ
-	else if (!cmd.compare(L"save.auto")) {
+	else if(!cmd.compare(L"save.auto")) {
 		auto_save = param.compare(L"off") != 0;
 		return true;
 	}
 	// charset
-	else if (!cmd.compare(L"charset")) {
+	else if(!cmd.compare(L"charset")) {
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
 		output_charset    = dic_charset;
 		file_charset      = dic_charset;
@@ -571,63 +571,63 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// charset
-	else if (!cmd.compare(L"charset.dic")) {
+	else if(!cmd.compare(L"charset.dic")) {
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if (!cmd.compare(L"charset.output")) {
+	else if(!cmd.compare(L"charset.output")) {
 		output_charset    = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if (!cmd.compare(L"charset.file")) {
+	else if(!cmd.compare(L"charset.file")) {
 		file_charset      = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if (!cmd.compare(L"charset.save")) {
+	else if(!cmd.compare(L"charset.save")) {
 		save_charset      = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if (!cmd.compare(L"charset.save.old")) {
+	else if(!cmd.compare(L"charset.save.old")) {
 		save_old_charset  = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if (!cmd.compare(L"charset.extension")) {
+	else if(!cmd.compare(L"charset.extension")) {
 		extension_charset = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
 	// fncdepth
-	else if (!cmd.compare(L"fncdepth")) {
+	else if(!cmd.compare(L"fncdepth")) {
 		int	f_depth = aya::ws_atoi(param, 10);
 		vm.calldepth().SetMaxDepth((f_depth < 2 && f_depth != 0) ? 2 : f_depth);
 		return true;
 	}
 	// checkparser closed function
-	else if (!cmd.compare(L"checkparser")) {
+	else if(!cmd.compare(L"checkparser")) {
 		checkparser = !param.compare(L"on");
 		return true;
 	}
 	// iolog.filter.keyword (old syntax : ignoreiolog)
-	else if (!cmd.compare(L"iolog.filter.keyword")){
+	else if(!cmd.compare(L"iolog.filter.keyword")){
 		vm.logger().AddIologFilterKeyword(param);
 		return true;
 	}
 	// iolog.filter.keyword.regex
-	else if (!cmd.compare(L"iolog.filter.keyword.regex")){
+	else if(!cmd.compare(L"iolog.filter.keyword.regex")){
 		vm.logger().AddIologFilterKeywordRegex(param);
 		return true;
 	}
 	// iolog.filter.keyword.delete (for SETSETTING)
-	else if (!cmd.compare(L"iolog.filter.keyword.delete")){
+	else if(!cmd.compare(L"iolog.filter.keyword.delete")){
 		vm.logger().DeleteIologFilterKeyword(param);
 		return true;
 	}
 	// iolog.filter.keyword.regex.delete (for SETSETTING)
-	else if (!cmd.compare(L"iolog.filter.keyword.regex.delete")){
+	else if(!cmd.compare(L"iolog.filter.keyword.regex.delete")){
 		vm.logger().DeleteIologFilterKeywordRegex(param);
 		return true;
 	}
 	// iolog.filter.mode
-	else if (!cmd.compare(L"iolog.filter.mode")){
+	else if(!cmd.compare(L"iolog.filter.mode")){
 		vm.logger().SetIologFilterMode(
 			(param.find(L"allow") != aya::string_t::npos)
 			);
@@ -657,78 +657,78 @@ static void CBasis_ConvertStringArray(const std::vector<aya::string_t> &array,CV
 CValue CBasis::GetParameter(const aya::string_t &cmd)
 {
 	// log
-	if (!cmd.compare(L"log")) {
+	if(!cmd.compare(L"log")) {
 		return logpath;
 	}
 	// iolog
-	else if (!cmd.compare(L"iolog")) {
+	else if(!cmd.compare(L"iolog")) {
 		return aya::string_t(iolog ? L"on" : L"off");
 	}
 	// save.encode
-	else if (!cmd.compare(L"save.encode")) {
+	else if(!cmd.compare(L"save.encode")) {
 		return aya::string_t(encode_savefile ? L"on" : L"off");
 	}
 	// save.auto
-	else if (!cmd.compare(L"save.auto")) {
+	else if(!cmd.compare(L"save.auto")) {
 		return aya::string_t(auto_save ? L"on" : L"off");
 	}
 	// messagetxt
-	else if (!cmd.compare(L"messagetxt")) {
+	else if(!cmd.compare(L"messagetxt")) {
 		return messagetxt_path;
 	}
 	// charset
-	else if (!cmd.compare(L"charset")) {
+	else if(!cmd.compare(L"charset")) {
 		return Ccct::CharsetIDToTextW(dic_charset);
 	}
 	// charset
-	else if (!cmd.compare(L"charset.dic")) {
+	else if(!cmd.compare(L"charset.dic")) {
 		return Ccct::CharsetIDToTextW(dic_charset);
 	}
-	else if (!cmd.compare(L"charset.output")) {
+	else if(!cmd.compare(L"charset.output")) {
 		return Ccct::CharsetIDToTextW(output_charset);
 	}
-	else if (!cmd.compare(L"charset.file")) {
+	else if(!cmd.compare(L"charset.file")) {
 		return Ccct::CharsetIDToTextW(file_charset);
 	}
-	else if (!cmd.compare(L"charset.save")) {
+	else if(!cmd.compare(L"charset.save")) {
 		return Ccct::CharsetIDToTextW(save_charset);
 	}
-	else if (!cmd.compare(L"charset.save.old")) {
+	else if(!cmd.compare(L"charset.save.old")) {
 		return Ccct::CharsetIDToTextW(save_old_charset);
 	}
-	else if (!cmd.compare(L"charset.extension")) {
+	else if(!cmd.compare(L"charset.extension")) {
 		return Ccct::CharsetIDToTextW(extension_charset);
 	}
 	// fncdepth
-	else if (!cmd.compare(L"fncdepth")) {
+	else if(!cmd.compare(L"fncdepth")) {
 		return CValue(vm.calldepth().GetMaxDepth());
 	}
 	// checkparser closed function
-	else if (!cmd.compare(L"checkparser")) {
+	else if(!cmd.compare(L"checkparser")) {
 		return checkparser ? L"on" : L"off";
 	}
 	// iolog.filter.keyword
-	else if (!cmd.compare(L"iolog.filter.keyword")){
+	else if(!cmd.compare(L"iolog.filter.keyword")){
 		CValue value(F_TAG_ARRAY, 0/*dmy*/);
 		CBasis_ConvertStringArray(vm.logger().GetIologFilterKeyword(),value);
 		return value;
 	}
 	// iolog.filter.keyword.regex
-	else if (!cmd.compare(L"iolog.filter.keyword.regex")){
+	else if(!cmd.compare(L"iolog.filter.keyword.regex")){
 		CValue value(F_TAG_ARRAY, 0/*dmy*/);
 		CBasis_ConvertStringArray(vm.logger().GetIologFilterKeywordRegex(),value);
 		return value;
 	}
 	// iolog.filter.keyword.delete (for SETSETTING only)
-	else if (!cmd.compare(L"iolog.filter.keyword.delete")){
+	else if(!cmd.compare(L"iolog.filter.keyword.delete")){
 		return L""; //NOOP
 	}
 	// iolog.filter.keyword.regex.delete (for SETSETTING only)
-	else if (!cmd.compare(L"iolog.filter.keyword.regex.delete")){
+	else if(!cmd.compare(L"iolog.filter.keyword.regex.delete")){
 		return L""; //NOOP
 	}
 	// iolog.filter.mode
-	else if (!cmd.compare(L"iolog.filter.mode")){
+	else if(!cmd.compare(L"iolog.filter.mode")){
 		return vm.logger().GetIologFilterMode() ? L"allowlist" : L"denylist";
 	}
 	return L"";
@@ -763,14 +763,14 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 
 	// ファイルを開く
 	aya::string_t	filename;
-	if (! pName || ! *pName) {
+	if(! pName || ! *pName) {
 		filename = GetSavefilePath();
 	}
 	else {
 		filename = base_path + pName;
 	}
 
-	if (ayc) {
+	if(ayc) {
 		char *s_filestr = Ccct::Ucs2ToMbcs(filename,CHARSET_DEFAULT);
 #if defined(WIN32)
 		DeleteFile(s_filestr);
@@ -800,14 +800,14 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 	vm.logger().Message(7);
 	vm.logger().Filename(filename);
 	FILE	*fp = aya::w_fopen(filename.c_str(), L"w");
-	if (fp == NULL) {
+	if(fp == NULL) {
 		vm.logger().Error(E_E, 57, filename);
 		return;
 	}
 /*
 #if defined(WIN32)
 	// UTF-8の場合は先頭にBOMを保存
-	if (charset == CHARSET_UTF8)
+	if(charset == CHARSET_UTF8)
 		write_utf8bom(fp);
 #endif
 	// UTF-8なのにBOMを付けるのはやめた方が宜しいかと…
@@ -837,16 +837,16 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 	for(size_t i = 0; i < var_num; i++) {
 		CVariable	*var = vm.variable().GetPtr(i);
 		// Voidは放置
-		if (var->value_const().IsVoid())
+		if(var->value_const().IsVoid())
 			continue;
 		// 内容が空文字列の変数は保存しない
-		//if (var->value_const().IsStringReal() && !var->value_const().s_value.size())
+		//if(var->value_const().IsStringReal() && !var->value_const().s_value.size())
 		//	continue;
 		// 内容が空汎用配列の変数は保存しない
-		//if (var->value_const().GetType() == F_TAG_ARRAY && !var->value_const().array_size())
+		//if(var->value_const().GetType() == F_TAG_ARRAY && !var->value_const().array_size())
 		//	continue;
 		// 消去フラグが立っている変数は保存しない
-		if (var->IsErased())
+		if(var->IsErased())
 			continue;
 
 		// 名前の保存
@@ -871,7 +871,7 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 			str += L"\",";
 			break;
 		case F_TAG_ARRAY:
-			if (!var->value_const().array_size()) {
+			if(!var->value_const().array_size()) {
 				str += ESC_IARRAY L":" ESC_IARRAY;
 			}
 			else {
@@ -879,24 +879,24 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 				CValueArray::const_iterator	itvbegin = var->value_const().array().begin();
 
 				for(itv = itvbegin; itv != var->value_const().array().end(); itv++) {
-					if (itv != itvbegin)
+					if(itv != itvbegin)
 						str += L":";
 					wstr = itv->GetValueString();
 					EscapeString(wstr);
 
-					if (itv->GetType() == F_TAG_STRING) {
+					if(itv->GetType() == F_TAG_STRING) {
 						str += L"\"";
 						str += wstr;
 						str += L"\"";
 					}
-					else if (itv->GetType() == F_TAG_VOID) {
+					else if(itv->GetType() == F_TAG_VOID) {
 						str += ESC_IVOID;
 					}
 					else {
 						str += wstr;
 					}
 				}
-				if (var->value_const().array_size() == 1) {
+				if(var->value_const().array_size() == 1) {
 					str += L":" ESC_IARRAY;
 				}
 			}
@@ -935,7 +935,7 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 
 	// ファイルを開く
 	aya::string_t	filename;
-	if (! pName || ! *pName) {
+	if(! pName || ! *pName) {
 		filename = GetSavefilePath();
 	}
 	else {
@@ -948,13 +948,13 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	FILE *fp = NULL;
 
 	//暗号化セーブファイル対応
-	if (ayc) {
+	if(ayc) {
 		filename += L".ays";
 		fp = aya::w_fopen(filename.c_str(), L"r");
-		if (!fp) {
+		if(!fp) {
 			filename.erase(filename.size()-4,4);
 			fp = aya::w_fopen(filename.c_str(), L"r");
-			if (!fp) {
+			if(!fp) {
 				vm.logger().Error(E_N, 0);
 				return;
 			}
@@ -965,10 +965,10 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	}
 	else {
 		fp = aya::w_fopen(filename.c_str(), L"r");
-		if (!fp) {
+		if(!fp) {
 			filename += L".ays";
 			fp = aya::w_fopen(filename.c_str(), L"r");
-			if (!fp) {
+			if(!fp) {
 				vm.logger().Error(E_N, 0);
 				return;
 			}
@@ -989,12 +989,12 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 
 	for (int i = 1; ; i++) {
 		// 1行読み込み
-		if (aya::ws_fgets(readline, fp, savefile_charset, ayc, i, false) == aya::WS_EOF)
+		if(aya::ws_fgets(readline, fp, savefile_charset, ayc, i, false) == aya::WS_EOF)
 			break;
 		// 改行は消去
 		CutCrLf(readline);
 		// 空行なら次の行へ
-		if (!readline.size()) {
+		if(!readline.size()) {
 			linebuffer.erase();
 			continue;
 		}
@@ -1002,54 +1002,54 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 		linebuffer += readline;
 		// ダブルクォーテーションが閉じているか確認する。閉じていない場合は、
 		// 次の行へ値が続いていると思われるので次の行の読み取りへ
-		if (IsInDQ(linebuffer, 0, linebuffer.size() - 1) != IsInDQ_notindq)
+		if(IsInDQ(linebuffer, 0, linebuffer.size() - 1) != IsInDQ_notindq)
 			continue;
 
 		parseline = linebuffer;
 		linebuffer.erase();
 
 		// 変数名を取得
-		if (!Split_IgnoreDQ(parseline, varname, value, L",")) {
+		if(!Split_IgnoreDQ(parseline, varname, value, L",")) {
 			vm.logger().Error(E_W, 1, filename, i);
 			continue;
 		}
 		// Charset
-		if (!varname.compare(L"//savefile_charset")) {
+		if(!varname.compare(L"//savefile_charset")) {
 			savefile_charset = Ccct::CharsetTextToID(value.c_str());
 			continue;
 		}
 		// 変数名の正当性を検査
-		if (IsLegalVariableName(varname)) {
+		if(IsLegalVariableName(varname)) {
 			vm.logger().Error(E_W, 2, filename, i);
 			continue;
 		}
 		// 値とデリミタを取り出す
 		parseline = value;
-		if (!Split_IgnoreDQ(parseline, value, delimiter, L",")) {
+		if(!Split_IgnoreDQ(parseline, value, delimiter, L",")) {
 			vm.logger().Error(E_W, 3, filename, i);
 			continue;
 		}
 		// 値をチェックして型を判定
 		int	type;
 
-		if (IsIntString(value)) {
+		if(IsIntString(value)) {
 			type = F_TAG_INT;
 		}
-		else if (IsDoubleButNotIntString(value)) {
+		else if(IsDoubleButNotIntString(value)) {
 			type = F_TAG_DOUBLE;
 		}
-		else if (!IsLegalStrLiteral(value)) {
+		else if(!IsLegalStrLiteral(value)) {
 			type = F_TAG_STRING;
 		}
 		else {
-			if (Find_IgnoreDQ(value,L":") == aya::string_t::npos) {
+			if(Find_IgnoreDQ(value,L":") == aya::string_t::npos) {
 				vm.logger().Error(E_W, 4, filename, i);
 				continue;
 			}
 			type = F_TAG_ARRAY;
 		}
 		// デリミタの正当性を検査
-		if (!delimiter.size()) {
+		if(!delimiter.size()) {
 			vm.logger().Error(E_W, 5, filename, i);
 			continue;
 		}
@@ -1057,21 +1057,21 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 		int	index = vm.variable().Make(varname, 0);
 		vm.variable().SetType(index, type);
 		
-		if (type == F_TAG_INT) {
+		if(type == F_TAG_INT) {
 			// 整数型
 			vm.variable().SetValue(index, aya::ws_atoi(value, 10));
 		}
-		else if (type == F_TAG_DOUBLE) {
+		else if(type == F_TAG_DOUBLE) {
 			// 実数型
 			vm.variable().SetValue(index, aya::ws_atof(value));
 		}
-		else if (type == F_TAG_STRING) {
+		else if(type == F_TAG_STRING) {
 			// 文字列型
 			CutDoubleQuote(value);
 			UnescapeString(value);
 			vm.variable().SetValue(index, value);
 		}
-		else if (type == F_TAG_ARRAY) {
+		else if(type == F_TAG_ARRAY) {
 			// 配列型
 			RestoreArrayVariable(*(vm.variable().GetValuePtr(index)), value);
 		}
@@ -1104,18 +1104,18 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 
 	for(; ;) {
 		splitResult = Split_IgnoreDQ(value, par, remain, L":");
-		if (!splitResult) {
+		if(!splitResult) {
 			par = value;
 		}
 
-		if (par.compare(ESC_IARRAY) != 0) {
-			if (!par.compare(ESC_IVOID)) {
+		if(par.compare(ESC_IARRAY) != 0) {
+			if(!par.compare(ESC_IVOID)) {
 				var.array().push_back(CValueSub());
 			}
-			else if (IsIntString(par)) {
+			else if(IsIntString(par)) {
 				var.array().push_back(CValueSub(aya::ws_atoi(par, 10)));
 			}
-			else if (IsDoubleButNotIntString(par)) {
+			else if(IsDoubleButNotIntString(par)) {
 				var.array().push_back(CValueSub(aya::ws_atof(par)));
 			}
 			else {
@@ -1125,7 +1125,7 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 			}
 		}
 
-		if (!splitResult) {
+		if(!splitResult) {
 			break;
 		}
 		value = remain;
@@ -1139,12 +1139,12 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
  */
 void	CBasis::ExecuteLoad(void)
 {
-	if (IsSuppress() || loadindex.IsNotFound()) {
+	if(IsSuppress() || loadindex.IsNotFound()) {
 		return;
 	}
 
 	int funcpos = loadindex.Find(vm,L"load");
-	if (funcpos < 0) {
+	if(funcpos < 0) {
 		return;
 	}
 
@@ -1170,7 +1170,7 @@ void	CBasis::ExecuteLoad(void)
 #if defined(WIN32) || defined(_WIN32_WCE)
 aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 {
-	if (IsSuppress() || requestindex.IsNotFound()) {
+	if(IsSuppress() || requestindex.IsNotFound()) {
 		GlobalFree(h);
 		h = NULL;
 		*len = 0;
@@ -1179,7 +1179,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	int funcpos = requestindex.Find(vm,L"request");
 
-	if (funcpos < 0) {
+	if(funcpos < 0) {
 		GlobalFree(h);
 		h = NULL;
 		*len = 0;
@@ -1193,7 +1193,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	// 第一引数（入力文字列）を作成　ここで文字コードをUCS-2へ変換
 	CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
 	wchar_t	*wistr = Ccct::MbcsToUcs2(istr, output_charset);
-	if (wistr != NULL) {
+	if(wistr != NULL) {
 		CValueSub	arg0 = wistr;
 		vm.logger().Io(0, arg0.s_value);
 		arg.array().push_back(arg0);
@@ -1214,7 +1214,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	aya::string_t	res = result.GetValueString();
 	vm.logger().Io(1, res);
 	char	*mostr = Ccct::Ucs2ToMbcs(res, output_charset);
-	if (mostr == NULL) {
+	if(mostr == NULL) {
 		// 文字コード変換失敗、NULLを返す
 		*len = 0;
 		GlobalFree(h);
@@ -1229,7 +1229,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	//ゼロ終端も含む……互換処理のため
 	HGLOBAL r_h = NULL;
-	if (oldlen >= copylen) {
+	if(oldlen >= copylen) {
 		r_h = h;
 	}
 	else {
@@ -1238,7 +1238,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 		r_h = ::GlobalAlloc(GMEM_FIXED,copylen);
 	}
 
-	if (r_h) {
+	if(r_h) {
 		memcpy(r_h, mostr, copylen);
 	}
 	free(mostr);
@@ -1248,7 +1248,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 #elif defined(POSIX)
 aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 {
-	if (IsSuppress() || requestindex.IsNotFound()) {
+	if(IsSuppress() || requestindex.IsNotFound()) {
 		free(h);
 		h = NULL;
 		*len = 0;
@@ -1257,7 +1257,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	int funcpos = requestindex.Find(vm,L"request");
 
-	if (funcpos < 0) {
+	if(funcpos < 0) {
 		free(h);
 		h = NULL;
 		*len = 0;
@@ -1270,7 +1270,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	CValue arg(F_TAG_ARRAY, 0/*dmy*/);
 	wchar_t *wistr = Ccct::MbcsToUcs2(istr, output_charset);
 	
-	if (wistr != NULL) {
+	if(wistr != NULL) {
 		CValueSub arg0 = wistr;
 		vm.logger().Io(0, arg0.s_value);
 		arg.array().push_back(arg0);
@@ -1294,7 +1294,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	vm.logger().Io(1, res);
 	char *mostr = Ccct::Ucs2ToMbcs(res, output_charset);
 
-	if (mostr == NULL) {
+	if(mostr == NULL) {
 		// 文字コード変換失敗、NULLを返す
 		*len = 0;
 		return NULL;
@@ -1317,12 +1317,12 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
  */
 void	CBasis::ExecuteUnload(void)
 {
-	if (IsSuppress() || unloadindex.IsNotFound()) {
+	if(IsSuppress() || unloadindex.IsNotFound()) {
 		return;
 	}
 
 	int funcpos = unloadindex.Find(vm,L"unload");
-	if (funcpos < 0) {
+	if(funcpos < 0) {
 		return;
 	}
 
@@ -1344,14 +1344,14 @@ void	CBasis::ExecuteUnload(void)
  */
 int CBasisFuncPos::Find(CAyaVM &vm,const aya::char_t *name)
 {
-	if (is_try_find) {
+	if(is_try_find) {
 		return pos_saved;
 	}
 
 	pos_saved = vm.function_exec().GetFunctionIndexFromName(name);
 	is_try_find = true;
 
-	if (pos_saved < 0) {
+	if(pos_saved < 0) {
 		vm.logger().Error(E_W, 32, name);
 	}
 

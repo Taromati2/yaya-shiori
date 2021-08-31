@@ -65,7 +65,7 @@ public:
 
 	//////////////////////////////////////////////
 	std::vector<CCell>::size_type cell_size(void) const {
-		if ( ! m_cell.get() ) {
+		if( ! m_cell.get() ) {
 			return 0;
 		}
 		else {
@@ -73,16 +73,16 @@ public:
 		}
 	}
 	const std::vector<CCell>& cell(void) const {
-		if ( ! m_cell.get() ) {
+		if( ! m_cell.get() ) {
 			m_cell.reset(new std::vector<CCell>);
 		}
 		return *m_cell;
 	}
 	std::vector<CCell>& cell(void) {
-		if ( ! m_cell.get() ) {
+		if( ! m_cell.get() ) {
 			m_cell.reset(new std::vector<CCell>);
 		}
-		else if ( m_cell.use_count() >= 2 ) {
+		else if( m_cell.use_count() >= 2 ) {
 			std::vector<CCell> *pV = m_cell.get();
 			m_cell.reset(new std::vector<CCell>(*pV));
 		}
@@ -90,7 +90,7 @@ public:
 	}
 	//////////////////////////////////////////////
 	std::vector<CSerial>::size_type serial_size(void) const {
-		if ( ! m_serial.get() ) {
+		if( ! m_serial.get() ) {
 			return 0;
 		}
 		else {
@@ -98,16 +98,16 @@ public:
 		}
 	}
 	const std::vector<CSerial>& serial(void) const {
-		if ( ! m_serial.get() ) {
+		if( ! m_serial.get() ) {
 			m_serial.reset(new std::vector<CSerial>);
 		}
 		return *m_serial;
 	}
 	std::vector<CSerial>& serial(void) {
-		if ( ! m_serial.get() ) {
+		if( ! m_serial.get() ) {
 			m_serial.reset(new std::vector<CSerial>);
 		}
-		else if ( m_serial.use_count() >= 2 ) {
+		else if( m_serial.use_count() >= 2 ) {
 			std::vector<CSerial> *pV = m_serial.get();
 			m_serial.reset(new std::vector<CSerial>(*pV));
 		}

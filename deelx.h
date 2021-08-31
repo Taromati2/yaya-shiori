@@ -1042,7 +1042,7 @@ public:
 public:
 	ElxInterface * m_pelx;
 	int m_ndata; // +0 : recursive to
-	             // -3 : named recursive
+				 // -3 : named recursive
 
 	CBufferT <CHART> m_szNamed;
 };

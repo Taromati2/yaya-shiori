@@ -73,7 +73,7 @@ void	CLocalVariable::AddDepth(void)
  */
 void	CLocalVariable::DelDepth(void)
 {
-	if (stack.size()) {
+	if(stack.size()) {
 		stack.erase(stack.end() - 1);
 		depth--;
 	}
@@ -154,8 +154,8 @@ void	CLocalVariable::GetIndex(const aya::char_t *name, int &id, int &dp)
 {
 	for(int i = stack.size() - 1; i >= 0; i--)
 		for(int j = stack[i].substack.size() - 1; j >= 0; j--)
-			if (!stack[i].substack[j].name.compare(name)) {
-				if (stack[i].substack[j].IsErased()) {
+			if(!stack[i].substack[j].name.compare(name)) {
+				if(stack[i].substack[j].IsErased()) {
 					id = -1;
 					dp = -1;
 				}
@@ -176,8 +176,8 @@ void	CLocalVariable::GetIndex(const aya::string_t &name, int &id, int &dp)
 {
 	for(int i = stack.size() - 1; i >= 0; i--)
 		for(int j = stack[i].substack.size() - 1; j >= 0; j--)
-			if (!stack[i].substack[j].name.compare(name)) {
-				if (stack[i].substack[j].IsErased()) {
+			if(!stack[i].substack[j].name.compare(name)) {
+				if(stack[i].substack[j].IsErased()) {
 					id = -1;
 					dp = -1;
 				}
@@ -204,7 +204,7 @@ const CValue& CLocalVariable::GetValue(const aya::char_t *name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return stack[dp].substack[id].value();
 
 	return emptyvalue;
@@ -216,7 +216,7 @@ const CValue& CLocalVariable::GetValue(const aya::string_t &name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return stack[dp].substack[id].value();
 
 	return emptyvalue;
@@ -234,7 +234,7 @@ CValue*	CLocalVariable::GetValuePtr(const aya::char_t *name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return &(stack[dp].substack[id].value());
 
 	return NULL;
@@ -246,7 +246,7 @@ CValue*	CLocalVariable::GetValuePtr(const aya::string_t &name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return &(stack[dp].substack[id].value());
 
 	return NULL;
@@ -259,7 +259,7 @@ CValue*	CLocalVariable::GetValuePtr(const aya::string_t &name)
  */
 int		CLocalVariable::GetNumber(int depth)
 {
-	if (depth < 0 || depth >= (int)stack.size()) {
+	if(depth < 0 || depth >= (int)stack.size()) {
 		return 0;
 	}
 	return stack[depth].substack.size();
@@ -272,10 +272,10 @@ int		CLocalVariable::GetNumber(int depth)
  */
 CVariable	*CLocalVariable::GetPtr(size_t depth,size_t index)
 {
-	if (depth >= stack.size()) {
+	if(depth >= stack.size()) {
 		return NULL;
 	}
-	if (index >= stack[depth].substack.size()) {
+	if(index >= stack[depth].substack.size()) {
 		return NULL;
 	}
 	return &(stack[depth].substack[index]);
@@ -290,7 +290,7 @@ aya::string_t	CLocalVariable::GetDelimiter(const aya::char_t *name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return stack[dp].substack[id].delimiter;
 
 	return aya::string_t(L"");
@@ -302,7 +302,7 @@ aya::string_t	CLocalVariable::GetDelimiter(const aya::string_t &name)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0)
+	if(id >= 0)
 		return stack[dp].substack[id].delimiter;
 
 	return aya::string_t(L"");
@@ -317,7 +317,7 @@ void	CLocalVariable::SetDelimiter(const aya::char_t *name, const aya::string_t &
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0) {
+	if(id >= 0) {
 		stack[dp].substack[id].delimiter = value;
 		return;
 	}
@@ -332,7 +332,7 @@ void	CLocalVariable::SetDelimiter(const aya::string_t &name, const aya::string_t
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0) {
+	if(id >= 0) {
 		stack[dp].substack[id].delimiter = value;
 		return;
 	}
@@ -350,7 +350,7 @@ void	CLocalVariable::SetValue(const aya::char_t *name, const CValue &value)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0) {
+	if(id >= 0) {
 		stack[dp].substack[id].value() = value;
 		return;
 	}
@@ -365,7 +365,7 @@ void	CLocalVariable::SetValue(const aya::string_t &name, const CValue &value)
 {
 	int	dp, id;
 	GetIndex(name, id, dp);
-	if (id >= 0) {
+	if(id >= 0) {
 		stack[dp].substack[id].value() = value;
 		return;
 	}
@@ -388,7 +388,7 @@ size_t	CLocalVariable::GetMacthedLongestNameLength(const aya::string_t &name)
 	for(aya::native_signed i = stack.size() - 1; i >= 0; i--)
 		for(aya::native_signed j = stack[i].substack.size() - 1; j >= 0; j--) {
 			size_t	len = stack[i].substack[j].name.size();
-			if (!stack[i].substack[j].IsErased() &&
+			if(!stack[i].substack[j].IsErased() &&
 				max_len < len &&
 				!name.compare(0,len,stack[i].substack[j].name,0,len))
 				max_len = len;
@@ -408,7 +408,7 @@ void	CLocalVariable::Erase(const aya::string_t &name)
 {
 	int	id, dp;
 	GetIndex(name, id, dp);
-	if (id >= 0) {
+	if(id >= 0) {
 		stack[dp].substack[id].Erase();
 	}
 }

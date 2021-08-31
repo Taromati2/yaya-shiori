@@ -122,7 +122,7 @@ void CAyaVM::request_after(void)
 -----------------------------------------------*/
 CFunctionDef& CAyaVM::function_parse()
 {
-	if ( m_function_parse.get() ) {
+	if( m_function_parse.get() ) {
 		return *m_function_parse.get();
 	}
 	function_exec();
@@ -188,7 +188,7 @@ void CAyaVM::genrand_sysfunc_srand_array(const unsigned long a[],const int n)
 
 #define FACTORY_DEFINE_THIS(classt,deft) \
 	classt & CAyaVM:: deft () { \
-		if ( m_ ## deft .get() == NULL ) { \
+		if( m_ ## deft .get() == NULL ) { \
 			m_ ## deft .reset(new classt (*this)); \
 		} \
 		return *(m_ ## deft .get()); \
@@ -196,7 +196,7 @@ void CAyaVM::genrand_sysfunc_srand_array(const unsigned long a[],const int n)
 
 #define FACTORY_DEFINE_PLAIN(classt,deft) \
 	classt & CAyaVM:: deft () { \
-		if ( m_ ## deft .get() == NULL ) { \
+		if( m_ ## deft .get() == NULL ) { \
 			m_ ## deft .reset(new classt); \
 		} \
 		return *(m_ ## deft .get()); \

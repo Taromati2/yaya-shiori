@@ -42,7 +42,7 @@
 */
 int	aya::ws_atoi(const aya::string_t &str, int base)
 {
-	if (!str.size())
+	if(!str.size())
 		return 0;
 	
 	wchar_t	*dmy;
@@ -56,7 +56,7 @@ int	aya::ws_atoi(const aya::string_t &str, int base)
 */
 double	aya::ws_atof(const aya::string_t &str)
 {
-	if (!str.size())
+	if(!str.size())
 		return 0.0;
 	
 	wchar_t	*dmy;
@@ -77,16 +77,16 @@ aya::string_t aya::ws_itoa(int num, int rdx)
 	
 	const aya::char_t convchars[] = L"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	
-	if ( rdx < 2 ) { rdx = 2; }
-	if ( rdx > 36 ) { rdx = 36; }
+	if( rdx < 2 ) { rdx = 2; }
+	if( rdx > 36 ) { rdx = 36; }
 	
 	bool minus = false;
-	if ( num < 0 ) {
+	if( num < 0 ) {
 		minus = true;
 		num = -num;
 	}
 	
-	if ( num == 0 ) {
+	if( num == 0 ) {
 		buf[offset] = L'0';
 		--offset;
 	}
@@ -100,7 +100,7 @@ aya::string_t aya::ws_itoa(int num, int rdx)
 		}
 	}
 	
-	if ( minus ) {
+	if( minus ) {
 		buf[offset] = '-';
 		--offset;
 	}
@@ -127,10 +127,10 @@ aya::string_t	aya::ws_ftoa(double num)
 */
 void	aya::ws_eraseend(aya::string_t &str,wchar_t c)
 {
-	if (!str.size())
+	if(!str.size())
 		return;
 	
-	if (str[str.size() - 1] == c)
+	if(str[str.size() - 1] == c)
 		str.erase(str.end() - 1);
 }
 
@@ -141,19 +141,19 @@ void	aya::ws_eraseend(aya::string_t &str,wchar_t c)
 */
 void	aya::ws_replace(aya::string_t &str, const wchar_t *before, const wchar_t *after, int count)
 {
-	if ( ! after ) { after = L""; }
+	if( ! after ) { after = L""; }
 
 	size_t sz_bef = wcslen(before);
 	size_t sz_aft = wcslen(after);
 
 	for(size_t rp_pos = 0; ; rp_pos += sz_aft) {
 		rp_pos = str.find(before, rp_pos);
-		if (rp_pos == aya::string_t::npos)
+		if(rp_pos == aya::string_t::npos)
 			break;
 		str.replace(rp_pos, sz_bef, after);
-		if ( count > 0 ) {
+		if( count > 0 ) {
 			count -= 1;
-			if ( count <= 0 ) { break; }
+			if( count <= 0 ) { break; }
 		}
 	}
 }
@@ -169,16 +169,16 @@ void	aya::ws_replace(aya::string_t &str, const wchar_t *before, const wchar_t *a
 FILE	*aya::w_fopen(const aya::char_t *fname, const aya::char_t *mode)
 {
 	FILE *fp;
-	if ( IsUnicodeAware() ) {
+	if( IsUnicodeAware() ) {
 		fp = _wfopen(fname,mode);
 	}
 	else {
 		// ファイル名とオープンモードををMBCSへ変換
 		char	*mfname = Ccct::Ucs2ToMbcs(fname, CHARSET_DEFAULT);
-		if (mfname == NULL)
+		if(mfname == NULL)
 			return NULL;
 		char	*mmode  = Ccct::Ucs2ToMbcs(mode,  CHARSET_DEFAULT);
-		if (mmode == NULL) {
+		if(mmode == NULL) {
 			free(mfname);
 			mfname = NULL;
 			return NULL;
@@ -251,15 +251,15 @@ int aya::ws_fgets(aya::string_t &str, FILE *stream, int charset, int ayc, int lc
 	buf.reserve(1000);
 	int c = 1;
 	
-	if (ayc) {
+	if(ayc) {
 		while (true) {
 			c = fgetc(stream);
-			if (c == EOF) {
+			if(c == EOF) {
 				break;
 			}
 			c = decodecipher(c);
 			buf += static_cast<char>(c);
-			if (c == '\x0a') {
+			if(c == '\x0a') {
 				// 行の終わり
 				break;
 			}
@@ -268,19 +268,19 @@ int aya::ws_fgets(aya::string_t &str, FILE *stream, int charset, int ayc, int lc
 	else {
 		while (true) {
 			c = fgetc(stream);
-			if (c == EOF) {
+			if(c == EOF) {
 				break;
 			}
 			buf += static_cast<char>(c);
-			if (c == '\x0a') {
+			if(c == '\x0a') {
 				// 行の終わり
 				break;
 			}
 		}
 	}
 
-	if ( lc == 1 && buf.length() >= 3 ) {
-		if ( static_cast<unsigned char>(buf[0]) == 0xEFU &&
+	if( lc == 1 && buf.length() >= 3 ) {
+		if( static_cast<unsigned char>(buf[0]) == 0xEFU &&
 			 static_cast<unsigned char>(buf[1]) == 0xBBU &&
 			 static_cast<unsigned char>(buf[2]) == 0xBFU ) { //UTF-8 bom
 			buf.erase(0,3);
@@ -288,10 +288,10 @@ int aya::ws_fgets(aya::string_t &str, FILE *stream, int charset, int ayc, int lc
 	}
 	
 	wchar_t *wstr_result = Ccct::MbcsToUcs2(buf, charset);
-	if ( ! wstr_result ) { return 0; }
+	if( ! wstr_result ) { return 0; }
 
 	wchar_t *wstr = wstr_result;
-	if (cutspace) {
+	if(cutspace) {
 		while (IsSpace(*wstr)) { ++wstr; }
 	}
 	str = wstr;
@@ -299,7 +299,7 @@ int aya::ws_fgets(aya::string_t &str, FILE *stream, int charset, int ayc, int lc
 	free(wstr_result);
 	wstr_result = NULL;
 	
-	if (c == EOF && str.empty()) {
+	if(c == EOF && str.empty()) {
 		return aya::WS_EOF;
 	}
 	else {
@@ -316,11 +316,11 @@ int aya::ws_fputs(const aya::char_t *str, FILE *stream, int charset, int ayc)
 {
 	//ayc = 1 復号化
 	char *str_result = Ccct::Ucs2ToMbcs(str, charset);
-	if ( ! str_result ) { return 0; }
+	if( ! str_result ) { return 0; }
 
 	int len = strlen(str_result);
 
-	if (ayc) {
+	if(ayc) {
 		char *resulttmp = str_result;
 		while ( *resulttmp ) {
 			*resulttmp = encodecipher(*resulttmp);

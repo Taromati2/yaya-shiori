@@ -44,10 +44,10 @@ int	CValue::GetValueInt(void) const
 		return i_value;
 	case F_TAG_DOUBLE:
 		{
-			if ( d_value > static_cast<double>(INT_MAX) ) {
+			if( d_value > static_cast<double>(INT_MAX) ) {
 				return INT_MAX;
 			}
-			else if ( d_value < static_cast<double>(INT_MIN) ) {
+			else if( d_value < static_cast<double>(INT_MIN) ) {
 				return INT_MIN;
 			}
 			else {
@@ -108,7 +108,7 @@ aya::string_t	CValue::GetValueString(void) const
 			aya::string_t	result;
 			for(CValueArray::const_iterator it = array().begin();
 				it != array().end(); it++) {
-				if (it != array().begin())
+				if(it != array().begin())
 					result += VAR_DELIMITER;
 				result += it->GetValueString();
 			}
@@ -146,10 +146,10 @@ aya::string_t	CValue::GetValueStringForLogging(void) const
 
 			for(CValueArray::const_iterator it = array().begin();
 				it != array().end(); it++) {
-				if (it != array().begin())
+				if(it != array().begin())
 					result += VAR_DELIMITER;
 				tmpstr = it->GetValueString();
-				if (it->GetType() == F_TAG_STRING)
+				if(it->GetType() == F_TAG_STRING)
 					AddDoubleQuote(tmpstr);
 				result += tmpstr;
 			}
@@ -175,24 +175,24 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 	int	aoflg = oval.DecodeArrayOrder(order, order1, delimiter);
 
 	// 値を更新する
-	if ( type == F_TAG_STRING ) {
+	if( type == F_TAG_STRING ) {
 		// 簡易配列
 		// 元の文字列をデリミタで分割
 		std::vector<aya::string_t>	s_array;
 		int	sz = SplitToMultiString(s_value, &s_array, delimiter);
 		// 更新
-		if (aoflg) {
+		if(aoflg) {
 			// 範囲つき
-			if (order1 < 0)
+			if(order1 < 0)
 				return;
-			else if (order < sz) {
+			else if(order < sz) {
 				int	s_index   = __GETMAX(order, 0);
 				int	e_index   = __GETMIN(order1 + 1, sz);
 
-				if ( value.GetType() == F_TAG_ARRAY ) {
+				if( value.GetType() == F_TAG_ARRAY ) {
 					std::vector<aya::string_t>::iterator it = s_array.erase(s_array.begin() + s_index,s_array.begin() + e_index);
 					
-					if ( ! value.array().empty() ) {
+					if( ! value.array().empty() ) {
 						for ( CValueArray::const_iterator ita = value.array().begin() ;
 							ita != value.array().end() ; ita++ ) {
 							it = s_array.insert(it,ita->GetValueString());
@@ -211,8 +211,8 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 					s_array.push_back(aya::string_t());
 				}
 	
-				if ( value.GetType() == F_TAG_ARRAY ) {
-					if ( ! value.array().empty() ) {
+				if( value.GetType() == F_TAG_ARRAY ) {
+					if( ! value.array().empty() ) {
 						for ( CValueArray::const_iterator ita = value.array().begin() ;
 							ita != value.array().end() ; ita++ ) {
 							s_array.push_back(ita->GetValueString());
@@ -226,13 +226,13 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 		}
 		else {
 			// 範囲なし
-			if (order < 0)
+			if(order < 0)
 				return;
-			else if (order < sz) {
-				if ( value.GetType() == F_TAG_ARRAY ) {
+			else if(order < sz) {
+				if( value.GetType() == F_TAG_ARRAY ) {
 					std::vector<aya::string_t>::iterator it = s_array.erase(s_array.begin() + order);
 					
-					if ( ! value.array().empty() ) {
+					if( ! value.array().empty() ) {
 						for ( CValueArray::const_iterator ita = value.array().begin() ;
 							ita != value.array().end() ; ita++ ) {
 							it = s_array.insert(it,ita->GetValueString());
@@ -250,8 +250,8 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 					s_array.push_back(aya::string_t());
 				}
 
-				if ( value.GetType() == F_TAG_ARRAY ) {
-					if ( ! value.array().empty() ) {
+				if( value.GetType() == F_TAG_ARRAY ) {
+					if( ! value.array().empty() ) {
 						for ( CValueArray::const_iterator ita = value.array().begin() ;
 							ita != value.array().end() ; ita++ ) {
 							s_array.push_back(ita->GetValueString());
@@ -265,7 +265,7 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 		}
 		// 文字列の復元
 		sz = s_array.size();
-		if (!sz)
+		if(!sz)
 			s_value = L"";
 		else {
 			s_value = s_array[0];
@@ -276,25 +276,25 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 	}
 	else {
 		// 汎用配列（もしくは未初期化）
-		if ( type != F_TAG_ARRAY ) {
+		if( type != F_TAG_ARRAY ) {
 			type = F_TAG_ARRAY;
 			array().clear();
 			array().push_back(CValueSub(*this));
 		}
 
-		if (aoflg) {
+		if(aoflg) {
 			int	sz = array_size();
 			// 範囲つき
-			if (order1 < 0)
+			if(order1 < 0)
 				return;
-			if (order < sz) {
+			if(order < sz) {
 				// 配列中途の書き換え
 				int	s_index   = __GETMAX(order, 0);
 				int	e_index   = __GETMIN(order1 + 1, sz);
 				
-				if ( value.GetType() == F_TAG_ARRAY ) {
+				if( value.GetType() == F_TAG_ARRAY ) {
 					CValueArray::iterator it = array().erase(array().begin() + s_index,array().begin() + e_index);
-					if ( ! value.array().empty() ) {
+					if( ! value.array().empty() ) {
 						array().insert(it, value.array().begin(), value.array().end());
 					}
 				}
@@ -310,8 +310,8 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 					array().push_back(CValueSub());
 				}
 				
-				if (value.GetType() == F_TAG_ARRAY) {
-					if ( ! value.array().empty() ) {
+				if(value.GetType() == F_TAG_ARRAY) {
+					if( ! value.array().empty() ) {
 						array().insert(array().end(),value.array().begin(), value.array().end());
 					}
 				}
@@ -322,13 +322,13 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 		}
 		else {
 			// 範囲なし
-			if (order < 0)
+			if(order < 0)
 				return;
-			if (order < static_cast<int>(array_size()) ) {
+			if(order < static_cast<int>(array_size()) ) {
 				// 配列中途の書き換え				
-				if (value.GetType() == F_TAG_ARRAY ) {
+				if(value.GetType() == F_TAG_ARRAY ) {
 					CValueArray::iterator it = array().erase(array().begin() + order);
-					if ( ! value.array().empty() ) {
+					if( ! value.array().empty() ) {
 						array().insert(it, value.array().begin(), value.array().end());
 					}
 				}
@@ -343,8 +343,8 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 					array().push_back(CValueSub());
 				}
 				
-				if (value.GetType() == F_TAG_ARRAY) {
-					if ( ! value.array().empty() ) {
+				if(value.GetType() == F_TAG_ARRAY) {
+					if( ! value.array().empty() ) {
 						array().insert(array().end(),value.array().begin(), value.array().end());
 					}
 				}
@@ -369,41 +369,41 @@ int	CValue::DecodeArrayOrder(int &order, int &order1, aya::string_t &delimiter) 
 	order1 = 0;
 	delimiter = VAR_DELIMITER;
 
-	if (type == F_TAG_ARRAY) {
+	if(type == F_TAG_ARRAY) {
 		int	sz = array_size();
-		if (sz) {
+		if(sz) {
 			// 要素0:序数
-			if (array()[0].GetType() == F_TAG_INT)
+			if(array()[0].GetType() == F_TAG_INT)
 				order = array()[0].i_value;
-			else if (array()[0].GetType() == F_TAG_DOUBLE)
+			else if(array()[0].GetType() == F_TAG_DOUBLE)
 				order = (int)floor(array()[0].d_value);
 			else
 				return 0;
-			if (sz == 1)
+			if(sz == 1)
 				return 0;
 			// 要素1:数値なら範囲指定、文字列ならデリミタ
 			switch(array()[1].GetType()) {
 			case F_TAG_INT:
 				order1  = array()[1].i_value;
-				if (order > order1)
+				if(order > order1)
 					exchange(order, order1);
 				break;
 			case F_TAG_DOUBLE:
 				order1  = (int)floor(array()[1].d_value);
-				if (order > order1)
+				if(order > order1)
 					exchange(order, order1);
 				break;
 			case F_TAG_STRING:
-				if (array()[1].s_value.size())
+				if(array()[1].s_value.size())
 					delimiter = array()[1].s_value;
 				return 0;
 			default:
 				return 0;
 			};
-			if (sz == 2)
+			if(sz == 2)
 				return 1;
 			// 要素2:要素1が範囲指定だった場合はデリミタ
-			if (array()[2].GetType() == F_TAG_STRING &&
+			if(array()[2].GetType() == F_TAG_STRING &&
 				array()[2].s_value.size())
 				delimiter = array()[2].s_value;
 			return 1;
@@ -519,7 +519,7 @@ CValue &CValue::operator =(const CValueSub &value)
 int CValue::CalcEscalationTypeNum(const int rhs) const
 {
 	int result = type > rhs ? type : rhs;
-	if ( result != F_TAG_STRING ) { return result; }
+	if( result != F_TAG_STRING ) { return result; }
 
 	switch ( type <= rhs ? type : rhs ) {
 	case F_TAG_VOID:
@@ -555,12 +555,12 @@ template<class Fn>
 CValue CValue_ArrayCalc(const CValue &param1_left,const CValue &param2_right,Fn calc_fn)
 {
 	CValue result;
-	if (param1_left.GetType() == F_TAG_ARRAY && param2_right.GetType() == F_TAG_ARRAY) {
-		if ( param1_left.array_size() == 0 ) {
+	if(param1_left.GetType() == F_TAG_ARRAY && param2_right.GetType() == F_TAG_ARRAY) {
+		if( param1_left.array_size() == 0 ) {
 			return param2_right;
 		}
 		else {
-			if ( param2_right.array_size() == 0 ) {
+			if( param2_right.array_size() == 0 ) {
 				return param1_left;
 			}
 			else {
@@ -574,8 +574,8 @@ CValue CValue_ArrayCalc(const CValue &param1_left,const CValue &param2_right,Fn 
 			}
 		}
 	}
-	else if (param1_left.GetType() == F_TAG_ARRAY) {
-		if ( param1_left.array_size() == 0 ) {
+	else if(param1_left.GetType() == F_TAG_ARRAY) {
+		if( param1_left.array_size() == 0 ) {
 			return param2_right;
 		}
 		else {
@@ -586,8 +586,8 @@ CValue CValue_ArrayCalc(const CValue &param1_left,const CValue &param2_right,Fn 
 			}
 		}
 	}
-	else if (param2_right.GetType() == F_TAG_ARRAY) {
-		if ( param2_right.array_size() == 0 ) {
+	else if(param2_right.GetType() == F_TAG_ARRAY) {
+		if( param2_right.array_size() == 0 ) {
 			return param1_left;
 		}
 		else {
@@ -606,13 +606,13 @@ void CValue_ArrayCalc_Subst(CValue &param1_subst,const CValue &param2_right,Fn c
 {
 	CValue result;
 
-	if (param1_subst.GetType() == F_TAG_ARRAY && param2_right.GetType() == F_TAG_ARRAY) {
-		if ( param1_subst.array_size() == 0 ) { //演算対象がない
+	if(param1_subst.GetType() == F_TAG_ARRAY && param2_right.GetType() == F_TAG_ARRAY) {
+		if( param1_subst.array_size() == 0 ) { //演算対象がない
 			param1_subst = param2_right;
 			return;
 		}
 		else {
-			if ( param2_right.array_size() == 0 ) { //演算相手がない
+			if( param2_right.array_size() == 0 ) { //演算相手がない
 				return;
 			}
 			else {
@@ -627,8 +627,8 @@ void CValue_ArrayCalc_Subst(CValue &param1_subst,const CValue &param2_right,Fn c
 			}
 		}
 	}
-	else if (param1_subst.GetType() == F_TAG_ARRAY) {
-		if ( param1_subst.array_size() == 0 ) { //演算対象がない
+	else if(param1_subst.GetType() == F_TAG_ARRAY) {
+		if( param1_subst.array_size() == 0 ) { //演算対象がない
 			param1_subst = param2_right;
 			return;
 		}
@@ -640,8 +640,8 @@ void CValue_ArrayCalc_Subst(CValue &param1_subst,const CValue &param2_right,Fn c
 			}
 		}
 	}
-	else if (param2_right.GetType() == F_TAG_ARRAY) {
-		if ( param2_right.array_size() == 0 ) { //演算対象がない
+	else if(param2_right.GetType() == F_TAG_ARRAY) {
+		if( param2_right.array_size() == 0 ) { //演算対象がない
 			return;
 		}
 		else {
@@ -749,21 +749,21 @@ CValue CValue::operator +(const CValue &value) const
 void CValue::operator +=(const CValue &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t == type ) { //左辺(自身)の型と同じ場合に限り
-		if ( t == F_TAG_INT ) {
+	if( t == type ) { //左辺(自身)の型と同じ場合に限り
+		if( t == F_TAG_INT ) {
 			i_value += value.GetValueInt();
 			return;
 		}
-		if ( t == F_TAG_DOUBLE ) {
+		if( t == F_TAG_DOUBLE ) {
 			d_value += value.GetValueDouble();
 			return;
 		}
-		if ( t == F_TAG_STRING ) { //文字列時用パフォーマンス向上コード 長い文字列結合時にだいぶマシに
+		if( t == F_TAG_STRING ) { //文字列時用パフォーマンス向上コード 長い文字列結合時にだいぶマシに
 			s_value += value.GetValueString();
 			return;
 		}
-		if ( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
-			if ( type == F_TAG_ARRAY ) {
+		if( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
+			if( type == F_TAG_ARRAY ) {
 				CValue_ArrayCalc_Subst(*this,value,CValueSub_Add_Subst());
 				return;
 			}
@@ -795,16 +795,16 @@ CValue CValue::operator -(const CValue &value) const
 void CValue::operator -=(const CValue &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t == type ) { //左辺(自身)の型と同じ場合に限り
-		if ( t == F_TAG_INT ) {
+	if( t == type ) { //左辺(自身)の型と同じ場合に限り
+		if( t == F_TAG_INT ) {
 			i_value -= value.GetValueInt();
 			return;
 		}
-		if ( t == F_TAG_DOUBLE ) {
+		if( t == F_TAG_DOUBLE ) {
 			d_value -= value.GetValueDouble();
 			return;
 		}
-		if ( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
+		if( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
 			CValue_ArrayCalc_Subst(*this,value,CValueSub_Sub_Subst());
 			return;
 		}
@@ -835,8 +835,8 @@ CValue CValue::operator *(const CValue &value) const
 void CValue::operator *=(const CValue &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t == type ) { //左辺(自身)の型と同じ場合に限り
-		if ( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
+	if( t == type ) { //左辺(自身)の型と同じ場合に限り
+		if( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
 			CValue_ArrayCalc_Subst(*this,value,CValueSub_Mul_Subst());
 			return;
 		}
@@ -856,7 +856,7 @@ CValue CValue::operator /(const CValue &value) const
 	case F_TAG_INT:
 		{
 			int denom = value.GetValueInt();
-			if ( denom ) {
+			if( denom ) {
 				return CValue(GetValueInt() / denom);
 			}
 			else {
@@ -866,7 +866,7 @@ CValue CValue::operator /(const CValue &value) const
 	case F_TAG_DOUBLE:
 		{
 			double denom = value.GetValueDouble();
-			if ( denom ) {
+			if( denom ) {
 				return CValue(GetValueDouble() / denom);
 			}
 			else {
@@ -883,8 +883,8 @@ CValue CValue::operator /(const CValue &value) const
 void CValue::operator /=(const CValue &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t == type ) { //左辺(自身)の型と同じ場合に限り
-		if ( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
+	if( t == type ) { //左辺(自身)の型と同じ場合に限り
+		if( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
 			CValue_ArrayCalc_Subst(*this,value,CValueSub_Div_Subst());
 			return;
 		}
@@ -905,7 +905,7 @@ CValue CValue::operator %(const CValue &value) const
 	case F_TAG_DOUBLE:
 		{
 			int denom = value.GetValueInt();
-			if ( denom ) {
+			if( denom ) {
 				return CValue(GetValueInt() % denom);
 			}
 			else {
@@ -922,8 +922,8 @@ CValue CValue::operator %(const CValue &value) const
 void CValue::operator %=(const CValue &value)
 {
 	int t = CalcEscalationTypeStr(value.type);
-	if ( t == type ) { //左辺(自身)の型と同じ場合に限り
-		if ( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
+	if( t == type ) { //左辺(自身)の型と同じ場合に限り
+		if( t == F_TAG_ARRAY ) { //配列時用パフォーマンス向上コード
 			CValue_ArrayCalc_Subst(*this,value,CValueSub_Mod_Subst());
 			return;
 		}
@@ -949,23 +949,23 @@ CValue CValue::operator [](const CValue &value) const
 	aya::string_t	delimiter;
 	int	aoflg = value.DecodeArrayOrder(order, order1, delimiter);
 
-	if (type == F_TAG_INT || type == F_TAG_DOUBLE) {
+	if(type == F_TAG_INT || type == F_TAG_DOUBLE) {
 		// 数値　序数が0ならthis、1以外では空文字列を返す
-		if (!order)
+		if(!order)
 			return *this;
 		else
 			return CValue();
 	}
-	if (type == F_TAG_STRING) {
+	if(type == F_TAG_STRING) {
 		// 簡易配列
 
 		// 文字列をデリミタで分割
 		std::vector<aya::string_t>	s_array;
 		int	sz = SplitToMultiString(s_value, &s_array, delimiter);
 		// 値の取得
-		if (aoflg) {
+		if(aoflg) {
 			// 範囲あり
-			if (order1 < 0 || order >= sz)
+			if(order1 < 0 || order >= sz)
 				return CValue();
 			else {
 				int	s_index   = __GETMAX(order, 0);
@@ -975,13 +975,13 @@ CValue CValue::operator [](const CValue &value) const
 				aya::string_t	result_str;
 				for(std::vector<aya::string_t>::iterator it = s_array.begin();
 					it != s_array.end(); it++, i++) {
-					if (s_index <= i && i < e_index) {
-						if (j)
+					if(s_index <= i && i < e_index) {
+						if(j)
 							result_str += delimiter;
 						j = 1;
 						result_str += *it;
 					}
-					else if (i >= e_index)
+					else if(i >= e_index)
 						break;
 				}
 				return result_str;
@@ -989,20 +989,20 @@ CValue CValue::operator [](const CValue &value) const
 		}
 		else {
 			// 範囲なし
-			if (0 <= order && order < sz)
+			if(0 <= order && order < sz)
 				return CValue(s_array[order]);
 			else 
 				return CValue();
 		}
 	}
-	else if (type == F_TAG_ARRAY) {
+	else if(type == F_TAG_ARRAY) {
 		// 汎用配列
 
 		int	sz = array_size();
 		// 値の取得
-		if (aoflg) {
+		if(aoflg) {
 			// 範囲あり
-			if (order1 < 0 || order >= sz)
+			if(order1 < 0 || order >= sz)
 				return CValue(F_TAG_ARRAY, 0/*dmy*/);
 			else {
 				int	s_index   = __GETMAX(order, 0);
@@ -1011,9 +1011,9 @@ CValue CValue::operator [](const CValue &value) const
 				CValue	result_array(F_TAG_ARRAY, 0/*dmy*/);
 				for(CValueArray::const_iterator it = array().begin();
 					it != array().end(); it++, i++) {
-					if (s_index <= i && i < e_index)
+					if(s_index <= i && i < e_index)
 						result_array.array().push_back(*it);
-					else if (i >= e_index)
+					else if(i >= e_index)
 						break;
 				}
 				return result_array;
@@ -1021,7 +1021,7 @@ CValue CValue::operator [](const CValue &value) const
 		}
 		else {
 			// 範囲なし
-			if (0 <= order && order < sz) {
+			if(0 <= order && order < sz) {
 				return CValue(array()[order]);
 			}
 			else {
@@ -1051,9 +1051,9 @@ int CValue::Compare(const CValue &value) const
 	case F_TAG_STRING:
 		return GetValueString() == value.GetValueString();
 	case F_TAG_ARRAY: {
-			if (value.type == F_TAG_ARRAY) {
+			if(value.type == F_TAG_ARRAY) {
 				size_t	len = array_size();
-				if (len != value.array_size())
+				if(len != value.array_size())
 					return 0;
 				else {
 					CValueArray::const_iterator it, it2;
@@ -1081,13 +1081,13 @@ int CValue::Great(const CValue &value) const
 {
 	int t = CalcEscalationTypeStr(value.type);
 
-	if (t == F_TAG_INT) {
+	if(t == F_TAG_INT) {
 		return GetValueInt() > value.GetValueInt();
 	}
-	else if (t == F_TAG_DOUBLE) {
+	else if(t == F_TAG_DOUBLE) {
 		return GetValueDouble() > value.GetValueDouble();
 	}
-	else if (t == F_TAG_STRING) {
+	else if(t == F_TAG_STRING) {
 		return GetValueString() > value.GetValueString();
 	}
 	return 0;
@@ -1102,13 +1102,13 @@ int CValue::Less(const CValue &value) const
 {
 	int t = CalcEscalationTypeStr(value.type);
 
-	if (t == F_TAG_INT) {
+	if(t == F_TAG_INT) {
 		return GetValueInt() < value.GetValueInt();
 	}
-	else if (t == F_TAG_DOUBLE) {
+	else if(t == F_TAG_DOUBLE) {
 		return GetValueDouble() < value.GetValueDouble();
 	}
-	else if (t == F_TAG_STRING) {
+	else if(t == F_TAG_STRING) {
 		return GetValueString() < value.GetValueString();
 	}
 	return 0;

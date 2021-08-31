@@ -42,7 +42,7 @@
 char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
 {
 	aya::string_t::size_type seppoint = str.find(sepstr);
-	if (seppoint == aya::string_t::npos) {
+	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
 		dstr1 = L"";
 		return 0;
@@ -63,7 +63,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr)
 {
 	aya::string_t::size_type seppoint = str.find(sepstr);
-	if (seppoint == aya::string_t::npos) {
+	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
 		dstr1 = L"";
 		return 0;
@@ -89,7 +89,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 char	SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
 {
 	aya::string_t::size_type seppoint = str.find(sepstr);
-	if (seppoint == aya::string_t::npos) {
+	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
 		dstr1 = L"";
 		return 0;
@@ -116,12 +116,12 @@ aya::string_t::size_type Find_IgnoreDQ(const aya::string_t &str, const aya::char
 
 	while(true){
 		findpoint = str.find(findstr, findpoint);
-		if (findpoint == aya::string_t::npos)
+		if(findpoint == aya::string_t::npos)
 			return aya::string_t::npos;
 
 		nextdq = IsInDQ(str, nextdq, findpoint);
-		if (nextdq >= IsInDQ_npos) {
-			if (nextdq == IsInDQ_runaway) { //クオートが終わらないまま終了
+		if(nextdq >= IsInDQ_npos) {
+			if(nextdq == IsInDQ_runaway) { //クオートが終わらないまま終了
 				return aya::string_t::npos;
 			}
 			break; //みつかった
@@ -175,7 +175,7 @@ aya::string_t::size_type find_last_str(const aya::string_t &str, const aya::stri
 char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
 {
 	aya::string_t::size_type seppoint = Find_IgnoreDQ(str,sepstr);
-	if ( seppoint == aya::string_t::npos ) {
+	if( seppoint == aya::string_t::npos ) {
 		dstr0 = str;
 		dstr1 = L"";
 		return 0;
@@ -207,7 +207,7 @@ char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_
  */
 int	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter)
 {
-	if (!str.size())
+	if(!str.size())
 		return 0;
 
 	const aya::string_t::size_type dlmlen = delimiter.size();
@@ -217,14 +217,14 @@ int	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *arr
 	for( ; ; ) {
 		// デリミタの発見
 		seppoint = str.find(delimiter,beforepoint);
-		if (seppoint == aya::string_t::npos) {
-			if ( array ) {
+		if(seppoint == aya::string_t::npos) {
+			if( array ) {
 				array->push_back(aya::string_t(str.begin()+beforepoint,str.end()));
 			}
 			break;
 		}
 		// 取り出しとvectorへの追加
-		if ( array ) {
+		if( array ) {
 			array->push_back(aya::string_t(str.begin()+beforepoint,str.begin()+seppoint));
 		}
 		// 取り出した分を削除
@@ -252,14 +252,14 @@ void	CutStartSpace(aya::string_t &str)
 	// 前方
 	int	erasenum = 0;
 	for(int i = 0; i < len; i++) {
-		if (IsSpace(str[i])) {
+		if(IsSpace(str[i])) {
 			erasenum++;
 		}
 		else {
 			break;
 		}
 	}
-	if (erasenum) {
+	if(erasenum) {
 		str.erase(0, erasenum);
 	}
 }
@@ -270,14 +270,14 @@ void	CutEndSpace(aya::string_t &str)
 	// 後方
 	int erasenum = 0;
 	for(int i = len - 1; i >= 0; i--) {
-		if (IsSpace(str[i])) {
+		if(IsSpace(str[i])) {
 			erasenum++;
 		}
 		else {
 			break;
 		}
 	}
-	if (erasenum) {
+	if(erasenum) {
 		str.erase(len - erasenum, erasenum);
 	}
 }
@@ -291,23 +291,23 @@ void	CutEndSpace(aya::string_t &str)
  */
 void	UnescapeSpecialString(aya::string_t &str)
 {
-	if ( str.size() <= 1 ) {
+	if( str.size() <= 1 ) {
 		return;
 	}
 
 	size_t len = str.size()-1; //1文字手前まで
 	for ( size_t i = 0 ; i < len ; ++i ) {
-		if ( str[i] == 0xFFFFU ) {
-			if ( str[i+1] == 0x0001U ) {
+		if( str[i] == 0xFFFFU ) {
+			if( str[i+1] == 0x0001U ) {
 				str[i]   = L'\r';
 				str[i+1] = L'\n';
 			}
-			else if ( str[i+1] == 0x0002U ) {
+			else if( str[i+1] == 0x0002U ) {
 				str.erase(i, 1);
 				str[i] = L'"';
 				len -= 1;
 			}
-			else if ( str[i+1] == 0x0003U ) {
+			else if( str[i+1] == 0x0003U ) {
 				str.erase(i, 1);
 				str[i] = L'\'';
 				len -= 1;
@@ -324,17 +324,17 @@ void	UnescapeSpecialString(aya::string_t &str)
 void	CutDoubleQuote(aya::string_t &str)
 {
 	size_t len = str.size();
-	if (!len)
+	if(!len)
 		return;
 	// 前方
-	if (str[0] == L'\"') {
+	if(str[0] == L'\"') {
 		str.erase(0, 1);
 		len--;
-		if (!len)
+		if(!len)
 			return;
 	}
 	// 後方
-	if (str[len - 1] == L'\"')
+	if(str[len - 1] == L'\"')
 		str.erase(len - 1, 1);
 }
 
@@ -346,17 +346,17 @@ void	CutDoubleQuote(aya::string_t &str)
 void	CutSingleQuote(aya::string_t &str)
 {
 	size_t len = str.size();
-	if (!len)
+	if(!len)
 		return;
 	// 前方
-	if (str[0] == L'\'') {
+	if(str[0] == L'\'') {
 		str.erase(0, 1);
 		len--;
-		if (!len)
+		if(!len)
 			return;
 	}
 	// 後方
-	if (str[len - 1] == L'\'')
+	if(str[len - 1] == L'\'')
 		str.erase(len - 1, 1);
 }
 
@@ -389,20 +389,20 @@ void	CutCrLf(aya::string_t &str)
 
 aya::string_t GetDateString()
 {
-    char buf[128];
-    time_t t = time(NULL);
-    struct tm* tm = localtime(&t);
-    strftime(buf, 127, "%Y/%m/%d %H:%M:%S", tm);
+	char buf[128];
+	time_t t = time(NULL);
+	struct tm* tm = localtime(&t);
+	strftime(buf, 127, "%Y/%m/%d %H:%M:%S", tm);
 
 #if !defined(POSIX) && !defined(__MINGW32__)
 	aya::char_t wbuf[64];
 	for ( size_t i = 0 ; i < 64 ; ++i ) {
 		wbuf[i] = buf[i];
-		if ( wbuf[i] == 0 ) { break; }
+		if( wbuf[i] == 0 ) { break; }
 	}
 	return wbuf;
 #else
-    return widen(std::string(buf));
+	return widen(std::string(buf));
 #endif
 }
 
@@ -429,34 +429,34 @@ aya::string_t::size_type IsInDQ(const aya::string_t &str, aya::string_t::size_ty
 	aya::string_t::size_type found  = startpoint;
 
 	while(true) {
-		if (found >= len) {
+		if(found >= len) {
 			found = IsInDQ_runaway;
 			break;
 		}
 		
 		found = str.find_first_of(L"'\"",found);
-		if (found == aya::string_t::npos) {
+		if(found == aya::string_t::npos) {
 			found = IsInDQ_runaway;
 			break;
 		}
 		else {
-			if (found >= checkpoint) {
-				if ( (dq && str[found] == L'\"') || (quote && str[found] == L'\'') ) {
+			if(found >= checkpoint) {
+				if( (dq && str[found] == L'\"') || (quote && str[found] == L'\'') ) {
 					found += 1;
 					break;
 				}
-				if ( ! dq && ! quote ) {
+				if( ! dq && ! quote ) {
 					break;
 				}
 			}
 
-			if (str[found] == L'\"') {
-				if (!quote) {
+			if(str[found] == L'\"') {
+				if(!quote) {
 					dq = !dq;
 				}
 			}
-			else if (str[found] == L'\'') {
-				if (!dq ) {
+			else if(str[found] == L'\'') {
+				if(!dq ) {
 					quote = !quote;
 				}
 			}
@@ -465,7 +465,7 @@ aya::string_t::size_type IsInDQ(const aya::string_t &str, aya::string_t::size_ty
 		}
 	}
 
-	if ( dq || quote ) {
+	if( dq || quote ) {
 		return found;
 	}
 	else {
@@ -484,7 +484,7 @@ aya::string_t::size_type IsInDQ(const aya::string_t &str, aya::string_t::size_ty
 char	IsDoubleButNotIntString(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 0;
 
 	int	advance = (str[0] == L'-' || str[0] == L'+') ? 1 : 0;
@@ -492,9 +492,9 @@ char	IsDoubleButNotIntString(const aya::string_t &str)
 
 	int	dotcount = 0;
 	for( ; i < len; i++) {
-//		if (!::iswdigit((int)str[i])) {
-		if (str[i] < L'0' || str[i] > L'9') {
-			if (str[i] == L'.') {
+//		if(!::iswdigit((int)str[i])) {
+		if(str[i] < L'0' || str[i] > L'9') {
+			if(str[i] == L'.') {
 				dotcount++;
 			}
 			else {
@@ -516,7 +516,7 @@ char	IsDoubleButNotIntString(const aya::string_t &str)
 char	IsIntString(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 0;
 
 	int	advance = (str[0] == L'-' || str[0] == L'+') ? 1 : 0;
@@ -524,17 +524,17 @@ char	IsIntString(const aya::string_t &str)
 
 	//32bit
 	//2147483647
-	if ( (len-i) > 10 ) { return 0; }
+	if( (len-i) > 10 ) { return 0; }
 
 	for( ; i < len; i++) {
-//		if (!::iswdigit((int)str[i]))
-		if (str[i] < L'0' || str[i] > L'9') {
+//		if(!::iswdigit((int)str[i]))
+		if(str[i] < L'0' || str[i] > L'9') {
 			return 0;
 		}
 	}
 
-	if ( (len-advance) == 10 ) {
-		if ( wcscmp(str.c_str(),L"2147483647") > 0 ) {
+	if( (len-advance) == 10 ) {
+		if( wcscmp(str.c_str(),L"2147483647") > 0 ) {
 			return 0; //Overflow
 		}
 	}
@@ -553,24 +553,24 @@ char	IsIntString(const aya::string_t &str)
 char	IsIntBinString(const aya::string_t &str, char header)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 0;
 
 	int	advance = (str[0] == L'-' || str[0] == L'+') ? 1 : 0;
 	int i = advance;
 
-	if (header) {
-		if (::wcsncmp(PREFIX_BIN, str.c_str() + i,PREFIX_BASE_LEN))
+	if(header) {
+		if(::wcsncmp(PREFIX_BIN, str.c_str() + i,PREFIX_BASE_LEN))
 			return 0;
 		i += PREFIX_BASE_LEN;
 	}
 
 	//32bit
-	if ( (len-i) > 32 ) { return 0; }
+	if( (len-i) > 32 ) { return 0; }
 	
 	for( ; i < len; i++) {
 		aya::char_t	j = str[i];
-		if (j != L'0' && j != L'1')
+		if(j != L'0' && j != L'1')
 			return 0;
 	}
 
@@ -587,29 +587,29 @@ char	IsIntBinString(const aya::string_t &str, char header)
 char	IsIntHexString(const aya::string_t &str, char header)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 0;
 
 	int	advance = (str[0] == L'-' || str[0] == L'+') ? 1 : 0;
 	int i = advance;
 
-	if (header) {
-		if (::wcsncmp(PREFIX_HEX, str.c_str() + i,PREFIX_BASE_LEN))
+	if(header) {
+		if(::wcsncmp(PREFIX_HEX, str.c_str() + i,PREFIX_BASE_LEN))
 			return 0;
 		i += PREFIX_BASE_LEN;
 	}
 
 	//32bit
 	//7fffffff
-	if ( (len-i) > 8 ) { return 0; }
+	if( (len-i) > 8 ) { return 0; }
 
 	for( ; i < len; i++) {
 		aya::char_t	j = str[i];
-		if (j >= L'0' && j <= L'9')
+		if(j >= L'0' && j <= L'9')
 			continue;
-		else if (j >= L'a' && j <= L'f')
+		else if(j >= L'a' && j <= L'f')
 			continue;
-		else if (j >= L'A' && j <= L'F')
+		else if(j >= L'A' && j <= L'F')
 			continue;
 
 		return 0;
@@ -631,21 +631,21 @@ char	IsIntHexString(const aya::string_t &str, char header)
 char	IsLegalFunctionName(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 1;
 
-	if (IsIntString(str))
+	if(IsIntString(str))
 		return 2;
 
-//	if (::iswdigit(str[0]) || str[0] == L'_')
-//	if ((str[0] >= L'0' && str[0] <= L'9') || str[0] == L'_') //チェックする必要はなさそう
+//	if(::iswdigit(str[0]) || str[0] == L'_')
+//	if((str[0] >= L'0' && str[0] <= L'9') || str[0] == L'_') //チェックする必要はなさそう
 //		return 3;
-	if (str[0] == L'_') //頭がアンダースコアは蹴らないとローカル変数とカブる
+	if(str[0] == L'_') //頭がアンダースコアは蹴らないとローカル変数とカブる
 		return 3;
 
 	for(int i = 0; i < len; i++) {
 		aya::char_t	c = str[i];
-		if ((c >= (aya::char_t)0x0000 && c <= (aya::char_t)0x0026) ||
+		if((c >= (aya::char_t)0x0000 && c <= (aya::char_t)0x0026) ||
 			(c >= (aya::char_t)0x0028 && c <= (aya::char_t)0x002d) ||
 			 c == (aya::char_t)0x002f ||
 			(c >= (aya::char_t)0x003a && c <= (aya::char_t)0x0040) ||
@@ -657,16 +657,16 @@ char	IsLegalFunctionName(const aya::string_t &str)
 	}
 
 	int sysidx = CSystemFunction::FindIndex(str);
-	if ( sysidx >= 0 ) { return 5; }
+	if( sysidx >= 0 ) { return 5; }
 
 	for(size_t i= 0; i < FLOWCOM_NUM; i++) {
-		if (!str.compare(flowcom[i])) {
+		if(!str.compare(flowcom[i])) {
 			return 6;
 		}
 	}
 	for(size_t i= 0; i < FORMULATAG_NUM; i++) {
-//		if (!str.compare(formulatag[i]))
-		if (str.find(formulatag[i]) != aya::string_t::npos) {
+//		if(!str.compare(formulatag[i]))
+		if(str.find(formulatag[i]) != aya::string_t::npos) {
 			return 6;
 		}
 	}
@@ -687,19 +687,19 @@ char	IsLegalFunctionName(const aya::string_t &str)
 char	IsLegalVariableName(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 1;
 
-	if (IsIntString(str))
+	if(IsIntString(str))
 		return 2;
 
-//	if (::iswdigit((int)str[0]))
-//	if (str[0] >= L'0' && str[0] <= L'9') //チェックする必要はなさそう
+//	if(::iswdigit((int)str[0]))
+//	if(str[0] >= L'0' && str[0] <= L'9') //チェックする必要はなさそう
 //		return 3;
 
 	for(int i = 0; i < len; i++) {
 		aya::char_t	c = str[i];
-		if ((c >= (aya::char_t)0x0000  && c <= (aya::char_t)0x0026) ||
+		if((c >= (aya::char_t)0x0000  && c <= (aya::char_t)0x0026) ||
 			(c >= (aya::char_t)0x0028  && c <= (aya::char_t)0x002d) ||
 			 c == (aya::char_t)0x002f ||
 			(c >= (aya::char_t)0x003a && c <= (aya::char_t)0x0040) ||
@@ -711,16 +711,16 @@ char	IsLegalVariableName(const aya::string_t &str)
 	}
 
 	int sysidx = CSystemFunction::FindIndex(str);
-	if ( sysidx >= 0 ) { return 5; }
+	if( sysidx >= 0 ) { return 5; }
 
 	for(size_t i= 0; i < FLOWCOM_NUM; i++) {
-		if (!str.compare(flowcom[i])) {
+		if(!str.compare(flowcom[i])) {
 			return 6;
 		}
 	}
 	for(size_t i= 0; i < FORMULATAG_NUM; i++) {
-//		if (!str.compare(formulatag[i]))
-		if (str.find(formulatag[i]) != aya::string_t::npos) {
+//		if(!str.compare(formulatag[i]))
+		if(str.find(formulatag[i]) != aya::string_t::npos) {
 			return 6;
 		}
 	}
@@ -740,20 +740,20 @@ char	IsLegalVariableName(const aya::string_t &str)
 char	IsLegalStrLiteral(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 3;
 
 	// 先頭のダブルクォートチェック
 	int	flg = (str[0] == L'\"') ? 1 : 0;
 	// 後端のダブルクォートチェック
-	if (len > 1)
-		if (str[len - 1] == L'\"')
+	if(len > 1)
+		if(str[len - 1] == L'\"')
 			flg += 2;
 	// 内包されているダブルクォートの探索
-	if (len > 2) {
+	if(len > 2) {
 		int	lenm1 = len - 1;
 		for(int i = 1; i < lenm1; i++)
-			if (str[i] == L'\"') {
+			if(str[i] == L'\"') {
 				flg = 4;
 				break;
 			}
@@ -787,20 +787,20 @@ char	IsLegalStrLiteral(const aya::string_t &str)
 char	IsLegalPlainStrLiteral(const aya::string_t &str)
 {
 	int	len = str.size();
-	if (!len)
+	if(!len)
 		return 3;
 
 	// 先頭のシングルクォートチェック
 	int	flg = (str[0] == L'\'') ? 1 : 0;
 	// 後端のシングルクォートチェック
-	if (len > 1)
-		if (str[len - 1] == L'\'')
+	if(len > 1)
+		if(str[len - 1] == L'\'')
 			flg += 2;
 	// 内包されているシングルクォートの探索
-	if (len > 2) {
+	if(len > 2) {
 		int	lenm1 = len - 1;
 		for(int i = 1; i < lenm1; i++)
-			if (str[i] == L'\'') {
+			if(str[i] == L'\'') {
 				flg = 4;
 				break;
 			}
@@ -866,7 +866,7 @@ void	EscapeString(aya::string_t &wstr)
 	aya::ws_replace(wstr, L"\"", ESC_DQ);
 
 	for ( size_t i = 0 ; i < wstr.length() ; ++i ) {
-		if ( wstr[i] <= END_OF_CTRL_CH ) {
+		if( wstr[i] <= END_OF_CTRL_CH ) {
 			aya::string_t replace_text(ESC_CTRL);
 			replace_text += (aya::char_t)(wstr[i] + CTRL_CH_START);
 
@@ -892,12 +892,12 @@ void	UnescapeString(aya::string_t &wstr)
 
 	while(true) {
 		found = wstr.find(ESC_CTRL,found);
-		if ( found == aya::string_t::npos ) {
+		if( found == aya::string_t::npos ) {
 			break;
 		}
 
 		ch = wstr[found + len];
-		if ( ch > CTRL_CH_START && ch <= (CTRL_CH_START + END_OF_CTRL_CH) ) {
+		if( ch > CTRL_CH_START && ch <= (CTRL_CH_START + END_OF_CTRL_CH) ) {
 			str[0] = ch - CTRL_CH_START;
 			wstr.replace(found,len + 1,str);
 			found += 1;
@@ -925,7 +925,7 @@ void EncodeBase64(aya::string_t &out,const char *in,size_t in_len)
 		out.append(1,table[static_cast<int>(*p)>>2]);
 		
 		// 2文字目 7-12bit ------xx:xxxx----:--------
-		if ( len-1 > 0 )
+		if( len-1 > 0 )
 			out.append(1,table[((static_cast<int>(*p) << 4)&0x30) | ((static_cast<int>(*(p+1)) >> 4)&0x0f)]);
 		else
 			out.append(1,table[((static_cast<int>(*p) << 4)&0x30) ]);
@@ -934,8 +934,8 @@ void EncodeBase64(aya::string_t &out,const char *in,size_t in_len)
 		++p;
 		
 		// 3文字目 13-18bit --------:----xxxx:xx------
-		if ( len > 0 ) {
-			if ( len-1 > 0 ) {
+		if( len > 0 ) {
+			if( len-1 > 0 ) {
 				out.append(1,table[((static_cast<int>(*p) << 2)&0x3C) | ((static_cast<int>(*(p+1)) >> 6)&0x03)]);
 			}
 			else {
@@ -978,19 +978,19 @@ void DecodeBase64(std::string &out,const aya::char_t *in,size_t in_len)
 	while (*p!='=')
 	{
 		//11111122:22223333:33444444
-		if ( (*p=='\0') || (*(p+1)=='=') ) break;
+		if( (*p=='\0') || (*(p+1)=='=') ) break;
 		out.append(1,static_cast<unsigned char>((reverse_64[*p&0x7f] <<2) & 0xFC | (reverse_64[*(p+1)&0x7f] >>4) & 0x03));
 		++p;
 
-		if ( (*p=='\0') || (*(p+1)=='=') ) break;
+		if( (*p=='\0') || (*(p+1)=='=') ) break;
 		out.append(1,static_cast<unsigned char>((reverse_64[*p&0x7f] <<4) & 0xF0 | (reverse_64[*(p+1)&0x7f] >>2) & 0x0F));
 		++p;
 
-		if ( (*p=='\0') || (*(p+1)=='=') ) break;
+		if( (*p=='\0') || (*(p+1)=='=') ) break;
 		out.append(1,static_cast<unsigned char>((reverse_64[*p&0x7f] <<6) & 0xC0 | reverse_64[*(p+1)&0x7f] & 0x3f ));
 		++p;
 
-		if ( (*p=='\0') || (*(p+1)=='=') ) break;
+		if( (*p=='\0') || (*(p+1)=='=') ) break;
 		++p;
 	}
 }
@@ -1007,10 +1007,10 @@ void EncodeURL(aya::string_t &out,const char *in,size_t in_len,bool isPlusPercen
 
 	for ( size_t i = 0 ; i < in_len ; ++i ) {
 		int current = static_cast<unsigned char>(p[i]);
-		if ( (current >= 'a' && current <= 'z') || (current >= 'A' && current <= 'Z') || (current >= '0' && current <= '9') || current == '.' || current == '_' || current == '-' ) {
+		if( (current >= 'a' && current <= 'z') || (current >= 'A' && current <= 'Z') || (current >= '0' && current <= '9') || current == '.' || current == '_' || current == '-' ) {
 			out.append(1,current);
 		}
-		else if ( (current == L' ') && isPlusPercent ) {
+		else if( (current == L' ') && isPlusPercent ) {
 			out.append(1,L'+');
 		}
 		else {
@@ -1031,7 +1031,7 @@ void DecodeURL(std::string &out,const aya::char_t *in,size_t in_len,bool isPlusP
 
 	for ( size_t pos = 0 ; pos < in_len ; ++pos ) {
 
-		if ( in[pos] == L'%' && (in_len - pos) >= 3) {
+		if( in[pos] == L'%' && (in_len - pos) >= 3) {
 			ch[0] = static_cast<char>(in[pos+1]);
 			ch[1] = static_cast<char>(in[pos+2]);
 
@@ -1039,7 +1039,7 @@ void DecodeURL(std::string &out,const aya::char_t *in,size_t in_len,bool isPlusP
 
 			pos += 2;
 		}
-		else if ( isPlusPercent && in[pos] == L'+' ) {
+		else if( isPlusPercent && in[pos] == L'+' ) {
 			out.append(1,' ');
 		}
 		else {

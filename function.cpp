@@ -74,7 +74,7 @@ int	CFunction::Execute(CValue &result, const CValue &arg, CLocalVariable &lvar)
 	lvar.SetValue(L"_argc", t_argc);
 
 	// 実行
-	if (!pvm->calldepth().Add(name)) {
+	if(!pvm->calldepth().Add(name)) {
 		result.SetType(F_TAG_VOID);
 		return exitcode;
 	}
@@ -134,7 +134,7 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 			break;
 		case ST_IF:						// if
 			ifflg = 0;
-			if (GetFormulaAnswer(lvar, statement[i]).GetTruth()) {
+			if(GetFormulaAnswer(lvar, statement[i]).GetTruth()) {
 				i = ExecuteInBrace(i + 2, t_value, lvar, BRACE_DEFAULT, exitcode);
 				output.Append(t_value);
 				ifflg = 1;
@@ -143,9 +143,9 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 				i = statement[i].jumpto;
 			break;
 		case ST_ELSEIF:					// elseif
-			if (ifflg)
+			if(ifflg)
 				i = statement[i].jumpto;
-			else if (GetFormulaAnswer(lvar, statement[i]).GetTruth()) {
+			else if(GetFormulaAnswer(lvar, statement[i]).GetTruth()) {
 				i = ExecuteInBrace(i + 2, t_value, lvar, BRACE_DEFAULT, exitcode);
 				output.Append(t_value);
 				ifflg = 1;
@@ -154,7 +154,7 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 				i = statement[i].jumpto;
 			break;
 		case ST_ELSE:					// else
-			if (ifflg)
+			if(ifflg)
 				i = statement[i].jumpto;
 			else {
 				i = ExecuteInBrace(i + 2, t_value, lvar, BRACE_DEFAULT, exitcode);
@@ -163,8 +163,8 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 			break;
 		case ST_PARALLEL:				// parallel
 			{
-		        const CValue& val = GetFormulaAnswer(lvar, statement[i]);
-				if (val.GetType() == F_TAG_ARRAY) {
+				const CValue& val = GetFormulaAnswer(lvar, statement[i]);
+				if(val.GetType() == F_TAG_ARRAY) {
 					for(size_t j = 0; j < val.array_size(); ++j)
 						output.Append(CValue(val.array()[j]));
 				}
@@ -175,23 +175,23 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 		case ST_VOID:				// void
 			{
 				//実行だけして捨てる
-		        GetFormulaAnswer(lvar, statement[i]);
+				GetFormulaAnswer(lvar, statement[i]);
 			}
 			break;
 		case ST_WHILE:					// while
 			for( ; ; ) {
-				if (!GetFormulaAnswer(lvar, statement[i]).GetTruth())
+				if(!GetFormulaAnswer(lvar, statement[i]).GetTruth())
 					break;
 				ExecuteInBrace(i + 2, t_value, lvar, BRACE_LOOP, exitcode);
 				output.Append(t_value);
 
-				if (exitcode == ST_BREAK) {
+				if(exitcode == ST_BREAK) {
 					exitcode = ST_NOP;
 					break;
 				}
-				else if (exitcode == ST_RETURN)
+				else if(exitcode == ST_RETURN)
 					break;
-				else if (exitcode == ST_CONTINUE)
+				else if(exitcode == ST_CONTINUE)
 					exitcode = ST_NOP;
 			}
 			i = statement[i].jumpto;
@@ -199,18 +199,18 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 		case ST_FOR:					// for
 			GetFormulaAnswer(lvar, statement[i]); //for第一パラメータ
 			for( ; ; ) {
-				if (!GetFormulaAnswer(lvar, statement[i + 1]).GetTruth()) //for第二パラメータ
+				if(!GetFormulaAnswer(lvar, statement[i + 1]).GetTruth()) //for第二パラメータ
 					break;
 				ExecuteInBrace(i + 4, t_value, lvar, BRACE_LOOP, exitcode);
 				output.Append(t_value);
 
-				if (exitcode == ST_BREAK) {
+				if(exitcode == ST_BREAK) {
 					exitcode = ST_NOP;
 					break;
 				}
-				else if (exitcode == ST_RETURN)
+				else if(exitcode == ST_RETURN)
 					break;
-				else if (exitcode == ST_CONTINUE)
+				else if(exitcode == ST_CONTINUE)
 					exitcode = ST_NOP;
 
 				GetFormulaAnswer(lvar, statement[i + 2]); //for第三パラメータ
@@ -219,7 +219,7 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 			break;
 		case ST_SWITCH: {				// switch
 				int	sw_index = GetFormulaAnswer(lvar, statement[i]).GetValueInt();
-				if (sw_index < 0)
+				if(sw_index < 0)
 					sw_index = BRACE_SWITCH_OUT_OF_RANGE;
 				i = ExecuteInBrace(i + 2, t_value, lvar, sw_index, exitcode);
 				output.Append(t_value);
@@ -242,10 +242,10 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 			pvm->logger().Error(E_E, 82, dicfilename, statement[i].linecount);
 			break;
 		};
-		if (exec_end)
+		if(exec_end)
 			break;
 
-		if (exitcode != ST_NOP)
+		if(exitcode != ST_NOP)
 			FeedLineToTail(i);
 	}
 
@@ -281,34 +281,34 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 
 	int	sz;
 	std::vector<aya::string_t>	s_array;
-	if (value.IsString()) {
+	if(value.IsString()) {
 		isPseudoarray = true;
 
 		aya::string_t delimiter = VAR_DELIMITER;
-		if (st0.cell_size() == 1) {
-			if (st0.cell()[0].value_GetType() == F_TAG_VARIABLE) {
+		if(st0.cell_size() == 1) {
+			if(st0.cell()[0].value_GetType() == F_TAG_VARIABLE) {
 				delimiter = pvm->variable().GetDelimiter(st0.cell()[0].index);
 			}
-			else if (st0.cell()[0].value_GetType() == F_TAG_LOCALVARIABLE)
+			else if(st0.cell()[0].value_GetType() == F_TAG_LOCALVARIABLE)
 				delimiter = lvar.GetDelimiter(st0.cell()[0].name);
 		}
 		else {
 			CCell *l_cell = &(st0.cell()[st0.serial()[st0.serial_size() - 1].tindex]);
-			if (l_cell->value_GetType() == F_TAG_VARIABLE)
+			if(l_cell->value_GetType() == F_TAG_VARIABLE)
 				delimiter = pvm->variable().GetDelimiter(l_cell->index);
-			else if (l_cell->value_GetType() == F_TAG_LOCALVARIABLE)
+			else if(l_cell->value_GetType() == F_TAG_LOCALVARIABLE)
 				delimiter = lvar.GetDelimiter(l_cell->name);
-			else if (l_cell->value_GetType() == F_TAG_ARRAYORDER) {
+			else if(l_cell->value_GetType() == F_TAG_ARRAYORDER) {
 				l_cell = &(st0.cell()[st0.serial()[st0.serial_size() - 1].tindex - 1]);
-				if (l_cell->value_GetType() == F_TAG_VARIABLE)
+				if(l_cell->value_GetType() == F_TAG_VARIABLE)
 					delimiter = pvm->variable().GetDelimiter(l_cell->index);
-				else if (l_cell->value_GetType() == F_TAG_LOCALVARIABLE)
+				else if(l_cell->value_GetType() == F_TAG_LOCALVARIABLE)
 					delimiter = lvar.GetDelimiter(l_cell->name);
 			}
 		}
 		sz = SplitToMultiString(value.GetValueString(), &s_array, delimiter);
 	}
-	else if (value.IsArray()) {
+	else if(value.IsArray()) {
 		sz = value.array_size();
 	}
 	else {
@@ -320,7 +320,7 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 	
 	for(int foreachcount = 0; foreachcount < sz; ++foreachcount ) {
 		// 代入する要素値を取得
-		if (isPseudoarray) {
+		if(isPseudoarray) {
 			t_value = s_array[foreachcount];
 		}
 		else {// F_TAG_ARRAY
@@ -329,10 +329,10 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 
 		// 代入
 		type = st1.cell()[0].value_GetType();
-		if ( type == F_TAG_VARIABLE ) {
+		if( type == F_TAG_VARIABLE ) {
 			pvm->variable().SetValue(st1.cell()[0].index, t_value);
 		}
-		else if ( type == F_TAG_LOCALVARIABLE ) {
+		else if( type == F_TAG_LOCALVARIABLE ) {
 			lvar.SetValue(st1.cell()[0].name, t_value);
 		}
 		else {
@@ -343,13 +343,13 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 		ExecuteInBrace(line + 3, t_value, lvar, BRACE_LOOP, exitcode);
 		output.Append(t_value);
 
-		if (exitcode == ST_BREAK) {
+		if(exitcode == ST_BREAK) {
 			exitcode = ST_NOP;
 			break;
 		}
-		else if (exitcode == ST_RETURN)
+		else if(exitcode == ST_RETURN)
 			break;
-		else if (exitcode == ST_CONTINUE)
+		else if(exitcode == ST_CONTINUE)
 			exitcode = ST_NOP;
 	}
 }
@@ -363,18 +363,18 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 {
 	int		o_index = 0;
 
-	if ( st.serial_size() ) { //高速化用
+	if( st.serial_size() ) { //高速化用
 		for (std::vector<CSerial>::iterator it = st.serial().begin(); it != st.serial().end(); it++) {
 			o_index = it->tindex;
 			CCell	&o_cell = st.cell()[o_index];
-			if (o_cell.value_GetType() >= F_TAG_ORIGIN_VALUE) {
+			if(o_cell.value_GetType() >= F_TAG_ORIGIN_VALUE) {
 				o_cell.ansv() = GetValueRefForCalc(o_cell, st, lvar);
 				break;
 			}
 
 			CCell	*s_cell = &(st.cell()[it->index[0]]);
 			CCell	*d_cell = NULL;
-			if ( it->index.size() >= 2 ) {
+			if( it->index.size() >= 2 ) {
 				d_cell = &(st.cell()[it->index[1]]);
 			}
 
@@ -382,7 +382,7 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 			case F_TAG_COMMA:
 				{
 					std_shared_ptr<CValue> tmp_ansv = o_cell.ansv_shared_create();
-					if (Comma(*tmp_ansv.get(), it->index, st, lvar)) {
+					if(Comma(*tmp_ansv.get(), it->index, st, lvar)) {
 						pvm->logger().Error(E_E, 33, L",", dicfilename, st.linecount);
 					}
 					o_cell.ansv_shared() = tmp_ansv;
@@ -403,7 +403,7 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 			case F_TAG_COMMAEQUAL:
 				{
 					std_shared_ptr<CValue> tmp_ansv = o_cell.ansv_shared_create();
-					if (Subst(o_cell.value_GetType(), *tmp_ansv.get(), it->index, st, lvar)) {
+					if(Subst(o_cell.value_GetType(), *tmp_ansv.get(), it->index, st, lvar)) {
 						pvm->logger().Error(E_E, 33, L"=", dicfilename, st.linecount);
 					}
 					o_cell.ansv_shared() = tmp_ansv;
@@ -464,10 +464,10 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 					GetValueRefForCalc(*d_cell, st, lvar));
 				break;
 			case F_TAG_OR:
-				if ( GetValueRefForCalc(*s_cell, st, lvar).GetTruth() ) {
+				if( GetValueRefForCalc(*s_cell, st, lvar).GetTruth() ) {
 					o_cell.ansv() = CValue(1);
 				}
-				else if ( GetValueRefForCalc(*d_cell, st, lvar).GetTruth() ) {
+				else if( GetValueRefForCalc(*d_cell, st, lvar).GetTruth() ) {
 					o_cell.ansv() = CValue(1);
 				}
 				else {
@@ -475,10 +475,10 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 				}
 				break;
 			case F_TAG_AND:
-				if ( ! GetValueRefForCalc(*s_cell, st, lvar).GetTruth() ) {
+				if( ! GetValueRefForCalc(*s_cell, st, lvar).GetTruth() ) {
 					o_cell.ansv() = CValue(0);
 				}
-				else if ( ! GetValueRefForCalc(*d_cell, st, lvar).GetTruth() ) {
+				else if( ! GetValueRefForCalc(*d_cell, st, lvar).GetTruth() ) {
 					o_cell.ansv() = CValue(0);
 				}
 				else {
@@ -488,22 +488,22 @@ const CValue& CFunction::GetFormulaAnswer(CLocalVariable &lvar, CStatement &st)
 			case F_TAG_FUNCPARAM:
 				{
 					std_shared_ptr<CValue> tmp_ansv = o_cell.ansv_shared_create();
-					if (ExecFunctionWithArgs(*tmp_ansv.get(), it->index, st, lvar)) {
+					if(ExecFunctionWithArgs(*tmp_ansv.get(), it->index, st, lvar)) {
 						pvm->logger().Error(E_E, 33, pvm->function_exec().func[st.cell()[it->index[0]].index].name, dicfilename, st.linecount);
 					}
 					o_cell.ansv_shared() = tmp_ansv;
 				}
 				break;
 			case F_TAG_SYSFUNCPARAM:
-				if (ExecSystemFunctionWithArgs(o_cell, it->index, st, lvar))
+				if(ExecSystemFunctionWithArgs(o_cell, it->index, st, lvar))
 					pvm->logger().Error(E_E, 33, CSystemFunction::GetNameFromIndex(st.cell()[it->index[0]].index), dicfilename, st.linecount);
 				break;
 			case F_TAG_ARRAYORDER:
-				if (Array(o_cell, it->index, st, lvar))
+				if(Array(o_cell, it->index, st, lvar))
 					pvm->logger().Error(E_E, 33, L",", dicfilename, st.linecount);
 				break;
 			case F_TAG_FEEDBACK:
-				if (Feedback(o_cell, it->index, st, lvar))
+				if(Feedback(o_cell, it->index, st, lvar))
 					pvm->logger().Error(E_E, 33, L"&", dicfilename, st.linecount);
 				break;
 			case F_TAG_EXC:
@@ -530,18 +530,18 @@ const CValue& CFunction::GetValueRefForCalc(CCell &cell, CStatement &st, CLocalV
 	// 即値はv、関数/変数/演算子項ならansvから取得　関数/変数の場合その値や実行結果が取得される
 
 	// %[n]処理
-	if (cell.value_GetType() == F_TAG_SYSFUNCPARAM) {
-		if ( cell.index == CSystemFunction::HistoryIndex() ) {
+	if(cell.value_GetType() == F_TAG_SYSFUNCPARAM) {
+		if( cell.index == CSystemFunction::HistoryIndex() ) {
 			ExecHistoryP2(cell, st);
 		}
 	}
 
 	// 演算が完了している（はずの）項ならそれを返す
-	if (cell.value_GetType() < F_TAG_ORIGIN_VALUE)
+	if(cell.value_GetType() < F_TAG_ORIGIN_VALUE)
 		return cell.ansv();
 
 	// 即値ならそれをそのまま返す
-	if (cell.value_GetType() <= F_TAG_STRING)
+	if(cell.value_GetType() <= F_TAG_STRING)
 		return cell.value();
 
 	// 関数なら実行して結果を、変数ならその内容を返す
@@ -587,9 +587,9 @@ int CFunction::ReindexUserFunctions(void)
 		for ( size_t j = 0 ; j < st.cell_size() ; ++j ) {
 			CCell &cl = st.cell()[j];
 
-			if ( cl.value_GetType() == F_TAG_USERFUNC ) {
+			if( cl.value_GetType() == F_TAG_USERFUNC ) {
 				int index = pvm->function_parse().GetFunctionIndexFromName(cl.name);
-				if ( index < 0 ) {
+				if( index < 0 ) {
 					pvm->logger().Error(E_E, 71, dicfilename, st.linecount);
 					error += 1;
 				}
@@ -615,7 +615,7 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 	int	solve_src;	// 種別 0/1/2/3=ローカル変数/変数/関数/システム関数
 	size_t	max_len = 0;	// 最長一致検索用
 
-	if (cell.value_const().s_value[0] == L'_') {
+	if(cell.value_const().s_value[0] == L'_') {
 		// ローカル変数
 		solve_src = 0;
 		max_len   = lvar.GetMacthedLongestNameLength(cell.value_const().s_value);
@@ -627,24 +627,24 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 		// 関数
 		size_t	t_len = 0;
 		for(std::vector<CFunction>::iterator it = pvm->function_exec().func.begin(); it != pvm->function_exec().func.end(); it++)
-			if (!it->name.compare(0,it->namelen,cell.value_const().s_value,0,it->namelen))
-				if (t_len < it->namelen)
+			if(!it->name.compare(0,it->namelen,cell.value_const().s_value,0,it->namelen))
+				if(t_len < it->namelen)
 					t_len = it->namelen;
-		if (t_len > max_len) {
+		if(t_len > max_len) {
 			solve_src = 2;
 			max_len   = t_len;
 		}
 		// システム関数
-		if ( max_len < static_cast<size_t>(CSystemFunction::GetMaxNameLength()) ) {
+		if( max_len < static_cast<size_t>(CSystemFunction::GetMaxNameLength()) ) {
 			t_len = CSystemFunction::FindIndexLongestMatch(cell.value_const().s_value,max_len);
-			if (t_len > max_len) {
+			if(t_len > max_len) {
 				solve_src = 3;
 				max_len   = t_len;
 			}
 		}
 	}
 	// 存在しなければ全体が文字列ということになる
-	if (!max_len) {
+	if(!max_len) {
 		cell.ansv()     = L"%" + cell.value_const().s_value;
 		cell.emb_ansv() = L"%" + cell.value_const().s_value;
 		return;
@@ -652,15 +652,15 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 
 	// 関数/システム関数の場合は引数部分を探す
 	size_t	len = cell.value_const().s_value.size();
-	if (solve_src >= 2) {
+	if(solve_src >= 2) {
 		size_t	depth = 1;
 		size_t i = 0;
 		for(i = max_len + 1; i < len; i++) {
 			depth += ((cell.value_const().s_value[i] == L'(') - (cell.value_const().s_value[i] == L')'));
-			if (!depth)
+			if(!depth)
 				break;
 		}
-		if (!depth)
+		if(!depth)
 			max_len = i + 1;
 	}
 
@@ -668,11 +668,11 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 	size_t	depth = 1;
 	size_t i = 0;
 	for(i = max_len + 1; i < len; i++) {
-		if (!depth && cell.value_const().s_value[i] != L'[')
+		if(!depth && cell.value_const().s_value[i] != L'[')
 			break;
 		depth += ((cell.value_const().s_value[i] == L'[') - (cell.value_const().s_value[i] == L']'));
 	}
-	if (!depth)
+	if(!depth)
 		max_len = i;
 
 	// 埋め込まれた要素とそれ以降の文字列に分割する
@@ -684,7 +684,7 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 
 	// 埋め込まれた要素を数式に変換する　失敗なら全体が文字列
 	CStatement	t_state(ST_FORMULA, st.linecount);
-	if (pvm->parser0().ParseEmbedString(s_value, t_state, dicfilename, st.linecount)) {
+	if(pvm->parser0().ParseEmbedString(s_value, t_state, dicfilename, st.linecount)) {
 		cell.ansv()       = L"%" + cell.value_const().s_value;
 		cell.emb_ansv() = L"%" + cell.value_const().s_value;
 		return;
@@ -711,7 +711,7 @@ char	CFunction::Comma(CValue &answer, std::vector<int> &sid, CStatement &st, CLo
 	for(std::vector<int>::iterator it = sid.begin(); it != sid.end(); it++) {
 		const CValue &addv = GetValueRefForCalc(st.cell()[*it], st, lvar);
 		
-		if (addv.GetType() == F_TAG_ARRAY) {
+		if(addv.GetType() == F_TAG_ARRAY) {
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
@@ -732,7 +732,7 @@ char	CFunction::Comma(CValue &answer, std::vector<int> &sid, CStatement &st, CLo
  */
 char	CFunction::CommaAdd(CValue &answer, std::vector<int> &sid, CStatement &st, CLocalVariable &lvar)
 {
-	if ( answer.GetType() != F_TAG_ARRAY ) {
+	if( answer.GetType() != F_TAG_ARRAY ) {
 		CValueSub st(answer);
 		answer.SetType(F_TAG_ARRAY);
 		answer.array().push_back(st);
@@ -745,7 +745,7 @@ char	CFunction::CommaAdd(CValue &answer, std::vector<int> &sid, CStatement &st, 
 	for( ; it != sid.end(); it++) {
 		const CValue &addv = GetValueRefForCalc(st.cell()[*it], st, lvar);
 		
-		if (addv.GetType() == F_TAG_ARRAY) {
+		if(addv.GetType() == F_TAG_ARRAY) {
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
@@ -771,17 +771,17 @@ char	CFunction::Subst(int type, CValue &answer, std::vector<int> &sid, CStatemen
 	int sid_0_cell_type = sid_0_cell->value_GetType();
 
 	//既存変数への代入の場合だけは特殊扱いする
-	if ( sid_0_cell_type == F_TAG_VARIABLE || sid_0_cell_type == F_TAG_LOCALVARIABLE ) {
+	if( sid_0_cell_type == F_TAG_VARIABLE || sid_0_cell_type == F_TAG_LOCALVARIABLE ) {
 		CValue* pSubstTo;
 
-		if ( sid_0_cell_type == F_TAG_VARIABLE ) {
+		if( sid_0_cell_type == F_TAG_VARIABLE ) {
 			pSubstTo = pvm->variable().GetValuePtr(sid_0_cell->index);
 		}
 		else {
 			pSubstTo = lvar.GetValuePtr(sid_0_cell->name);
 		}
 
-		if ( pSubstTo ) {
+		if( pSubstTo ) {
 			CValue &substTo = *pSubstTo;
 
 			answer.array_clear();
@@ -814,7 +814,7 @@ char	CFunction::Subst(int type, CValue &answer, std::vector<int> &sid, CStatemen
 
 				//カンマ特殊処理
 			case F_TAG_COMMAEQUAL:
-				if (CommaAdd(substTo, sid, st, lvar)) {
+				if(CommaAdd(substTo, sid, st, lvar)) {
 					return 1;
 				}
 				break;
@@ -827,7 +827,7 @@ char	CFunction::Subst(int type, CValue &answer, std::vector<int> &sid, CStatemen
 			answer = const_cast<const CValue&>(substTo);
 
 			// グローバル変数の場合、削除済みの場合があるのでここで再Enable
-			if ( sid_0_cell_type == F_TAG_VARIABLE ) {
+			if( sid_0_cell_type == F_TAG_VARIABLE ) {
 				pvm->variable().EnableValue(sid_0_cell->index);
 			}
 
@@ -862,7 +862,7 @@ char	CFunction::Subst(int type, CValue &answer, std::vector<int> &sid, CStatemen
 		answer = GetValueRefForCalc(*sid_0_cell, st, lvar) % GetValueRefForCalc(*sid_1_cell, st, lvar);
 		break;
 	case F_TAG_COMMAEQUAL:
-		if (Comma(answer, sid, st, lvar))
+		if(Comma(answer, sid, st, lvar))
 			return 1;
 		break;
 	default:
@@ -879,7 +879,7 @@ char	CFunction::Subst(int type, CValue &answer, std::vector<int> &sid, CStatemen
 		lvar.SetValue(sid_0_cell->name, answer);
 		return 0;
 	case F_TAG_ARRAYORDER: {
-			if (sid[0] > 0)
+			if(sid[0] > 0)
 				return SubstToArray(st.cell()[sid[0] - 1], *sid_0_cell, answer, st, lvar);
 			else
 				return 1;
@@ -902,7 +902,7 @@ char	CFunction::SubstToArray(CCell &vcell, CCell &ocell, CValue &answer, CStatem
 	CValue	t_order;
 	EncodeArrayOrder(vcell, ocell.order(), lvar, t_order);
 
-	if (t_order.GetType() == F_TAG_UNKNOWN)
+	if(t_order.GetType() == F_TAG_UNKNOWN)
 		return 1;
 
 	// 値を取得
@@ -942,7 +942,7 @@ char	CFunction::Array(CCell &anscell, std::vector<int> &sid, CStatement &st, CLo
 	CValue	t_order;
 	EncodeArrayOrder(*v_cell, anscell.order(), lvar, t_order);
 
-	if (t_order.GetType() == F_TAG_UNKNOWN) {
+	if(t_order.GetType() == F_TAG_UNKNOWN) {
 		anscell.ansv().SetType(F_TAG_VOID);
 		return 1;
 	}
@@ -960,7 +960,7 @@ char	CFunction::Array(CCell &anscell, std::vector<int> &sid, CStatement &st, CLo
  */
 int	CFunction::_in_(const CValue &src, const CValue &dst)
 {
-	if (src.IsString() && dst.IsString())
+	if(src.IsString() && dst.IsString())
 		return (dst.s_value.find(src.s_value) != aya::string_t::npos) ? 1 : 0;
 
 	return 0;
@@ -997,8 +997,8 @@ char	CFunction::ExecFunctionWithArgs(CValue &answer, std::vector<int> &sid, CSta
 	for( ; it != sid.end(); it++) {
 		const CValue &addv = GetValueRefForCalc(st.cell()[*it], st, lvar);
 		
-		if (addv.GetType() == F_TAG_ARRAY) {
-			if ( sidsize <= 2 ) { //配列1つのみが与えられている->最適化のためスマートポインタ代入のみで済ませる
+		if(addv.GetType() == F_TAG_ARRAY) {
+			if( sidsize <= 2 ) { //配列1つのみが与えられている->最適化のためスマートポインタ代入のみで済ませる
 				arg.array_shared() = addv.array_shared();
 			}
 			else {
@@ -1020,11 +1020,11 @@ char	CFunction::ExecFunctionWithArgs(CValue &answer, std::vector<int> &sid, CSta
 	int	errcount = 0;
 
 	for(it = sid.begin() + 1; it != sid.end(); it++, i++) {
-		if (st.cell()[*it].value_GetType() == F_TAG_FEEDBACK) {
+		if(st.cell()[*it].value_GetType() == F_TAG_FEEDBACK) {
 			CValue	v_value;
 			v_value = v_argv->array()[i];
 
-			if (st.cell()[*it].order_const().GetType() != F_TAG_NOP)
+			if(st.cell()[*it].order_const().GetType() != F_TAG_NOP)
 				errcount += SubstToArray(st.cell()[(*it) + 1], st.cell()[*it], v_value, st, lvar);
 			else {
 				switch(st.cell()[(*it) + 1].value_GetType()) {
@@ -1069,8 +1069,8 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<int> &sid, C
 	for( ; it != sid.end(); it++) {
 		const CValue &addv = GetValueRefForCalc(st.cell()[*it], st, lvar);
 		
-		if (addv.GetType() == F_TAG_ARRAY) {
-			if ( sidsize <= 2 ) { //配列1つのみが与えられている->最適化のためスマートポインタ代入のみで済ませる
+		if(addv.GetType() == F_TAG_ARRAY) {
+			if( sidsize <= 2 ) { //配列1つのみが与えられている->最適化のためスマートポインタ代入のみで済ませる
 				arg.array_shared() = addv.array_shared();
 			}
 			else {
@@ -1086,7 +1086,7 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<int> &sid, C
 	}
 
 	// 実行　%[n]処理関数のみ特例扱い
-	if (index == CSystemFunction::HistoryIndex())
+	if(index == CSystemFunction::HistoryIndex())
 		ExecHistoryP1(func_index - 2, cell, arg, st);
 	else
 		cell.ansv() = pvm->sysfunction().Execute(index, arg, pcellarg, valuearg, lvar, st.linecount, this);
@@ -1103,7 +1103,7 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<int> &sid, C
  */
 void	CFunction::ExecHistoryP1(int start_index, CCell& cell, const CValue &arg, CStatement &st)
 {
-	if (arg.array_size()) {
+	if(arg.array_size()) {
 		cell.ansv()    = start_index;
 		cell.order()   = arg.array()[0];
 	}
@@ -1123,18 +1123,18 @@ void	CFunction::ExecHistoryP1(int start_index, CCell& cell, const CValue &arg, C
  */
 void	CFunction::ExecHistoryP2(CCell& cell, CStatement &st)
 {
-	if (!cell.order_const().IsNum())
+	if(!cell.order_const().IsNum())
 		return;
 
 	int	index = cell.order_const().GetValueInt();
-	if (index < 0)
+	if(index < 0)
 		return;
 
 	int start = __GETMIN(static_cast<int>(st.cell().size())-1,cell.ansv_const().GetValueInt());
 
 	for(int i = start ; i >= 0; i--) {
-		if (st.cell()[i].value_GetType() == F_TAG_STRING_EMBED) {
-			if (!index) {
+		if(st.cell()[i].value_GetType() == F_TAG_STRING_EMBED) {
+			if(!index) {
 				cell.ansv_shared() = st.cell()[i].emb_ansv_shared();
 				return;
 			}
@@ -1159,7 +1159,7 @@ char	CFunction::Feedback(CCell &anscell, std::vector<int> &sid, CStatement &st, 
 
 	// 右辺が配列序数を指定する演算子だった場合はそこから序数をコピー
 	// 配列でなかった場合は序数を格納する変数の型をNOPにしてフラグとする
-	if (v_cell->value_GetType() == F_TAG_ARRAYORDER)
+	if(v_cell->value_GetType() == F_TAG_ARRAYORDER)
 		anscell.order_shared() = v_cell->order_shared();
 	else
 		anscell.order().SetType(F_TAG_NOP);
@@ -1193,11 +1193,11 @@ void CFunction::EncodeArrayOrder(CCell &vcell, const CValue &order, CLocalVariab
 	};
 
 	// デリミタ
-	if (result.array_size() < 2) {
+	if(result.array_size() < 2) {
 		CValueSub	adddlm(VAR_DELIMITER);
-		if (vcell.value_GetType() == F_TAG_VARIABLE)
+		if(vcell.value_GetType() == F_TAG_VARIABLE)
 			adddlm = pvm->variable().GetDelimiter(vcell.index);
-		else if (vcell.value_GetType() == F_TAG_LOCALVARIABLE)
+		else if(vcell.value_GetType() == F_TAG_LOCALVARIABLE)
 			adddlm = lvar.GetDelimiter(vcell.name);
 		result.array().push_back(adddlm);
 	}
@@ -1218,7 +1218,7 @@ void	CFunction::FeedLineToTail(int &line)
 	line++;
 	for( ; line < t_statelenm1; line++) {
 		depth += ((statement[line].type == ST_OPEN) - (statement[line].type == ST_CLOSE));
-		if (!depth)
+		if(!depth)
 			break;
 	}
 
@@ -1232,12 +1232,12 @@ void	CFunction::FeedLineToTail(int &line)
  */
 int	CFunctionDef::GetFunctionIndexFromName(const aya::string_t& name)
 {
-	if ( map.empty() ) {
+	if( map.empty() ) {
 		RebuildFunctionMap();
 	}
 
 	aya::indexmap::const_iterator it = map.find(name);
-	if ( it != map.end() ) {
+	if( it != map.end() ) {
 		return it->second;
 	}
 	return -1;

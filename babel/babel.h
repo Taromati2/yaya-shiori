@@ -604,7 +604,7 @@ template<class T> auto_array_class<T, 0> auto_array(unsigned int index, const T 
 
 /*
 template<class T> const T & get_array_item(unsigned int index, const T &first_item...) {
-	if (0 == index) {
+	if(0 == index) {
 		return first_item;
 	}
 	va_list X;
@@ -727,13 +727,13 @@ inline const int get_base_encoding() {
 #endif
 #ifdef	__USING_UNKNOWN__
 	const int fingerprint = ((unsigned char*)("漢字"))[0];
-	if (0x8A == fingerprint) {
+	if(0x8A == fingerprint) {
 		return sjis;
 	}
-	if (0x84 == fingerprint) {
+	if(0x84 == fingerprint) {
 		return euc;
 	}
-	if (0xE6 == fingerprint) {
+	if(0xE6 == fingerprint) {
 		return utf8;
 	}
 	return ansi;
@@ -771,13 +771,13 @@ class bbl_smart_base {
 
   public:
 	void inc_ref() volatile {
-		if (NULL != this) {
+		if(NULL != this) {
 			++ref_count;
 		}
 	}
 	void dec_ref() volatile {
-		if (NULL != this) {
-			if (--ref_count <= 0) {
+		if(NULL != this) {
+			if(--ref_count <= 0) {
 				assert(0 == ref_count);
 				delete this;
 			}
@@ -805,7 +805,7 @@ class bbl_smart_shell {
 	}
 
 	this_type & operator = (target_type *X_value) {
-		if (value != X_value) {
+		if(value != X_value) {
 			value->dec_ref();
 			value = X_value;
 			value->inc_ref();
@@ -813,7 +813,7 @@ class bbl_smart_shell {
 		return *this;
 	}
 	this_type & operator = (const this_type &X) {
-		if (value != X.value) {
+		if(value != X.value) {
 			value->dec_ref();
 			value = X.value;
 			value->inc_ref();
@@ -1933,7 +1933,7 @@ class auto_translate_engine :public translate_to_string_engine<to_string> {
   protected:
 	void translate() {
 		int new_from_base_encoding = analyze_base_encoding(base_type::untranslated_buffer);
-		if (from_base_encoding != new_from_base_encoding) {
+		if(from_base_encoding != new_from_base_encoding) {
 			from_base_encoding = new_from_base_encoding;
 			base_type::engine = base_type::order(from_base_encoding, to_base_encoding);
 		} else {

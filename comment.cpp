@@ -33,17 +33,17 @@
  */
 void	CComment::Process(aya::string_t &str)
 {
-	if (str.empty()) { return; }
+	if(str.empty()) { return; }
 
 	aya::string_t::size_type found0;
 	aya::string_t::size_type found1;
 
 	while ( true ) {
 		//前行からコメントが続いてる
-		if ( flag ) {
+		if( flag ) {
 			found1 = str.find(L"*/"); //コメント終了位置を探索 これはクォートに影響されない
 
-			if ( found1 != aya::string_t::npos ) {
+			if( found1 != aya::string_t::npos ) {
 				str.erase(0,found1+2); //+2は */ の分
 				flag = 0;
 			}
@@ -56,11 +56,11 @@ void	CComment::Process(aya::string_t &str)
 		else {
 			found0 = Find_IgnoreDQ(str,L"/*");//スタートのみクォートを考慮
 
-			if ( found0 != aya::string_t::npos ) { //スタート位置が同じ行内で見つかった
+			if( found0 != aya::string_t::npos ) { //スタート位置が同じ行内で見つかった
 
 				found1 = str.find(L"*/",found0+2);
 
-				if ( found1 != aya::string_t::npos ) { //ストップ位置も同じ行内で見つかった
+				if( found1 != aya::string_t::npos ) { //ストップ位置も同じ行内で見つかった
 					str.erase(found0,(found1+2-found0)); //+2は */ の分
 				}
 				else {
@@ -83,17 +83,17 @@ void	CComment::Process(aya::string_t &str)
  */
 void	CComment::Process_Top(aya::string_t &str)
 {
-	if (str.empty()) { return; }
+	if(str.empty()) { return; }
 	
 	const wchar_t *pt = str.c_str();
 	
 	while ( *pt == L' ' || *pt == L'\t' ) { ++pt; }
 	
 	//コメント
-	if ( *pt == L'/' && *(pt+1) == L'/' ) { str.erase(); }
+	if( *pt == L'/' && *(pt+1) == L'/' ) { str.erase(); }
 	
 	//ついでに空白だけの行もなかったことに
-	if ( *pt == 0 ) { str.erase(); }
+	if( *pt == 0 ) { str.erase(); }
 }
 
 /* -----------------------------------------------------------------------
@@ -103,10 +103,10 @@ void	CComment::Process_Top(aya::string_t &str)
  */
 void	CComment::Process_Tail(aya::string_t &str)
 {
-	if (str.empty()) { return; }
+	if(str.empty()) { return; }
 
 	aya::string_t::size_type found = Find_IgnoreDQ(str, L"//");
-	if ( found != aya::string_t::npos ) {
+	if( found != aya::string_t::npos ) {
 		str.erase(found, (int)str.size() - found);
 		CutSpace(str);
 	}

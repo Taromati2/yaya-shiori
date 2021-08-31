@@ -42,7 +42,7 @@ int	CLib::Add(const aya::string_t &name)
 {
 	std::list<CLib1>::iterator it;
 	for(it = liblist.begin(); it != liblist.end(); it++) {
-		if (!name.compare(it->GetName())) {
+		if(!name.compare(it->GetName())) {
 			return 2;
 		}
 	}
@@ -50,19 +50,19 @@ int	CLib::Add(const aya::string_t &name)
 	liblist.push_back(CLib1(vm, name, charset));
 	it = liblist.end();
 	it--;
-	if (!it->LoadLib()) {
+	if(!it->LoadLib()) {
 		liblist.erase(it);
 		return 0;
 	}
 
-	if (!it->Load()) {
+	if(!it->Load()) {
 		liblist.erase(it);
 		return 0;
 	}
 
 	//一時文字コード設定保存部にためこんだものを設定
 	charset_map::iterator itc = charset_temp_map.find(name);
-	if ( itc != charset_temp_map.end() ) {
+	if( itc != charset_temp_map.end() ) {
 		it->SetCharset(itc->second);
 		charset_temp_map.erase(itc);
 	}
@@ -80,7 +80,7 @@ int	CLib::Add(const aya::string_t &name)
 int	CLib::Delete(const aya::string_t &name)
 {
 	for(std::list<CLib1>::iterator it = liblist.begin(); it != liblist.end(); it++) {
-		if (!name.compare(it->GetName())) {
+		if(!name.compare(it->GetName())) {
 			int	result = it->Unload();
 			it->Release();
 			it = liblist.erase(it);
@@ -112,7 +112,7 @@ void	CLib::DeleteAll(void)
 int	CLib::SetCharsetDynamic(const aya::string_t &name,int cs)
 {
 	for(std::list<CLib1>::iterator it = liblist.begin(); it != liblist.end(); it++) {
-		if (!name.compare(it->GetName())) {
+		if(!name.compare(it->GetName())) {
 			it->SetCharset(cs);
 			return 1;
 		}
@@ -120,7 +120,7 @@ int	CLib::SetCharsetDynamic(const aya::string_t &name,int cs)
 
 	//ファイルの存在ちぇき
 	FILE *fp = aya::w_fopen(name.c_str(),L"rb");
-	if ( ! fp ) {
+	if( ! fp ) {
 		return 0;
 	}
 	fclose(fp);
@@ -141,13 +141,13 @@ int	CLib::SetCharsetDynamic(const aya::string_t &name,int cs)
 int	CLib::GetCharsetDynamic(const aya::string_t &name)
 {
 	for(std::list<CLib1>::iterator it = liblist.begin(); it != liblist.end(); it++) {
-		if (!name.compare(it->GetName())) {
+		if(!name.compare(it->GetName())) {
 			return it->GetCharset();
 		}
 	}
 
 	charset_map::const_iterator itr = charset_temp_map.find(name);
-	if ( itr != charset_temp_map.end() ) {
+	if( itr != charset_temp_map.end() ) {
 		return itr->second;
 	}
 	return -1;
@@ -164,7 +164,7 @@ int	CLib::GetCharsetDynamic(const aya::string_t &name)
 int	CLib::Request(const aya::string_t &name, const aya::string_t &istr, aya::string_t &ostr)
 {
 	for(std::list<CLib1>::iterator it = liblist.begin(); it != liblist.end(); it++) {
-		if (!name.compare(it->GetName())) {
+		if(!name.compare(it->GetName())) {
 			vm.logger().IoLib(0, istr, name);
 			int	result = it->Request(istr, ostr);
 			vm.logger().IoLib(1, ostr, name);

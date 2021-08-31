@@ -11,12 +11,12 @@
 
 
 int main(int argc, char* argv[]) {
-    char* path = static_cast<char*>(malloc(3));
-    memcpy(path, "./", 3);
+	char* path = static_cast<char*>(malloc(3));
+	memcpy(path, "./", 3);
 
-    load(path, 2);
-    unload();
-    
-    return 0;
+	load(path, 2);
+	unload();
+	
+	return 0;
 }
 

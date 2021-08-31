@@ -43,12 +43,12 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 {
 	iolog   = il;
 
-	if ( open ) {
-		if ( path != p || charset != cs ) {
+	if( open ) {
+		if( path != p || charset != cs ) {
 			Termination();
 		}
 		else {
-			if ( ! iolog ) {
+			if( ! iolog ) {
 				Termination();
 			}
 			return;
@@ -58,10 +58,10 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 	path    = p;
 	charset = cs;
 	
-	if ( hw ) { //hwがある＝玉からの呼び出しなので強制ON、ファイル無効
+	if( hw ) { //hwがある＝玉からの呼び出しなので強制ON、ファイル無効
 		path = L"";
 	}
-	else if ( ! il ) {
+	else if( ! il ) {
 		enable = 0;
 		return;
 	}
@@ -76,14 +76,14 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 #endif
 
 	// ロギング有効/無効の判定
-	if ( path.size() ) {
+	if( path.size() ) {
 		fileen = 1;
 		enable = 1;
 	}
 	else {
 		fileen = 0;
 #if defined(WIN32)
-		if ( hWnd == NULL ) {
+		if( hWnd == NULL ) {
 			enable = 0;
 			return;
 		}
@@ -99,12 +99,12 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 	str += L"\n\n";
 
 	// ファイルへ書き込み
-	if (fileen) {
+	if(fileen) {
 		char	*tmpstr = Ccct::Ucs2ToMbcs(str, charset);
-		if (tmpstr != NULL) {
+		if(tmpstr != NULL) {
 			FILE	*fp = aya::w_fopen(path.c_str(), L"w");
-			if (fp != NULL) {
-/*				if (charset == CHARSET_UTF8)
+			if(fp != NULL) {
+/*				if(charset == CHARSET_UTF8)
 					write_utf8bom(fp);*/
 				fprintf(fp, "%s", tmpstr);
 				fclose(fp);
@@ -117,9 +117,9 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 
 #if defined(WIN32)
 	// チェックツールへ送出　最初に文字コードを設定してから文字列を送出
-	if (charset == CHARSET_SJIS)
+	if(charset == CHARSET_SJIS)
 		SendLogToWnd(L"", E_SJIS);
-	else if (charset == CHARSET_UTF8)
+	else if(charset == CHARSET_UTF8)
 		SendLogToWnd(L"", E_UTF8);
 	else	// CHARSET_DEFAULT
 		SendLogToWnd(L"", E_DEFAULT);
@@ -135,7 +135,7 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
  */
 void	CLog::Termination(void)
 {
-	if (!enable)
+	if(!enable)
 		return;
 
 	Message(1);
@@ -159,18 +159,18 @@ void	CLog::Termination(void)
  */
 void	CLog::Write(const aya::char_t *str, int mode)
 {
-	if (!enable)
+	if(!enable)
 		return;
-	if (str == NULL)
+	if(str == NULL)
 		return;
-	if (!wcslen(str))
+	if(!wcslen(str))
 		return;
 
 	// 文字列中の\rは消す
 	aya::string_t	cstr = str;
 	int	len = cstr.size();
 	for(int i = 0; i < len; ) {
-		if (cstr[i] == L'\r') {
+		if(cstr[i] == L'\r') {
 			cstr.erase(i, 1);
 			len--;
 			continue;
@@ -179,12 +179,12 @@ void	CLog::Write(const aya::char_t *str, int mode)
 	}
 
 	// ファイルへ書き込み
-	if (fileen) {
-		if (! path.empty()) {
+	if(fileen) {
+		if(! path.empty()) {
 			char	*tmpstr = Ccct::Ucs2ToMbcs(cstr, charset);
-			if (tmpstr != NULL) {
+			if(tmpstr != NULL) {
 				FILE	*fp = aya::w_fopen(path.c_str(), L"a");
-				if (fp != NULL) {
+				if(fp != NULL) {
 					fprintf(fp, "%s", tmpstr);
 					fclose(fp);
 				}
@@ -247,11 +247,11 @@ void	CLog::Error(int mode, int id, const aya::char_t *ref, const aya::string_t &
 	// ログに書き込み文字列を作成（辞書ファイル名と行番号）
 	aya::string_t	logstr;
 
-	if (dicfilename.empty())
+	if(dicfilename.empty())
 		logstr = L"-(-) : ";
 	else {
 		logstr = dicfilename + L"(";
-		if (linecount == -1)
+		if(linecount == -1)
 			logstr += L"-) : ";
 		else {
 			logstr += aya::ws_itoa(linecount);
@@ -263,14 +263,14 @@ void	CLog::Error(int mode, int id, const aya::char_t *ref, const aya::string_t &
 		logstr += ayamsg::GetTextFromTable(mode,id);
 	}
 	// ログに書き込み文字列を作成（付加情報）
-	if (ref != NULL) {
+	if(ref != NULL) {
 		logstr += L" : ";
 		logstr += ref;
 	}
 
 	// 念の為改行コードを消しておく
 	for(aya::string_t::iterator it = logstr.begin(); it != logstr.end(); it++){
-		if ( *it == '\r' || *it == '\n' ) {
+		if( *it == '\r' || *it == '\n' ) {
 			*it = ' ';
 		}
 	}
@@ -278,7 +278,7 @@ void	CLog::Error(int mode, int id, const aya::char_t *ref, const aya::string_t &
 	AddErrorLogHistory(logstr);
 
 	// 書き込み
-	if (!enable)
+	if(!enable)
 		return;
 
 	logstr += L'\n';
@@ -296,14 +296,14 @@ void	CLog::Error(int mode, int id, const aya::string_t& ref, const aya::string_t
 
 void	CLog::Error(int mode, int id, const aya::char_t *ref)
 {
-        Error(mode, id, ref, aya::string_t(), -1);
+		Error(mode, id, ref, aya::string_t(), -1);
 }
 
 //----
 
 void	CLog::Error(int mode, int id, const aya::string_t& ref)
 {
-        Error(mode, id, (aya::char_t *)ref.c_str(), aya::string_t(), -1);
+		Error(mode, id, (aya::char_t *)ref.c_str(), aya::string_t(), -1);
 }
 
 //----
@@ -317,7 +317,7 @@ void	CLog::Error(int mode, int id, const aya::string_t& dicfilename, int linecou
 
 void	CLog::Error(int mode, int id)
 {
-        Error(mode, id, (aya::char_t *)NULL, aya::string_t(), -1);
+		Error(mode, id, (aya::char_t *)NULL, aya::string_t(), -1);
 }
 
 /* -----------------------------------------------------------------------
@@ -328,14 +328,14 @@ void	CLog::Error(int mode, int id)
  */
 void	CLog::Io(char io, const aya::char_t *str)
 {
-	if (!enable || !iolog)
+	if(!enable || !iolog)
 		return;
 
 	static	aya::timer		timer;
 
-	if (!io) {
+	if(!io) {
 		//ignoreiolog機能。
-		if ( iolog_filter_keyword.size() > 0 || iolog_filter_keyword_regex.size() > 0 ) {
+		if( iolog_filter_keyword.size() > 0 || iolog_filter_keyword_regex.size() > 0 ) {
 			aya::string_t cstr=str;
 
 			bool found = false;
@@ -349,26 +349,26 @@ void	CLog::Io(char io, const aya::char_t *str)
 				}
 			}
 
-			if ( ! found ) {
+			if( ! found ) {
 				for(it = iolog_filter_keyword_regex.begin(); it != iolog_filter_keyword_regex.end(); it++){
 					CRegexpT<aya::char_t> regex(it->c_str(),MULTILINE | EXTENDED);
 
 					MatchResult result = regex.Match(cstr.c_str());
-					if ( result.IsMatched() ) {
+					if( result.IsMatched() ) {
 						found = true;
 						break;
 					}
 				}
 			}
 
-			if ( iolog_filter_mode == 0 ) { //denylist
-				if ( found ) {
+			if( iolog_filter_mode == 0 ) { //denylist
+				if( found ) {
 					skip_next_log_output = 1;
 					return;
 				}
 			}
 			else { //allowlist
-				if ( ! found ) {
+				if( ! found ) {
 					skip_next_log_output = 1;
 					return;
 				}
@@ -379,7 +379,7 @@ void	CLog::Io(char io, const aya::char_t *str)
 		Write(str);
 		Write(L"\n");
 
-        timer.restart();
+		timer.restart();
 	}
 	else {
 		//ログ抑制
@@ -410,12 +410,12 @@ void	CLog::Io(char io, const aya::string_t &str)
  */
 void	CLog::IoLib(char io, const aya::string_t &str, const aya::string_t &name)
 {
-	if (!enable || !iolog)
+	if(!enable || !iolog)
 		return;
 
 	static	aya::timer		timer;
 
-	if (!io) {
+	if(!io) {
 		Write(L"// request to library\n// name : ");
 		Write(name + L"\n");
 		Write(str + L"\n");
@@ -439,7 +439,7 @@ void	CLog::IoLib(char io, const aya::string_t &str, const aya::string_t &name)
 #if defined(WIN32)
 void	CLog::SendLogToWnd(const aya::char_t *str, int mode)
 {
-	if (hWnd == NULL)
+	if(hWnd == NULL)
 		return;
 
 	COPYDATASTRUCT cds;
@@ -479,7 +479,7 @@ HWND	CLog::GetCheckerWnd(void)
 void	CLog::AddIologFilterKeyword(const aya::string_t &ignorestr){
 	std::vector<aya::string_t>::iterator it = std::find(iolog_filter_keyword.begin(), iolog_filter_keyword.end(), ignorestr);
 
-	if ( it == iolog_filter_keyword.end() ){
+	if( it == iolog_filter_keyword.end() ){
 		iolog_filter_keyword.push_back(ignorestr);
 	}
 }
@@ -487,7 +487,7 @@ void	CLog::AddIologFilterKeyword(const aya::string_t &ignorestr){
 void	CLog::AddIologFilterKeywordRegex(const aya::string_t &ignorestr){
 	std::vector<aya::string_t>::iterator it = std::find(iolog_filter_keyword_regex.begin(), iolog_filter_keyword_regex.end(), ignorestr);
 
-	if ( it == iolog_filter_keyword_regex.end() ){
+	if( it == iolog_filter_keyword_regex.end() ){
 		iolog_filter_keyword_regex.push_back(ignorestr);
 	}
 }
@@ -501,7 +501,7 @@ void	CLog::AddIologFilterKeywordRegex(const aya::string_t &ignorestr){
 void	CLog::DeleteIologFilterKeyword(const aya::string_t &ignorestr){
 	std::vector<aya::string_t>::iterator it = std::find(iolog_filter_keyword.begin(), iolog_filter_keyword.end(), ignorestr);
 
-	if ( it != iolog_filter_keyword.end() ){
+	if( it != iolog_filter_keyword.end() ){
 		iolog_filter_keyword.erase(it);
 	}
 }
@@ -509,7 +509,7 @@ void	CLog::DeleteIologFilterKeyword(const aya::string_t &ignorestr){
 void	CLog::DeleteIologFilterKeywordRegex(const aya::string_t &ignorestr){
 	std::vector<aya::string_t>::iterator it = std::find(iolog_filter_keyword_regex.begin(), iolog_filter_keyword_regex.end(), ignorestr);
 
-	if ( it != iolog_filter_keyword_regex.end() ){
+	if( it != iolog_filter_keyword_regex.end() ){
 		iolog_filter_keyword_regex.erase(it);
 	}
 }
@@ -540,7 +540,7 @@ void CLog::SetIologFilterMode(char mode)
  * -----------------------------------------------------------------------
  */
 void    CLog::AddErrorLogHistory(const aya::string_t &err) {
-	if ( error_log_history.size() >= MAX_ERROR_LOG_HISTORY ) {
+	if( error_log_history.size() >= MAX_ERROR_LOG_HISTORY ) {
 		error_log_history.pop_back();
 	}
 	error_log_history.push_front(err);
