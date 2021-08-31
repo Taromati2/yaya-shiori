@@ -89,11 +89,15 @@ public:
 	void	AddIologFilterKeyword(const aya::string_t &ignorestr);
 	void	AddIologFilterKeywordRegex(const aya::string_t &ignorestr);
 
+	const std::vector<aya::string_t>& GetIologFilterKeyword(void) { return iolog_filter_keyword; }
+	const std::vector<aya::string_t>& GetIologFilterKeywordRegex(void) { return iolog_filter_keyword_regex; }
+
 	void	DeleteIologFilterKeyword(const aya::string_t &ignorestr);
 	void	DeleteIologFilterKeywordRegex(const aya::string_t &ignorestr);
 
 	void	ClearIologFilterKeyword();
 	void	SetIologFilterMode(char mode);
+	char	GetIologFilterMode(void) { return iolog_filter_mode; }
 
 	std::deque<aya::string_t> & GetErrorLogHistory(void);
 	void SetErrorLogHistory(std::deque<aya::string_t> &log);

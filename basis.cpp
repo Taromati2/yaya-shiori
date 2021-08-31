@@ -52,7 +52,7 @@
 #ifdef _WINDOWS
 #ifdef _DEBUG
 #include <crtdbg.h>
-#define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
+#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 #endif
 ////////////////////////////////////////
@@ -99,7 +99,7 @@ void	CBasis::SetModuleName(const aya::string_t &s,const aya::char_t *trailer,con
 	modulename = s;
 	modename = mode;
 
-	if ( trailer ) {
+	if (trailer) {
 		config_file_name_trailer = trailer;
 	}
 	else {
@@ -126,7 +126,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	base_path = wcpath;
 
 	//最後が\でも/でもなければ足す
-	if (base_path.length() == 0 || ( (base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\') ) ) {
+	if (!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
 		base_path += L"\\";
 	}
 
@@ -142,7 +142,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	//free(h); //load側で開放
 	h = NULL;
 	// スラッシュで終わってなければ付ける。
-	if (path.length() == 0 || path[path.length() - 1] != L'/') {
+	if (!path.length() || path[path.length() - 1] != L'/') {
 		path += L'/';
 	}
 	// モジュールハンドルの取得は出来ないので、力技で位置を知る。
@@ -164,7 +164,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	if (lc(get_extension(fname)) == "dll") {
 		std::string txt_file = narrow(path) + change_extension(fname, "txt");
 	    struct stat sb;
-	    if (::stat(txt_file.c_str(), &sb) == 0) {
+	    if (!::stat(txt_file.c_str(), &sb)) {
 		// txtファイルがあるので、中身を見てみる。
 		if (file_content_search(narrow(path) + fname, "aya.dll") != std::string::npos) {
 		    // これはAYAのDLLである。
@@ -265,7 +265,7 @@ void	CBasis::Termination(void)
 		// 開いているすべてのファイルを閉じる
 		vm.files().DeleteAll();
 		// 変数の保存
-		if ( auto_save ) {
+		if (auto_save) {
 			SaveVariable();
 		}
 	}
@@ -363,7 +363,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 	aya::string_t	cmd, param;
 	size_t line=0;
 
-	while ( true ) {
+	while (true) {
 		line += 1;
 
 		// 1行読み込み
@@ -382,7 +382,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 		comment.Process_Tail(readline);
 		
 		// 空行、もしくは全体がコメント行だった場合は次の行へ
-		if (readline.size() == 0) {
+		if (!readline.size()) {
 			continue;
 		}
 
@@ -404,16 +404,16 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, std::vector<CDic1> *dics)
 {
 	//include
-	if ( cmd.compare(L"include") == 0 ) {
+	if (!cmd.compare(L"include")) {
 		aya::string_t param1, param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t filename = load_path + param1;
 
 		char cset = dic_charset;
-		if ( param2.size() ) {
+		if (param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if ( cx != CHARSET_DEFAULT ) {
+			if (cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -421,16 +421,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	//includeEX
-	if ( cmd.compare(L"includeEX") == 0 ) {
+	else if (!cmd.compare(L"includeEX")) {
 		aya::string_t param1, param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t filename = load_path + param1;
 
 		char cset = dic_charset;
-		if ( param2.size() ) {
+		if (param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if ( cx != CHARSET_DEFAULT ) {
+			if (cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -449,16 +449,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// dic
-	if ( cmd.compare(L"dic") == 0 && dics) {
+	else if (!cmd.compare(L"dic") && dics) {
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
 		aya::string_t	filename = base_path + param1;
 
 		char cset = dic_charset;
-		if ( param2.size() ) {
+		if (param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if ( cx != CHARSET_DEFAULT ) {
+			if (cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
@@ -466,7 +466,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// dicdir
-	if ( cmd.compare(L"dicdir") == 0 && dics) {
+	else if (!cmd.compare(L"dicdir") && dics) {
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
@@ -475,10 +475,10 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		CDirEnum ef(dirname);
 		CDirEnumEntry entry;
 
-		while ( ef.next(entry) ) {
+		while (ef.next(entry)) {
 			aya::string_t relpath_and_cs = param1 + L"\\" + entry.name + L"," + param2;
 
-			if ( entry.isdir ) {
+			if (entry.isdir) {
 				SetParameter(L"dicdir",relpath_and_cs,dics);
 			}
 			else {
@@ -489,23 +489,26 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// messagetxt
-	if ( cmd.compare(L"messagetxt") == 0 ) {//本土化
+	else if (!cmd.compare(L"messagetxt")) {//本土化
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
 		char cset = CHARSET_UTF8; //UTF8固定
 		
-		if ( param2.size() ) {
+		if (param2.size()) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
-			if ( cx != CHARSET_DEFAULT ) {
+			if (cx != CHARSET_DEFAULT) {
 				cset = cx;
 			}
 		}
-		return ayamsg::LoadMessageFromTxt(load_path + param1,cset);
+		if (ayamsg::LoadMessageFromTxt(load_path + param1,cset)) {
+			messagetxt_path = load_path + param1;
+		}
+		return true;
 	}
 	// log
-	if ( cmd.compare(L"log") == 0 ) {
-		if ( param.empty() ) {
+	else if (!cmd.compare(L"log")) {
+		if (param.empty()) {
 			logpath.erase();
 		}
 		else {
@@ -514,11 +517,11 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// basepath
-	if ( cmd.compare(L"basepath") == 0 ) {
+	else if (!cmd.compare(L"basepath")) {
 		CDirEnum dirCheck(param);
 		CDirEnumEntry dirCheckTmp;
 
-		if ( dirCheck.next(dirCheckTmp) ) { //something exist in directory
+		if (dirCheck.next(dirCheckTmp)) { //something exist in directory
 			#if defined(WIN32) || defined(_WIN32_WCE)
 			if(param[1]==L':')
 			#elif defined(POSIX)
@@ -529,7 +532,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				base_path += param;
 
 			//最後が\でも/でもなければ足す
-			if (base_path.length() == 0 || ( (base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\') ) ) {
+			if (!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
 				#if defined(WIN32) || defined(_WIN32_WCE)
 				base_path += L"\\";
 				#elif defined(POSIX)
@@ -543,22 +546,22 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		}
 	}
 	// iolog
-	if ( cmd.compare(L"iolog") == 0 ) {
+	else if (!cmd.compare(L"iolog")) {
 		iolog = param.compare(L"off") != 0;
 		return true;
 	}
 	// セーブデータ暗号化
-	if ( cmd.compare(L"save.encode") == 0 ) {
-		encode_savefile = param.compare(L"on") == 0;
+	else if (!cmd.compare(L"save.encode")) {
+		encode_savefile = !param.compare(L"on");
 		return true;
 	}
 	// 自動セーブ
-	if ( cmd.compare(L"save.auto") == 0 ) {
+	else if (!cmd.compare(L"save.auto")) {
 		auto_save = param.compare(L"off") != 0;
 		return true;
 	}
 	// charset
-	if ( cmd.compare(L"charset") == 0 ) {
+	else if (!cmd.compare(L"charset")) {
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
 		output_charset    = dic_charset;
 		file_charset      = dic_charset;
@@ -568,63 +571,63 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// charset
-	if ( cmd.compare(L"charset.dic") == 0 ) {
+	else if (!cmd.compare(L"charset.dic")) {
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	if ( cmd.compare(L"charset.output") == 0 ) {
+	else if (!cmd.compare(L"charset.output")) {
 		output_charset    = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	if ( cmd.compare(L"charset.file") == 0 ) {
+	else if (!cmd.compare(L"charset.file")) {
 		file_charset      = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	if ( cmd.compare(L"charset.save") == 0 ) {
+	else if (!cmd.compare(L"charset.save")) {
 		save_charset      = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	if ( cmd.compare(L"charset.save.old") == 0 ) {
+	else if (!cmd.compare(L"charset.save.old")) {
 		save_old_charset  = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	if ( cmd.compare(L"charset.extension") == 0 ) {
+	else if (!cmd.compare(L"charset.extension")) {
 		extension_charset = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
 	// fncdepth
-	if ( cmd.compare(L"fncdepth") == 0 ) {
+	else if (!cmd.compare(L"fncdepth")) {
 		int	f_depth = aya::ws_atoi(param, 10);
 		vm.calldepth().SetMaxDepth((f_depth < 2 && f_depth != 0) ? 2 : f_depth);
 		return true;
 	}
 	// checkparser closed function
-	if ( cmd.compare(L"checkparser") == 0 ) {
-		checkparser = param.compare(L"on") == 0;
+	else if (!cmd.compare(L"checkparser")) {
+		checkparser = !param.compare(L"on");
 		return true;
 	}
 	// iolog.filter.keyword (old syntax : ignoreiolog)
-	if ( cmd.compare(L"iolog.filter.keyword") == 0 ){
+	else if (!cmd.compare(L"iolog.filter.keyword")){
 		vm.logger().AddIologFilterKeyword(param);
 		return true;
 	}
 	// iolog.filter.keyword.regex
-	if ( cmd.compare(L"iolog.filter.keyword.regex") == 0 ){
+	else if (!cmd.compare(L"iolog.filter.keyword.regex")){
 		vm.logger().AddIologFilterKeywordRegex(param);
 		return true;
 	}
 	// iolog.filter.keyword.delete (for SETSETTING)
-	if ( cmd.compare(L"iolog.filter.keyword.delete") == 0 ){
+	else if (!cmd.compare(L"iolog.filter.keyword.delete")){
 		vm.logger().DeleteIologFilterKeyword(param);
 		return true;
 	}
 	// iolog.filter.keyword.regex.delete (for SETSETTING)
-	if ( cmd.compare(L"iolog.filter.keyword.regex.delete") == 0 ){
+	else if (!cmd.compare(L"iolog.filter.keyword.regex.delete")){
 		vm.logger().DeleteIologFilterKeywordRegex(param);
 		return true;
 	}
 	// iolog.filter.mode
-	if ( cmd.compare(L"iolog.filter.mode") == 0 ){
+	else if (!cmd.compare(L"iolog.filter.mode")){
 		vm.logger().SetIologFilterMode(
 			(param.find(L"allow") != aya::string_t::npos)
 			);
@@ -639,7 +642,19 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
  *  機能概要：  各種パラメータを文字列で返します
  * -----------------------------------------------------------------------
  */
-aya::string_t CBasis::GetParameter(const aya::string_t &cmd)
+static void CBasis_ConvertStringArray(const std::vector<aya::string_t> &array,CValue &var)
+{
+	var.array().clear();
+
+	std::vector<aya::string_t>::const_iterator itr = array.begin();
+
+	while (itr != array.end()) {
+		var.array().push_back(CValueSub(*itr));
+		++itr;
+	}
+}
+
+CValue CBasis::GetParameter(const aya::string_t &cmd)
 {
 	// log
 	if (!cmd.compare(L"log")) {
@@ -656,6 +671,10 @@ aya::string_t CBasis::GetParameter(const aya::string_t &cmd)
 	// save.auto
 	else if (!cmd.compare(L"save.auto")) {
 		return aya::string_t(auto_save ? L"on" : L"off");
+	}
+	// messagetxt
+	else if (!cmd.compare(L"messagetxt")) {
+		return messagetxt_path;
 	}
 	// charset
 	else if (!cmd.compare(L"charset")) {
@@ -682,8 +701,35 @@ aya::string_t CBasis::GetParameter(const aya::string_t &cmd)
 	}
 	// fncdepth
 	else if (!cmd.compare(L"fncdepth")) {
-		aya::string_t str;
-		return aya::ws_itoa(vm.calldepth().GetMaxDepth(),10);
+		return CValue(vm.calldepth().GetMaxDepth());
+	}
+	// checkparser closed function
+	else if (!cmd.compare(L"checkparser")) {
+		return checkparser ? L"on" : L"off";
+	}
+	// iolog.filter.keyword
+	else if (!cmd.compare(L"iolog.filter.keyword")){
+		CValue value(F_TAG_ARRAY, 0/*dmy*/);
+		CBasis_ConvertStringArray(vm.logger().GetIologFilterKeyword(),value);
+		return value;
+	}
+	// iolog.filter.keyword.regex
+	else if (!cmd.compare(L"iolog.filter.keyword.regex")){
+		CValue value(F_TAG_ARRAY, 0/*dmy*/);
+		CBasis_ConvertStringArray(vm.logger().GetIologFilterKeywordRegex(),value);
+		return value;
+	}
+	// iolog.filter.keyword.delete (for SETSETTING only)
+	else if (!cmd.compare(L"iolog.filter.keyword.delete")){
+		return L""; //NOOP
+	}
+	// iolog.filter.keyword.regex.delete (for SETSETTING only)
+	else if (!cmd.compare(L"iolog.filter.keyword.regex.delete")){
+		return L""; //NOOP
+	}
+	// iolog.filter.mode
+	else if (!cmd.compare(L"iolog.filter.mode")){
+		return vm.logger().GetIologFilterMode() ? L"allowlist" : L"denylist";
 	}
 	return L"";
 }
@@ -717,14 +763,14 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 
 	// ファイルを開く
 	aya::string_t	filename;
-	if ( ! pName || ! *pName ) {
+	if (! pName || ! *pName) {
 		filename = GetSavefilePath();
 	}
 	else {
 		filename = base_path + pName;
 	}
 
-	if ( ayc ) {
+	if (ayc) {
 		char *s_filestr = Ccct::Ucs2ToMbcs(filename,CHARSET_DEFAULT);
 #if defined(WIN32)
 		DeleteFile(s_filestr);
@@ -889,7 +935,7 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 
 	// ファイルを開く
 	aya::string_t	filename;
-	if ( ! pName || ! *pName ) {
+	if (! pName || ! *pName) {
 		filename = GetSavefilePath();
 	}
 	else {
@@ -902,7 +948,7 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	FILE *fp = NULL;
 
 	//暗号化セーブファイル対応
-	if ( ayc ) {
+	if (ayc) {
 		filename += L".ays";
 		fp = aya::w_fopen(filename.c_str(), L"r");
 		if (!fp) {
@@ -948,7 +994,7 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 		// 改行は消去
 		CutCrLf(readline);
 		// 空行なら次の行へ
-		if (readline.size() == 0) {
+		if (!readline.size()) {
 			linebuffer.erase();
 			continue;
 		}
@@ -968,7 +1014,7 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 			continue;
 		}
 		// Charset
-		if (varname.compare(L"//savefile_charset") == 0) {
+		if (!varname.compare(L"//savefile_charset")) {
 			savefile_charset = Ccct::CharsetTextToID(value.c_str());
 			continue;
 		}
@@ -1056,21 +1102,21 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 	aya::string_t	par, remain;
 	char splitResult;
 
-	for( ; ; ) {
+	for(; ;) {
 		splitResult = Split_IgnoreDQ(value, par, remain, L":");
 		if (!splitResult) {
 			par = value;
 		}
 
 		if (par.compare(ESC_IARRAY) != 0) {
-			if (par.compare(ESC_IVOID) == 0) {
+			if (!par.compare(ESC_IVOID)) {
 				var.array().push_back(CValueSub());
 			}
 			else if (IsIntString(par)) {
-				var.array().push_back(CValueSub( aya::ws_atoi(par, 10) ));
+				var.array().push_back(CValueSub(aya::ws_atoi(par, 10)));
 			}
 			else if (IsDoubleButNotIntString(par)) {
-				var.array().push_back(CValueSub( aya::ws_atof(par) ));
+				var.array().push_back(CValueSub(aya::ws_atof(par)));
 			}
 			else {
 				CutDoubleQuote(par);
@@ -1098,7 +1144,7 @@ void	CBasis::ExecuteLoad(void)
 	}
 
 	int funcpos = loadindex.Find(vm,L"load");
-	if ( funcpos < 0 ) {
+	if (funcpos < 0) {
 		return;
 	}
 
@@ -1133,7 +1179,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	int funcpos = requestindex.Find(vm,L"request");
 
-	if ( funcpos < 0 ) {
+	if (funcpos < 0) {
 		GlobalFree(h);
 		h = NULL;
 		*len = 0;
@@ -1211,7 +1257,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	int funcpos = requestindex.Find(vm,L"request");
 
-	if ( funcpos < 0 ) {
+	if (funcpos < 0) {
 		free(h);
 		h = NULL;
 		*len = 0;
@@ -1271,12 +1317,12 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
  */
 void	CBasis::ExecuteUnload(void)
 {
-	if ( IsSuppress() || unloadindex.IsNotFound() ) {
+	if (IsSuppress() || unloadindex.IsNotFound()) {
 		return;
 	}
 
 	int funcpos = unloadindex.Find(vm,L"unload");
-	if ( funcpos < 0 ) {
+	if (funcpos < 0) {
 		return;
 	}
 
@@ -1298,14 +1344,14 @@ void	CBasis::ExecuteUnload(void)
  */
 int CBasisFuncPos::Find(CAyaVM &vm,const aya::char_t *name)
 {
-	if ( is_try_find ) {
+	if (is_try_find) {
 		return pos_saved;
 	}
 
 	pos_saved = vm.function_exec().GetFunctionIndexFromName(name);
 	is_try_find = true;
 
-	if ( pos_saved < 0 ) {
+	if (pos_saved < 0) {
 		vm.logger().Error(E_W, 32, name);
 	}
 

@@ -56,6 +56,7 @@ public:
 
 	aya::string_t	base_path;					// 上位モジュールからload時に渡されるパス
 	aya::string_t	load_path;					// messagetxt\savefile\aya.txt etc.
+	aya::string_t	messagetxt_path;			// エラーメッセージを読んだパス
 
 protected:
 	char	dic_charset;				// 文字コードセット（Shift_JIS/UTF-8/OSデフォルト）
@@ -120,11 +121,11 @@ public:
 	void	SaveVariable(const aya::char_t* pName = NULL);
 	void	RestoreVariable(const aya::char_t* pName = NULL);
 
-	aya::string_t GetParameter(const aya::string_t &cmd);
+	CValue GetParameter(const aya::string_t &cmd);
 	bool SetParameter(const aya::string_t &cmd, const aya::string_t &param, std::vector<CDic1> *dics = NULL);
 	void SetLogger(void);
 
-	void    SetOutputCharset(char cst) { output_charset = cst; }
+	void	SetOutputCharset(char cst) { output_charset = cst; }
 
 	char	IsSuppress(void);
 
