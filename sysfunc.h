@@ -146,6 +146,7 @@ protected:
 	CValue	ArraySize(CValueArgArray &valuearg, const std::vector<CCell *> &pcellarg, CLocalVariable &lvar,
 				aya::string_t &d, int &l);
 	CValue	SETDELIM(const std::vector<CCell *> &pcellarg, CLocalVariable &lvar, aya::string_t &d, int &l);
+	CValue	ISEVALABLE(const CValue& arg, aya::string_t& d, int& l);
 	CValue	EVAL(const CValue &arg, aya::string_t &d, int &l, CLocalVariable &lvar,
 				CFunction *thisfunc);
 	CValue	ERASEVAR(const CValue &arg, CLocalVariable &lvar, aya::string_t &d, int &l);
