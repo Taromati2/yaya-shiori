@@ -250,6 +250,9 @@ protected:
 	CValue UNDEFFUNC(const CValue &arg, aya::string_t &, int &);
 	CValue UNDEFGLOBALDEFINE(const CValue &arg, aya::string_t &, int &);
 
+	CValue ISGLOBALDEFINE(const CValue& arg, aya::string_t& d, int& l);
+	CValue SETGLOBALDEFINE(const CValue& arg, aya::string_t& d, int& l);
+
 	CValue	GETFUNCINFO(const CValue &arg, aya::string_t &d, int &l);
 	CValue	PROCESSGLOBALDEFINE(const CValue &arg, aya::string_t &d, int &l);
 
