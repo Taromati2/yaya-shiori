@@ -188,6 +188,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 void	CBasis::SetLogRcvWnd(long hwnd)
 {
 	hlogrcvWnd = (HWND)hwnd;
+	vm.logger().Start(logpath, output_charset, hlogrcvWnd, iolog);
 }
 #endif
 
