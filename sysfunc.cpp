@@ -3385,7 +3385,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(const CValue &arg, aya::string_t &d, int
 		}
 	}
 
-	gdefines.push_back({ defname , defbody , L"runtime"});
+	gdefines.push_back(CDefine(defname, defbody, L"runtime"));
 	return CValue(0);
 }
 

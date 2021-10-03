@@ -644,9 +644,8 @@ char	CParser0::GetPreProcess(aya::string_t &str, std::vector<CDefine>& defines, 
 		CDefine	adddefine(bef, aft, dicfilename);
 		defines.push_back(adddefine);
 	}
-	else if(!pname.compare(L"#globaldefine")) {
-		CDefine	adddefine(bef, aft, dicfilename);
-		gdefines.push_back(adddefine);
+	else if (!pname.compare(L"#globaldefine")) {
+		gdefines.push_back(CDefine(bef, aft, dicfilename));
 	}
 	else {
 		vm.logger().Error(E_E, 76, pname, dicfilename, linecount);
