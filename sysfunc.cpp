@@ -3344,7 +3344,7 @@ CValue	CSystemFunction::APPENDDEF(const CValue &arg, aya::string_t &d, int &l)
 
 	aya::string_t def = arg.array()[0].s_value;
 	
-	bool err = vm.parser0().DynamicAppendDefines(def);
+	int err = vm.parser0().DynamicAppendDefines(def);
 
 	return CValue(err ? -1 : 0);
 }
@@ -3377,7 +3377,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(const CValue &arg, aya::string_t &d, int
 	while (itg != gdefines.end()) {
 		if( itg->before == defname ) {
 			itg->after=defbody;
-			itg->dicfilename=L"runtime";
+			itg->dicfilename=L"_DIC_RUNTIME_DEF_";
 			return CValue(1);
 		}
 		else {
@@ -3385,7 +3385,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(const CValue &arg, aya::string_t &d, int
 		}
 	}
 
-	gdefines.push_back(CDefine(defname, defbody, L"runtime"));
+	gdefines.push_back(CDefine(defname, defbody, L"_DIC_RUNTIME_DEF_"));
 	return CValue(0);
 }
 
