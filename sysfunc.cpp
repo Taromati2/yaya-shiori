@@ -302,7 +302,7 @@ static const wchar_t sysfunc[SYSFUNC_NUM][32] = {
 	L"SETTAMAHWND",
 	L"ISGLOBALDEFINE",
 	L"SETGLOBALDEFINE",
-	L"APPENDDEF",
+	L"APPEND_RUNTIME_DIC",
 };
 
 //このグローバル変数はマルチインスタンスでも共通
@@ -727,7 +727,7 @@ CValue	CSystemFunction::Execute(int index, const CValue &arg, const std::vector<
 	case 148:
 		return SETGLOBALDEFINE(arg, d, l);
 	case 149:
-		return APPENDDEF(arg, d, l);
+		return APPEND_RUNTIME_DIC(arg, d, l);
 	default:
 		vm.logger().Error(E_E, 49, d, l);
 		return CValue(F_TAG_NOP, 0/*dmy*/);
@@ -3324,27 +3324,27 @@ CValue	CSystemFunction::ISGLOBALDEFINE(const CValue &arg, aya::string_t &d, int 
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::APPENDDEF
- *  引数　　：　_argv[0] = define(s)
+ *  関数名  ：  CSystemFunction::APPEND_RUNTIME_DIC
+ *  引数　　：　_argv[0] = temporary dictionary text
  * -----------------------------------------------------------------------
  */
-CValue	CSystemFunction::APPENDDEF(const CValue &arg, aya::string_t &d, int &l)
+CValue	CSystemFunction::APPEND_RUNTIME_DIC(const CValue &arg, aya::string_t &d, int &l)
 {
 	if(!arg.array_size()) {
-		vm.logger().Error(E_W, 8, L"SETGLOBALDEFINE", d, l);
+		vm.logger().Error(E_W, 8, L"APPEND_RUNTIME_DIC", d, l);
 		SetError(8);
 		return CValue(-1);
 	}
 
 	if(!arg.array()[0].IsString()) {
-		vm.logger().Error(E_W, 9, L"SETGLOBALDEFINE", d, l);
+		vm.logger().Error(E_W, 9, L"APPEND_RUNTIME_DIC", d, l);
 		SetError(9);
 		return CValue(-1);
 	}
 
 	aya::string_t def = arg.array()[0].s_value;
 	
-	int err = vm.parser0().DynamicAppendDefines(def);
+	int err = vm.parser0().DynamicAppendRuntimeDictionary(def);
 
 	return CValue(err ? -1 : 0);
 }
@@ -3377,7 +3377,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(const CValue &arg, aya::string_t &d, int
 	while (itg != gdefines.end()) {
 		if( itg->before == defname ) {
 			itg->after=defbody;
-			itg->dicfilename=L"_DIC_RUNTIME_DEF_";
+			itg->dicfilename=L"_RUNTIME_DIC_";
 			return CValue(1);
 		}
 		else {
@@ -3385,7 +3385,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(const CValue &arg, aya::string_t &d, int
 		}
 	}
 
-	gdefines.push_back(CDefine(defname, defbody, L"_DIC_RUNTIME_DEF_"));
+	gdefines.push_back(CDefine(defname, defbody, L"_RUNTIME_DIC_"));
 	return CValue(0);
 }
 

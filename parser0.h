@@ -58,7 +58,7 @@ public:
 	char	ParseEmbedString(aya::string_t& str, CStatement &st, const aya::string_t &dicfilename, int linecount);
 
 	int		DynamicLoadDictionary(const aya::string_t& dicfilename, int charset);
-	int		DynamicAppendDefines(const aya::string_t& codes);
+	int		DynamicAppendRuntimeDictionary(const aya::string_t& codes);
 	int		DynamicUnloadDictionary(const aya::string_t& dicfilename);
 	int		DynamicUndefFunc(const aya::string_t& funcname);
 
