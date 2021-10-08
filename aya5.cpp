@@ -26,9 +26,9 @@
 
 class CAyaVMWrapper;
 
-static std::vector<CAyaVMWrapper*> vm;
+static CAyaVMWrapper* vm=NULL;
 static aya::string_t modulename;
-static std::vector<void (*)(const aya::char_t *str, int mode)> loghandler_list;
+static void (*loghandler)(const aya::char_t *str, int mode)=NULL;
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -39,16 +39,6 @@ static std::vector<void (*)(const aya::char_t *str, int mode)> loghandler_list;
 #endif
 ////////////////////////////////////////
 
-size_t get_id_of_(CAyaVMWrapper*p) {
-	size_t id=0;
-	for (auto a : vm)
-		if (a == p)
-			return id;
-		else
-			id++;
-	return 0;
-}
-
 class CAyaVMWrapper {
 private:
 	CAyaVM *vm;
@@ -57,7 +47,7 @@ public:
 	CAyaVMWrapper(const aya::string_t &path, aya::global_t h, long len) {
 		vm = new CAyaVM();
 
-		vm->logger().Set_loghandler(loghandler_list[get_id_of_(this)]);
+		vm->logger().Set_loghandler(loghandler);
 
 		vm->basis().SetModuleName(modulename,L"",L"normal");
 
@@ -132,24 +122,6 @@ public:
 
 };
 
-class CAyaVMPrepare {
-public:
-	CAyaVMPrepare(void) {
-		vm.clear();
-		vm.push_back(NULL); //0番VM＝loadなど従来関数で使う標準
-	}
-	~CAyaVMPrepare(void) {
-		size_t n = vm.size();
-		for ( size_t i = 0 ; i < n ; ++i ) {
-			if( vm[i] ) {
-				delete vm[i];
-			}
-		}
-	}
-};
-
-static CAyaVMPrepare prepare; //これはコンストラクタ・デストラクタ作動用
-
 /* -----------------------------------------------------------------------
  *  DllMain
  * -----------------------------------------------------------------------
@@ -198,12 +170,9 @@ extern "C" BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPV
  */
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(aya::global_t h, long len)
 {
-	if( vm[0] ) { delete vm[0]; }
+	if( vm ) { delete vm; }
 
-	loghandler_list.reserve(1);
-	while(loghandler_list.size()<1)
-		loghandler_list.push_back(NULL);
-	vm[0] = new CAyaVMWrapper(modulename,h,len);
+	vm = new CAyaVMWrapper(modulename,h,len);
 
 #if defined(WIN32) || defined(_WIN32_WCE)
 	::GlobalFree(h);
@@ -212,36 +181,6 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(aya::global_t h, long len)
 #endif
 
 	return 1;
-}
-
-extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
-{
-	long id = 0;
-	
-	long n = (long)vm.size();
-	for ( long i = 1 ; i < n ; ++i ) { //1から 0番は従来用
-		if( vm[i] == NULL ) {
-			id = i;
-		}
-	}
-
-	if( id <= 0 ) {
-		vm.push_back(NULL);
-		id = (long)vm.size() - 1;
-	}
-
-	loghandler_list.reserve(id+1);
-	while(loghandler_list.size()<id+1)
-		loghandler_list.push_back(NULL);
-	vm[id] = new CAyaVMWrapper(modulename,h,len);
-
-#if defined(WIN32) || defined(_WIN32_WCE)
-	::GlobalFree(h);
-#elif defined(POSIX)
-	free(h);
-#endif
-
-	return id;
 }
 
 /* -----------------------------------------------------------------------
@@ -250,22 +189,10 @@ extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
  */
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB unload()
 {
-	if( vm[0] ) {
-		delete vm[0];
-		vm[0] = NULL;
+	if( vm ) {
+		delete vm;
+		vm = NULL;
 	}
-
-	return 1;
-}
-
-extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_unload(long id)
-{
-	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
-		return 0;
-	}
-
-	delete vm[id];
-	vm[id] = NULL;
 
 	return 1;
 }
@@ -276,22 +203,8 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_unload(long id)
  */
 extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len)
 {
-	if( vm[0] ) {
-		return vm[0]->ExecuteRequest(h, len, false);
-	}
-	else {
-		return NULL;
-	}
-}
-
-extern "C" DLLEXPORT aya::global_t FUNCATTRIB multi_request(long id, aya::global_t h, long *len)
-{
-	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
-		return 0;
-	}
-
-	if( vm[id] ) {
-		return vm[id]->ExecuteRequest(h, len, false);
+	if( vm ) {
+		return vm->ExecuteRequest(h, len, false);
 	}
 	else {
 		return NULL;
@@ -304,22 +217,8 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB multi_request(long id, aya::global
  */
  extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB CI_check_failed(void)
 {
-	if( vm[0] ) {
-		return vm[0]->IsSuppress()||vm[0]->IsEmergency();
-	}
-	else {
-		return NULL;
-	}
-}
-
-extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_CI_check_failed(long id)//?
-{
-	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
-		return 0;
-	}
-
-	if( vm[id] ) {
-		return vm[id]->IsSuppress()||vm[id]->IsEmergency();
+	if( vm ) {
+		return vm->IsSuppress()||vm->IsEmergency();
 	}
 	else {
 		return NULL;
@@ -332,34 +231,14 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_CI_check_failed(long id)//?
  */
  extern "C" DLLEXPORT void FUNCATTRIB Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode))
 {
-	if( vm[0] ) {
-		vm[0]->Set_loghandler(loghandler);
+	if( vm ) {
+		vm->Set_loghandler(loghandler);
 	}
 	else {
-		loghandler_list.reserve(1);
-		while(loghandler_list.size()<1)
-			loghandler_list.push_back(NULL);
-		loghandler_list[0]=loghandler;
+		::loghandler=loghandler;
 	}
 }
 
-extern "C" DLLEXPORT void FUNCATTRIB multi_Set_loghandler(long id,void (*loghandler)(const aya::char_t *str, int mode))//?
-{
-	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
-		return;
-	}
-
-	if( vm[id] ) {
-		vm[id]->Set_loghandler(loghandler);
-	}
-	else {
-		loghandler_list.reserve(id+1);
-		while(loghandler_list.size()<id+1)
-			loghandler_list.push_back(NULL);
-		loghandler_list[id]=loghandler;
-	}
-}
- 
 /* -----------------------------------------------------------------------
  *  logsend（AYA固有　チェックツールから使用）
  * -----------------------------------------------------------------------
@@ -368,11 +247,8 @@ extern "C" DLLEXPORT void FUNCATTRIB multi_Set_loghandler(long id,void (*loghand
 #if defined(WIN32)
 extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB logsend(long hwnd)
 {
-	if( vm[0] ) {
-		vm[0]->SetLogRcvWnd(hwnd);
-	}
-	else if( vm.size() >= 2 && vm[1] ) {
-		vm[1]->SetLogRcvWnd(hwnd);
+	if( vm ) {
+		vm->SetLogRcvWnd(hwnd);
 	}
 
 	return TRUE;
