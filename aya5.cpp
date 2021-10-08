@@ -28,6 +28,7 @@ class CAyaVMWrapper;
 
 static std::vector<CAyaVMWrapper*> vm;
 static aya::string_t modulename;
+static std::vector<void (*)(const aya::char_t *str, int mode)> loghandler_list;
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -38,6 +39,16 @@ static aya::string_t modulename;
 #endif
 ////////////////////////////////////////
 
+size_t get_id_of_(CAyaVMWrapper*p) {
+	size_t id=0;
+	for (auto a : vm)
+		if (a == p)
+			return id;
+		else
+			id++;
+	return 0;
+}
+
 class CAyaVMWrapper {
 private:
 	CAyaVM *vm;
@@ -45,6 +56,8 @@ private:
 public:
 	CAyaVMWrapper(const aya::string_t &path, aya::global_t h, long len) {
 		vm = new CAyaVM();
+
+		vm->logger().Set_loghandler(loghandler_list[get_id_of_(this)]);
 
 		vm->basis().SetModuleName(modulename,L"",L"normal");
 
@@ -83,6 +96,10 @@ public:
 		vm->unload();
 
 		delete vm;
+	}
+
+	void Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode)){
+		vm->logger().Set_loghandler(loghandler);
 	}
 
 	bool IsSuppress(void) {
@@ -183,6 +200,9 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB load(aya::global_t h, long len)
 {
 	if( vm[0] ) { delete vm[0]; }
 
+	loghandler_list.reserve(1);
+	while(loghandler_list.size()<1)
+		loghandler_list.push_back(NULL);
 	vm[0] = new CAyaVMWrapper(modulename,h,len);
 
 #if defined(WIN32) || defined(_WIN32_WCE)
@@ -210,6 +230,9 @@ extern "C" DLLEXPORT long FUNCATTRIB multi_load(aya::global_t h, long len)
 		id = (long)vm.size() - 1;
 	}
 
+	loghandler_list.reserve(id+1);
+	while(loghandler_list.size()<id+1)
+		loghandler_list.push_back(NULL);
 	vm[id] = new CAyaVMWrapper(modulename,h,len);
 
 #if defined(WIN32) || defined(_WIN32_WCE)
@@ -300,6 +323,40 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB multi_CI_check_failed(long id)//?
 	}
 	else {
 		return NULL;
+	}
+}
+
+/* -----------------------------------------------------------------------
+ *  Set_loghandler
+ * -----------------------------------------------------------------------
+ */
+ extern "C" DLLEXPORT void FUNCATTRIB Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode))
+{
+	if( vm[0] ) {
+		vm[0]->Set_loghandler(loghandler);
+	}
+	else {
+		loghandler_list.reserve(1);
+		while(loghandler_list.size()<1)
+			loghandler_list.push_back(NULL);
+		loghandler_list[0]=loghandler;
+	}
+}
+
+extern "C" DLLEXPORT void FUNCATTRIB multi_Set_loghandler(long id,void (*loghandler)(const aya::char_t *str, int mode))//?
+{
+	if( id <= 0 || id > (long)vm.size() || vm[id] == NULL ) { //1から 0番は従来用
+		return;
+	}
+
+	if( vm[id] ) {
+		vm[id]->Set_loghandler(loghandler);
+	}
+	else {
+		loghandler_list.reserve(id+1);
+		while(loghandler_list.size()<id+1)
+			loghandler_list.push_back(NULL);
+		loghandler_list[id]=loghandler;
 	}
 }
  

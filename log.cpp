@@ -115,17 +115,15 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 	}
 	open = 1;
 
-#if defined(WIN32)
 	// チェックツールへ送出　最初に文字コードを設定してから文字列を送出
 	if(charset == CHARSET_SJIS)
-		SendLogToWnd(L"", E_SJIS);
+		Call_loghandler(L"", E_SJIS);
 	else if(charset == CHARSET_UTF8)
-		SendLogToWnd(L"", E_UTF8);
+		Call_loghandler(L"", E_UTF8);
 	else	// CHARSET_DEFAULT
-		SendLogToWnd(L"", E_DEFAULT);
+		Call_loghandler(L"", E_DEFAULT);
 
-	SendLogToWnd(str, E_I);
-#endif
+	Call_loghandler(str, E_I);
 }
 
 /* -----------------------------------------------------------------------
@@ -147,9 +145,7 @@ void	CLog::Termination(void)
 
 	open = 0;
 
-#if defined(WIN32)
-	SendLogToWnd(L"", E_END);
-#endif
+	Call_loghandler(L"", E_END);
 }
 
 /* -----------------------------------------------------------------------
@@ -194,10 +190,8 @@ void	CLog::Write(const aya::char_t *str, int mode)
 		}
 	}
 
-#if defined(WIN32)
 	// チェックツールへ送出
-	SendLogToWnd(cstr, mode);
-#endif
+	Call_loghandler(cstr, mode);
 }
 
 //----
@@ -431,6 +425,23 @@ void	CLog::IoLib(char io, const aya::string_t &str, const aya::string_t &name)
 	}
 }
 
+void	CLog::Call_loghandler(const aya::string_t &str, int mode)
+{
+	Call_loghandler((aya::char_t *)str.c_str(), mode);
+}
+void	CLog::Call_loghandler(const aya::char_t *str, int mode){
+	if (loghandler)
+		loghandler(str,mode);
+	else
+	#if defined(WIN32)
+		SendLogToWnd(str,mode);
+	#else
+		return;
+	#endif
+}
+void	CLog::Set_loghandler(void (*loghandler_v)(const aya::char_t *str, int mode)){
+	loghandler=loghandler_v;
+}
 /* -----------------------------------------------------------------------
  *  関数名  ：  CLog::SendLogToWnd
  *  機能概要：  チェックツールに制御メッセージおよびログ文字列をWM_COPYDATAで送信します
@@ -451,12 +462,6 @@ void	CLog::SendLogToWnd(const aya::char_t *str, int mode)
 	::SendMessageTimeout(hWnd, WM_COPYDATA, (WPARAM)NULL, (LPARAM)&cds, SMTO_ABORTIFHUNG|SMTO_BLOCK, 5000, &res_dword);
 }
 
-//----
-
-void	CLog::SendLogToWnd(const aya::string_t &str, int mode)
-{
-	SendLogToWnd((aya::char_t *)str.c_str(), mode);
-}
 #endif
 
 /* -----------------------------------------------------------------------

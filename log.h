@@ -31,6 +31,7 @@ protected:
 #if defined(WIN32)
 	HWND		hWnd;		// チェックツールのHWND
 #endif
+	void (*loghandler)(const aya::char_t *str, int mode)=NULL;
 
 	char		enable;		// ロギング有効フラグ
 	char		open;		// ロギング開始フラグ
@@ -83,8 +84,11 @@ public:
 
 	void	IoLib(char io, const aya::string_t &str, const aya::string_t &name);
 
+	void	Call_loghandler(const aya::string_t& str, int mode);
+	void	Call_loghandler(const aya::char_t* str, int mode);
+	void	Set_loghandler(void(*loghandler_v)(const aya::char_t* str, int mode));
+
 	void	SendLogToWnd(const aya::char_t *str, int mode);
-	void	SendLogToWnd(const aya::string_t &str, int mode);
 
 	void	AddIologFilterKeyword(const aya::string_t &ignorestr);
 	void	AddIologFilterKeywordRegex(const aya::string_t &ignorestr);
