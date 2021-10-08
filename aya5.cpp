@@ -231,11 +231,9 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len
  */
  extern "C" DLLEXPORT void FUNCATTRIB Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode))
 {
+	::loghandler=loghandler;
 	if( vm ) {
 		vm->Set_loghandler(loghandler);
-	}
-	else {
-		::loghandler=loghandler;
 	}
 }
 
