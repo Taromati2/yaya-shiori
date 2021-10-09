@@ -28,7 +28,7 @@ class CAyaVMWrapper;
 
 static CAyaVMWrapper* vm=NULL;
 static aya::string_t modulename;
-static void (*loghandler)(const aya::char_t *str, int mode)=NULL;
+static void (*loghandler)(const aya::char_t *str, int mode, int id)=NULL;
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -88,7 +88,7 @@ public:
 		delete vm;
 	}
 
-	void Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode)){
+	void Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode, int id)){
 		vm->logger().Set_loghandler(loghandler);
 	}
 
@@ -215,7 +215,7 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len
  *  CI_check_failed
  * -----------------------------------------------------------------------
  */
- extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB CI_check_failed(void)
+extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB CI_check_failed(void)
 {
 	if( vm ) {
 		return vm->IsSuppress()||vm->IsEmergency();
@@ -229,7 +229,7 @@ extern "C" DLLEXPORT aya::global_t FUNCATTRIB request(aya::global_t h, long *len
  *  Set_loghandler
  * -----------------------------------------------------------------------
  */
- extern "C" DLLEXPORT void FUNCATTRIB Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode))
+extern "C" DLLEXPORT void FUNCATTRIB Set_loghandler(void (*loghandler)(const aya::char_t *str, int mode, int id))
 {
 	::loghandler=loghandler;
 	if( vm ) {
