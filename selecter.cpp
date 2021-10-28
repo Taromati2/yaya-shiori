@@ -34,7 +34,7 @@ CSelecter::CSelecter(CAyaVM &vmr, CDuplEvInfo *dc, int aid) : vm(vmr), duplctl(d
 	areanum = 0;
 
 	CVecValue	addvv;
-	values.push_back(addvv);
+	values.emplace_back(addvv);
 }
 
 /* -----------------------------------------------------------------------
@@ -50,7 +50,7 @@ void	CSelecter::AddArea(void)
 
 	// 領域を追加
 	CVecValue	addvv;
-	values.push_back(addvv);
+	values.emplace_back(addvv);
 	areanum++;
 }
 
@@ -67,7 +67,7 @@ void	CSelecter::Append(const CValue &value)
 	if(value.GetType() == F_TAG_VOID)
 		return;
 
-	values[areanum].array.push_back(value);
+	values[areanum].array.emplace_back(value);
 }
 
 /* -----------------------------------------------------------------------
@@ -263,7 +263,7 @@ CValue CSelecter::StructArray1(int index)
 			result.array().insert(result.array().end(), target.array().begin(), target.array().end());
 		}
 		else {
-			result.array().push_back(CValueSub(target));
+			result.array().emplace_back(CValueSub(target));
 		}
 	}
 

@@ -104,7 +104,7 @@ int	CFile::Add(const aya::string_t &name, const aya::string_t &mode)
 		return 0;
 	}
 
-	filelist.push_back(CFile1(name, charset, t_mode));
+	filelist.emplace_back(CFile1(name, charset, t_mode));
 	it = filelist.end();
 	it--;
 	if(!it->Open()) {

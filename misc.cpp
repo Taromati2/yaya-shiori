@@ -219,13 +219,13 @@ int	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *arr
 		seppoint = str.find(delimiter,beforepoint);
 		if(seppoint == aya::string_t::npos) {
 			if( array ) {
-				array->push_back(aya::string_t(str.begin()+beforepoint,str.end()));
+				array->emplace_back(aya::string_t(str.begin()+beforepoint,str.end()));
 			}
 			break;
 		}
 		// 取り出しとvectorへの追加
 		if( array ) {
-			array->push_back(aya::string_t(str.begin()+beforepoint,str.begin()+seppoint));
+			array->emplace_back(aya::string_t(str.begin()+beforepoint,str.begin()+seppoint));
 		}
 		// 取り出した分を削除
 		beforepoint = seppoint + dlmlen;

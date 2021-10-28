@@ -68,13 +68,13 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 	if(mode == CHOICETYPE_NONOVERLAP) {
 		for(int i = 0; i < total; ++i) {
 			if( i != lastroundorder ) {
-				roundorder.push_back(i);
+				roundorder.emplace_back(i);
 			}
 		}
 
 		//緊急時エラー回避用
 		if( ! roundorder.size() ) {
-			roundorder.push_back(0);
+			roundorder.emplace_back(0);
 		}
 
 		int n = roundorder.size();
@@ -89,7 +89,7 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 	}
 	else {
 		for(int i = 0; i < total; ++i) {
-			roundorder.push_back(i);
+			roundorder.emplace_back(i);
 		}
 	}
 }
@@ -113,7 +113,7 @@ char	CDuplEvInfo::UpdateNums(int areanum, const std::vector<CVecValue> &values)
 	char	changed = (areanum != bef_numlenm1) ? 1 : 0;
 	for(int i = 0; i <= areanum; i++) {
 		int	t_num = values[i].array.size();
-		num.push_back(t_num);
+		num.emplace_back(t_num);
 		total *= t_num;
 		if(i <= bef_numlenm1)
 			if(bef_num[i] != t_num)
