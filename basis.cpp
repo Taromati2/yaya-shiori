@@ -987,6 +987,56 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 			}
 			str += L',';
 			break;
+		case F_TAG_HASH:
+			if (!var->value_const().hash_size()) {
+				str += ESC_IHASH L"=" ESC_IHASH L":" ESC_IHASH L"=" ESC_IHASH;
+			}
+			else {
+				CValueHash::const_iterator	itv;
+				CValueHash::const_iterator	itvbegin = var->value_const().hash().begin();
+
+				for(itv = itvbegin; itv != var->value_const().hash().end(); itv++) {
+					if (itv != itvbegin)
+						str += L":";
+
+					wstr = itv->first.GetValueString();
+					EscapeString(wstr);
+
+					if (itv->first.GetType() == F_TAG_STRING) {
+						str += L"\"";
+						str += wstr;
+						str += L"\"";
+					}
+					else if (itv->first.GetType() == F_TAG_VOID) {
+						str += ESC_IVOID;
+					}
+					else {
+						str += wstr;
+					}
+
+					str += L"=";
+
+					wstr = itv->second.GetValueString();
+					EscapeString(wstr);
+
+					if (itv->second.GetType() == F_TAG_STRING) {
+						str += L"\"";
+						str += wstr;
+						str += L"\"";
+					}
+					else if (itv->second.GetType() == F_TAG_VOID) {
+						str += ESC_IVOID;
+					}
+					else {
+						str += wstr;
+					}
+				}
+				if (var->value_const().hash_size() == 1) {
+					str += L":" ESC_IHASH L"=" ESC_IHASH;
+				}
+			}
+			str += L",";
+			break;
 		default:
 			vm.logger().Error(E_W, 7, var->name);
 			break;
@@ -1159,7 +1209,12 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 				vm.logger().Error(E_W, 4, filename, i);
 				continue;
 			}
-			type = F_TAG_ARRAY;
+			else {
+				type = F_TAG_ARRAY;
+				if (Find_IgnoreDQ(value,L"=") != aya::string_t::npos) {
+					type = F_TAG_HASH;
+				}
+			}
 		}
 		// デリミタの正当性を検査
 		if(!delimiter.size()) {
@@ -1187,6 +1242,10 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 		else if(type == F_TAG_ARRAY) {
 			// 配列型
 			RestoreArrayVariable(*(vm.variable().GetValuePtr(index)), value);
+		}
+		else if (type == F_TAG_HASH) {
+			// �A�z�z��^
+			RestoreHashVariable(*(vm.variable().GetValuePtr(index)), value);
 		}
 		else {
 			vm.logger().Error(E_W, 6, filename, i);
@@ -1243,6 +1302,70 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 		}
 
 		if(!splitResult) {
+			break;
+		}
+		value = remain;
+	}
+}
+
+
+/* -----------------------------------------------------------------------
+ *  �֐���  �F  CBasis::RestoreHashVariable
+ *  �@�\�T�v�F  RestoreVariable����Ă΂�܂��B�z��ϐ��̓�e�𕜌����܂�
+ * -----------------------------------------------------------------------
+ */
+void	CBasis::RestoreHashVariable(CValue &var, aya::string_t &value)
+{
+	var.hash().clear();
+
+	aya::string_t	par, remain, key, key_value;
+	char splitResult;
+
+	for( ; ; ) {
+		splitResult = Split_IgnoreDQ(value, par, remain, L":");
+		if (!splitResult) {
+			par = value;
+		}
+
+		if ( Split_IgnoreDQ(par, key, key_value, L"=") ) {
+			if (key.compare(ESC_IHASH) != 0) {
+				std::pair<CValueSub,CValueSub> kv;
+
+				if (key.compare(ESC_IVOID) == 0) {
+					kv.first = CValueSub();
+				}
+				else if (IsIntString(key)) {
+					kv.first = CValueSub( aya::ws_atoi(key, 10) );
+				}
+				else if (IsDoubleButNotIntString(key)) {
+					kv.first = CValueSub( aya::ws_atof(key) );
+				}
+				else {
+					CutDoubleQuote(key);
+					UnescapeString(key);
+					kv.first = CValueSub(key);
+				}
+
+				if (key_value.compare(ESC_IVOID) == 0) {
+					kv.second = CValueSub();
+				}
+				if (IsIntString(key_value)) {
+					kv.second = CValueSub( aya::ws_atoi(key_value, 10) );
+				}
+				else if (IsDoubleButNotIntString(key_value)) {
+					kv.second = CValueSub( aya::ws_atof(key_value) );
+				}
+				else {
+					CutDoubleQuote(key_value);
+					UnescapeString(key_value);
+					kv.second = CValueSub(key_value);
+				}
+
+				var.hash().insert(kv);
+			}
+		}
+
+		if (!splitResult) {
 			break;
 		}
 		value = remain;

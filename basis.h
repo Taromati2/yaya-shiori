@@ -143,6 +143,7 @@ protected:
 	void LoadBaseConfigureFile_Base(aya::string_t filename, std::vector<CDic1> &dics,char cset);
 
 	void	RestoreArrayVariable(CValue &var, aya::string_t &value);
+	void	RestoreHashVariable(CValue &var, aya::string_t &value);
 };
 
 //----

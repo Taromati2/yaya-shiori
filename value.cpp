@@ -58,6 +58,8 @@ aya::int_t	CValue::GetValueInt(void) const
 		return aya::ws_atoll(s_value, 10);
 	case F_TAG_ARRAY:
 		return 0;
+    case F_TAG_HASH:
+        return 0;
 	default:
 		return 0;
 	};
@@ -80,6 +82,8 @@ double	CValue::GetValueDouble(void) const
 	case F_TAG_STRING:
 		return aya::ws_atof(s_value);
 	case F_TAG_ARRAY:
+		return 0.0;
+	case F_TAG_HASH:
 		return 0.0;
 	default:
 		return 0.0;
@@ -111,6 +115,18 @@ aya::string_t	CValue::GetValueString(void) const
 				if(it != array().begin())
 					result += VAR_DELIMITER;
 				result += it->GetValueString();
+			}
+			return result;
+		}
+	case F_TAG_HASH: {
+			aya::string_t	result;
+			for(CValueHash::const_iterator it = hash().begin();
+				it != hash().end(); it++) {
+				if (it != hash().begin())
+					result += VAR_DELIMITER;
+				result += it->first.GetValueString();
+				result += L"=";
+				result += it->second.GetValueString();
 			}
 			return result;
 		}
@@ -150,6 +166,29 @@ aya::string_t	CValue::GetValueStringForLogging(void) const
 					result += VAR_DELIMITER;
 				tmpstr = it->GetValueString();
 				if(it->GetType() == F_TAG_STRING)
+					AddDoubleQuote(tmpstr);
+				result += tmpstr;
+			}
+			return result;
+		}
+	case F_TAG_HASH: {
+			aya::string_t	result;
+			aya::string_t	tmpstr;
+
+			for(CValueHash::const_iterator it = hash().begin();
+				it != hash().end(); it++) {
+				if (it != hash().begin())
+					result += VAR_DELIMITER;
+
+				tmpstr = it->first.GetValueString();
+				if (it->first.GetType() == F_TAG_STRING)
+					AddDoubleQuote(tmpstr);
+				result += tmpstr;
+
+				result += L"=";
+
+				tmpstr = it->second.GetValueString();
+				if (it->second.GetType() == F_TAG_STRING)
 					AddDoubleQuote(tmpstr);
 				result += tmpstr;
 			}
@@ -488,6 +527,18 @@ CValue &CValue::operator =(const CValueArray &value)&
 	return *this;
 }
 
+/* -----------------------------------------------------------------------
+ *  operator = (CValueHash)
+ * -----------------------------------------------------------------------
+ */
+CValue &CValue::operator =(const CValueHash &value)&
+{
+	type    = F_TAG_HASH;
+	hash() = value;
+
+	return *this;
+}
+
 void CValue::SubstToArray(CValueArray &value)&
 {
 	type    = F_TAG_ARRAY;
@@ -547,6 +598,8 @@ int CValue::CalcEscalationTypeNum(const int rhs) const
 		return F_TAG_DOUBLE;
 	case F_TAG_ARRAY:
 		return F_TAG_ARRAY;
+    case F_TAG_HASH:
+        return F_TAG_HASH;
 	}
 	return F_TAG_VOID;
 }
@@ -1046,6 +1099,19 @@ CValue CValue::operator [](const CValue &value) const
 			}
 		}
 	}
+    else if (type == F_TAG_HASH)
+    {
+        if (!aoflg)
+        {
+            if (hash().count(value.array()[0]))
+            {
+                return CValue(hash().find(value.array()[0])->second);
+            }
+            else {
+                return CValue(L"");
+            }
+        }
+    }
 
 	return aya::string_t();
 }
