@@ -34,7 +34,7 @@ CSelecter::CSelecter(CAyaVM &vmr, CDuplEvInfo *dc, int aid) : vm(vmr), duplctl(d
 	areanum = 0;
 
 	CVecValue	addvv;
-	values.emplace_back(addvv);
+	values.push_back(addvv);
 }
 
 /* -----------------------------------------------------------------------
@@ -45,12 +45,12 @@ CSelecter::CSelecter(CAyaVM &vmr, CDuplEvInfo *dc, int aid) : vm(vmr), duplctl(d
 void	CSelecter::AddArea(void)
 {
 	// 追加前の領域が空だった場合はダミーの空文字列を追加
-	if(!values[areanum].array.size())
+	if (!values[areanum].array.size())
 		Append(CValue());
 
 	// 領域を追加
 	CVecValue	addvv;
-	values.emplace_back(addvv);
+	values.push_back(addvv);
 	areanum++;
 }
 
@@ -62,12 +62,12 @@ void	CSelecter::AddArea(void)
 void	CSelecter::Append(const CValue &value)
 {
 	//空文字列はやっぱり追加しないとまずい
-	//if(value.GetType() == F_TAG_STRING && !value.s_value.size())
+	//if (value.GetType() == F_TAG_STRING && !value.s_value.size())
 	//	return;
-	if(value.GetType() == F_TAG_VOID)
+	if (value.GetType() == F_TAG_VOID)
 		return;
 
-	values[areanum].array.emplace_back(value);
+	values[areanum].array.push_back(value);
 }
 
 /* -----------------------------------------------------------------------
@@ -80,26 +80,26 @@ void	CSelecter::Append(const CValue &value)
  *  nonoverlao/sequential選択はCDuplEvInfoクラスに任せます。
  * -----------------------------------------------------------------------
  */
-CValue	CSelecter::Output(void)
+CValue	CSelecter::Output()
 {
 	// switch選択
-	if(aindex >= BRACE_SWITCH_OUT_OF_RANGE) {
+	if (aindex >= BRACE_SWITCH_OUT_OF_RANGE) {
 		vm.sysfunction().SetLso(aindex);
 		return ChoiceByIndex();
 	}
 
 	// 領域が1つしかなく、かつ候補が存在しない場合は出力なし
-	if(!areanum && !values[0].array.size()) {
+	if (!areanum && !values[0].array.size()) {
 		vm.sysfunction().SetLso(-1);
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
 	// 最後の領域が空だった場合はダミーの空文字列を追加
-	if(!values[areanum].array.size())
+	if (!values[areanum].array.size())
 		Append(CValue());
 
 	// ランダム選択
-	if(duplctl == NULL)
+	if (duplctl == NULL)
 		return ChoiceRandom();
 
 	// 重複回避制御付き選択
@@ -111,14 +111,11 @@ CValue	CSelecter::Output(void)
 	case CHOICETYPE_VOID:
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	case CHOICETYPE_ARRAY:
-		return StructArray();
-	case CHOICETYPE_POSSIBILITY_LIST:
-		return StructPossibilityList();
 	case CHOICETYPE_POOL:
 	case CHOICETYPE_POOL_ARRAY:
 	case CHOICETYPE_NONOVERLAP_POOL:
 	case CHOICETYPE_SEQUENTIAL_POOL:
-		return StructPool();
+		return StructArray();
 	case CHOICETYPE_RANDOM:
 	default:
 		return ChoiceRandom();
@@ -135,8 +132,8 @@ CValue	CSelecter::Output(void)
  */
 CValue	CSelecter::ChoiceRandom(void)
 {
-	if(areanum) {
-		aya::string_t	result;
+	if (areanum) {
+		yaya::string_t	result;
 		for(int i = 0; i <= areanum; i++)
 			result += ChoiceRandom1(i).GetValueString();
 		return CValue(result);
@@ -152,15 +149,15 @@ CValue	CSelecter::ChoiceRandom(void)
  */
 CValue	CSelecter::ChoiceRandom1(int index)
 {
-	if( ! values[index].array.size() ) {
+	if ( ! values[index].array.size() ) {
 		return CValue();
 	}
 
-	int choice = vm.genrand_int(static_cast<int>(values[index].array.size()));
+    int choice = vm.genrand_int(static_cast<int>(values[index].array.size()));
 
-	vm.sysfunction().SetLso(choice);
+    vm.sysfunction().SetLso(choice);
 
-	return values[index].array[choice];
+    return values[index].array[choice];
 }
 
 /* -----------------------------------------------------------------------
@@ -176,12 +173,12 @@ CValue	CSelecter::ChoiceRandom1(int index)
 CValue	CSelecter::ChoiceByIndex()
 {
 	// 最後の領域が空だった場合はダミーの空文字列を追加
-	if(!values[areanum].array.size())
+	if (!values[areanum].array.size())
 		Append(CValue());
 
 	// 主処理
-	if(areanum) {
-		aya::string_t	result;
+	if (areanum) {
+		yaya::string_t	result;
 		for(int i = 0; i <= areanum; i++)
 			result += ChoiceByIndex1(i).GetValueString();
 		return CValue(result);
@@ -199,52 +196,10 @@ CValue	CSelecter::ChoiceByIndex1(int index)
 {
 	int	num = values[index].array.size();
 
-	if(!num)
+	if (!num)
 		return CValue();
 
 	return (aindex >= 0 && aindex < num) ? values[index].array[aindex] : CValue();
-}
-
-/* -----------------------------------------------------------------------
- *  関数名  ：  CSelecter::StructPool
- *  機能概要：  make a "pool"
- * -----------------------------------------------------------------------
- */
-CValue CSelecter::StructPool(){
-	if(areanum){
-		CValue	result(F_TAG_ARRAY, 0/*dmy*/);
-		result.array().emplace_back(ChoiceRandom());
-		return result;
-	}
-	else
-		return StructArray1(0);
-}
-
-/* -----------------------------------------------------------------------
- *  関数名  ：  CSelecter::StructPossibilityList
- *  機能概要：  可能なすべてのリターンの一般的な配列を返します
- * -----------------------------------------------------------------------
- */
-CValue CSelecter::StructPossibilityList()
-{
-	if(areanum) {
-		CValue	result(F_TAG_ARRAY, 0/*dmy*/);
-		for(int i = 0; i <= areanum; i++){
-			CValue aarray = StructArray1(i);
-			CValue toarray(F_TAG_ARRAY, 0/*dmy*/);
-			if (result.array().empty())
-				toarray = aarray;
-			else if(aarray.array().size()){
-				for(auto j:result.array())
-					for(auto k:aarray.array())
-						toarray.array().emplace_back(j+k);
-			}
-			std::swap(result,toarray);
-		}
-		return result;
-	}
-	else
-		return StructArray1(0);
 }
 
 /* -----------------------------------------------------------------------
@@ -254,15 +209,17 @@ CValue CSelecter::StructPossibilityList()
  */
 CValue CSelecter::StructArray()
 {
-	if(areanum) {
+	if (areanum) {
 		CValue	result(F_TAG_ARRAY, 0/*dmy*/);
-		for(int i = 0; i <= areanum; i++)
+		for(int i = 0; i <= areanum; i++) {
 			result = result + StructArray1(i);
 //			result = result + StructArray1(i).GetValueString();
+		}
 		return result;
 	}
-	else
+	else {
 		return StructArray1(0);
+	}
 }
 
 /* -----------------------------------------------------------------------
@@ -274,11 +231,11 @@ CValue CSelecter::StructArray1(int index)
 {
 	CValue	result(F_TAG_ARRAY, 0/*dmy*/);
 
-	for(size_t i = 0; i < values[index].array.size(); ++i) {
+    for(size_t i = 0; i < values[index].array.size(); ++i) {
 		const CValue &target = values[index].array[i];
 		int	valtype = target.GetType();
 		
-		if(valtype == F_TAG_ARRAY) {
+		if (valtype == F_TAG_ARRAY) {
 			result.array().insert(result.array().end(), target.array().begin(), target.array().end());
 		}
 		else {
@@ -286,5 +243,5 @@ CValue CSelecter::StructArray1(int index)
 		}
 	}
 
-	return result;
+    return result;
 }

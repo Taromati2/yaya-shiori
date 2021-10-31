@@ -37,8 +37,9 @@
 CValue	CDuplEvInfo::Choice(CAyaVM &vm,int areanum, const std::vector<CVecValue> &values, int mode)
 {
 	// 領域毎の候補数と総数を更新　変化があった場合は巡回順序を初期化する
-	if(UpdateNums(areanum, values))
+	if ( UpdateNums(areanum, values) ) {
 		InitRoundOrder(vm,mode);
+	}
 
 	// 値の取得と巡回制御
 	CValue	result = GetValue(vm, areanum, values);
@@ -47,8 +48,9 @@ CValue	CDuplEvInfo::Choice(CAyaVM &vm,int areanum, const std::vector<CVecValue> 
 
 	// 巡回位置を進める　巡回が完了したら巡回順序を初期化する
 	index++;
-	if(index >= static_cast<int>(roundorder.size()) )
+	if ( index >= static_cast<int>(roundorder.size()) ) {
 		InitRoundOrder(vm,mode);
+	}
 
 	return result;
 }
@@ -56,8 +58,9 @@ CValue	CDuplEvInfo::Choice(CAyaVM &vm,int areanum, const std::vector<CVecValue> 
 CValue	CDuplEvInfo::ChoiceValue(CAyaVM &vm, CValue &value, int mode)
 {
 	// 領域毎の候補数と総数を更新　変化があった場合は巡回順序を初期化する
-	if(UpdateNums(value))
+	if ( UpdateNums(value) ) {
 		InitRoundOrder(vm,mode);
+	}
 
 	// 値の取得と巡回制御
 	CValue	result = GetValue(vm, value);
@@ -66,8 +69,9 @@ CValue	CDuplEvInfo::ChoiceValue(CAyaVM &vm, CValue &value, int mode)
 
 	// 巡回位置を進める　巡回が完了したら巡回順序を初期化する
 	index++;
-	if(index >= static_cast<int>(roundorder.size()) )
+	if ( index >= static_cast<int>(roundorder.size()) ) {
 		InitRoundOrder(vm,mode);
+	}
 
 	return result;
 }
@@ -84,22 +88,22 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 	roundorder.clear();
 	roundorder.reserve(total);
 
-	if(mode == CHOICETYPE_NONOVERLAP) {
+    if ( mode == CHOICETYPE_NONOVERLAP || mode == CHOICETYPE_NONOVERLAP_POOL ) {
 		for(int i = 0; i < total; ++i) {
-			if( i != lastroundorder ) {
-				roundorder.emplace_back(i);
+			if ( i != lastroundorder ) {
+				roundorder.push_back(i);
 			}
 		}
 
 		//緊急時エラー回避用
-		if( ! roundorder.size() ) {
-			roundorder.emplace_back(0);
+		if ( ! roundorder.size() ) {
+			roundorder.push_back(0);
 		}
 
 		int n = roundorder.size();
 		for ( int i = 0 ; i < n ; ++i ) {
 			int s = vm.genrand_int(n);
-			if( i != s ) {
+			if ( i != s ) {
 				int tmp = roundorder[i];
 				roundorder[i] = roundorder[s];
 				roundorder[s] = tmp;
@@ -108,7 +112,7 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 	}
 	else {
 		for(int i = 0; i < total; ++i) {
-			roundorder.emplace_back(i);
+			roundorder.push_back(i);
 		}
 	}
 }
@@ -122,35 +126,42 @@ void	CDuplEvInfo::InitRoundOrder(CAyaVM &vm,int mode)
 bool	CDuplEvInfo::UpdateNums(int areanum, const std::vector<CVecValue> &values)
 {
 	// 元の候補数を保存しておく
-	std::vector<int>	bef_num(num.begin(), num.end());
-	int	bef_numlenm1 = bef_num.size() - 1;
+	int	bef_numlenm1 = num.size() - 1;
 
 	// 領域毎の候補数と組み合わせ総数を更新
 	// 候補数に変化があった場合はフラグに記録する
-	num.clear();
-	total = 1;
 	bool changed = areanum != bef_numlenm1;
+	if ( changed ) {
+		num.resize(areanum+1);
+	}
+	total = 1;
+
 	for(int i = 0; i <= areanum; i++) {
 		int	t_num = values[i].array.size();
-		num.emplace_back(t_num);
-		total *= t_num;
-		if (i <= bef_numlenm1) {
-			if (bef_num[i] != t_num) {
-				changed = true;
-			}
+
+		if (num[i] != t_num) {
+			changed = true;
 		}
+
+		total *= t_num;
+		num[i] = t_num;
 	}
 
 	return changed;
 }
+
 bool	CDuplEvInfo::UpdateNums(const CValue& value)
 {
-	bool changed=0;
-	if(num.size()!=1)
-		num.resize(changed=1);
-	if (num[1] != value.array().size()) {
-		changed=1;
-		total = num[1] = value.array().size();
+	bool changed = false;
+
+	if(num.size()!=1) {
+		num.resize(1);
+		changed = true;
+	}
+
+	if (num[0] != value.array().size()) {
+		changed = true;
+		total = num[0] = value.array().size();
 	}
 
 	return changed;
@@ -170,10 +181,10 @@ CValue	CDuplEvInfo::GetValue(CAyaVM &vm,int areanum, const std::vector<CVecValue
 
 	vm.sysfunction().SetLso(t_index);
 
-	if(areanum) {
-		aya::string_t	result;
+	if (areanum) {
+		yaya::string_t	result;
 		for ( int i = 0; i <= areanum; i++ ) {
-			if( num[i] ) {
+			if ( num[i] ) {
 				int	next = t_index/num[i];
 				result += values[i].array[t_index - next*(num[i])].GetValueString();
 				t_index = next;

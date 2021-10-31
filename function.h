@@ -59,13 +59,13 @@ public:
 	~CStatement(void) {}
 
 	void deep_copy(CStatement &from) {
-		aya::shared_ptr_deep_copy(from.m_cell,this->m_cell);
-		aya::shared_ptr_deep_copy(from.m_serial,this->m_serial);
+		yaya::shared_ptr_deep_copy(from.m_cell,this->m_cell);
+		yaya::shared_ptr_deep_copy(from.m_serial,this->m_serial);
 	}
 
 	//////////////////////////////////////////////
 	std::vector<CCell>::size_type cell_size(void) const {
-		if( ! m_cell.get() ) {
+		if ( ! m_cell.get() ) {
 			return 0;
 		}
 		else {
@@ -73,16 +73,16 @@ public:
 		}
 	}
 	const std::vector<CCell>& cell(void) const {
-		if( ! m_cell.get() ) {
+		if ( ! m_cell.get() ) {
 			m_cell.reset(new std::vector<CCell>);
 		}
 		return *m_cell;
 	}
 	std::vector<CCell>& cell(void) {
-		if( ! m_cell.get() ) {
+		if ( ! m_cell.get() ) {
 			m_cell.reset(new std::vector<CCell>);
 		}
-		else if( m_cell.use_count() >= 2 ) {
+		else if ( m_cell.use_count() >= 2 ) {
 			std::vector<CCell> *pV = m_cell.get();
 			m_cell.reset(new std::vector<CCell>(*pV));
 		}
@@ -90,7 +90,7 @@ public:
 	}
 	//////////////////////////////////////////////
 	std::vector<CSerial>::size_type serial_size(void) const {
-		if( ! m_serial.get() ) {
+		if ( ! m_serial.get() ) {
 			return 0;
 		}
 		else {
@@ -98,16 +98,16 @@ public:
 		}
 	}
 	const std::vector<CSerial>& serial(void) const {
-		if( ! m_serial.get() ) {
+		if ( ! m_serial.get() ) {
 			m_serial.reset(new std::vector<CSerial>);
 		}
 		return *m_serial;
 	}
 	std::vector<CSerial>& serial(void) {
-		if( ! m_serial.get() ) {
+		if ( ! m_serial.get() ) {
 			m_serial.reset(new std::vector<CSerial>);
 		}
-		else if( m_serial.use_count() >= 2 ) {
+		else if ( m_serial.use_count() >= 2 ) {
 			std::vector<CSerial> *pV = m_serial.get();
 			m_serial.reset(new std::vector<CSerial>(*pV));
 		}
@@ -131,11 +131,11 @@ private:
 	CAyaVM *pvm;
 	
 public:
-	aya::string_t				name;			// 名前
-	aya::string_t::size_type	namelen;		// 名前の長さ
+	yaya::string_t				name;			// 名前
+	yaya::string_t::size_type	namelen;		// 名前の長さ
 	std::vector<CStatement>		statement;		// 命令郡
-	CDuplEvInfo					dupl;			// 重複回避制御
-	aya::string_t				dicfilename;	// 対応する辞書ファイル名
+	CDuplEvInfo					dupl_func;		// 重複回避制御
+	yaya::string_t				dicfilename;	// 対応する辞書ファイル名
 
 protected:
 	int					statelenm1;		// statementの長さ-1（1を減じているのは終端の"}"を処理しないためです）
@@ -145,7 +145,7 @@ private:
 	CFunction(void);
 
 public:
-	CFunction(CAyaVM &vmr, const aya::string_t& n, int ct, const aya::string_t& df, int lc) : pvm(&vmr) , name(n) , dupl(ct) , dicfilename(df) , linecount(lc)
+	CFunction(CAyaVM &vmr, const yaya::string_t& n, int ct, const yaya::string_t& df, int lc) : pvm(&vmr) , name(n) , dupl_func(ct) , dicfilename(df) , linecount(lc)
 	{
 		namelen     = name.size();
 	}
@@ -159,9 +159,9 @@ public:
 
 	const CValue& GetFormulaAnswer(CLocalVariable &lvar, CStatement &st);
 
-	int		ReindexUserFunctions(void);
+	int     ReindexUserFunctions(void);
 
-	const aya::string_t&	GetFileName() const {return dicfilename;}
+	const yaya::string_t&	GetFileName() const {return dicfilename;}
 	size_t	GetLineNumBegin() const { return linecount;}
 	size_t	GetLineNumEnd() const   { return statement.empty() ? 0 : statement[statement.size()-1].linecount;}
 
@@ -197,13 +197,13 @@ protected:
 class CFunctionDef
 {
 private:
-	aya::indexmap map;
+	yaya::indexmap map;
 
 public:
 	std::vector<CFunction> func;
-
-	int  GetFunctionIndexFromName(const aya::string_t& name);
-	void AddFunctionIndex(const aya::string_t& name,int index);
+	
+	int  GetFunctionIndexFromName(const yaya::string_t& name);
+	void AddFunctionIndex(const yaya::string_t& name,int index);
 	void ClearFunctionIndex(void);
 	void RebuildFunctionMap(void);
 	void deep_copy_func(CFunctionDef &from);
