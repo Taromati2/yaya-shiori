@@ -12,7 +12,9 @@
 
 //----
 
-extern const aya::char_t *aya_name;
+extern const aya::char_t* aya_name;
+extern const aya::char_t* aya_version;
+extern const aya::char_t* aya_author;
 
 //----
 

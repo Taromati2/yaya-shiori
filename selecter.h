@@ -35,7 +35,7 @@ enum {
 	CHOICETYPE_SEQUENTIAL_POOL,	/* sequentialのスコープ無視版 */
 };
 
-const struct { yaya::char_t *name; int type; } choicetype[] = {
+const struct { aya::char_t *name; int type; } choicetype[] = {
 	{ L"random", CHOICETYPE_RANDOM } ,
 	{ L"nonoverlap", CHOICETYPE_NONOVERLAP } ,
 	{ L"sequential", CHOICETYPE_SEQUENTIAL } ,

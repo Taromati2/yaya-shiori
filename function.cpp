@@ -327,11 +327,11 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output, int line,int &e
 	bool isPseudoarray = false;
 
 	int	sz;
-	std::vector<yaya::string_t>	s_array;
+	std::vector<aya::string_t>	s_array;
 	if (value.IsString()) {
 		isPseudoarray = true;
 
-		yaya::string_t delimiter = VAR_DELIMITER;
+		aya::string_t delimiter = VAR_DELIMITER;
 		if (st0.cell_size() == 1) {
 			if (st0.cell()[0].value_GetType() == F_TAG_VARIABLE) {
 				delimiter = pvm->variable().GetDelimiter(st0.cell()[0].index);
@@ -707,11 +707,11 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 		max_len = i;
 
 	// 埋め込まれた要素とそれ以降の文字列に分割する
-	//yaya::string_t	s_value(cell.value_const().s_value.substr(0, max_len));
-	//yaya::string_t	d_value(cell.value_const().s_value.substr(max_len, len - max_len));
-	yaya::string_t::const_iterator it_split = cell.value_const().s_value.begin() + max_len;
-	yaya::string_t s_value(cell.value_const().s_value.begin(),it_split);
-	yaya::string_t d_value(it_split,cell.value_const().s_value.end());
+	//aya::string_t	s_value(cell.value_const().s_value.substr(0, max_len));
+	//aya::string_t	d_value(cell.value_const().s_value.substr(max_len, len - max_len));
+	aya::string_t::const_iterator it_split = cell.value_const().s_value.begin() + max_len;
+	aya::string_t s_value(cell.value_const().s_value.begin(),it_split);
+	aya::string_t d_value(it_split,cell.value_const().s_value.end());
 
 	// 埋め込まれた要素を数式に変換する　失敗なら全体が文字列
 	CStatement	t_state(ST_FORMULA, st.linecount);
@@ -722,7 +722,7 @@ void	CFunction::SolveEmbedCell(CCell &cell, CStatement &st, CLocalVariable &lvar
 	}
 
 	// 埋め込み要素の値を取得して応答文字列を作成
-	yaya::string_t	result = GetFormulaAnswer(lvar, t_state).GetValueString();
+	aya::string_t	result = GetFormulaAnswer(lvar, t_state).GetValueString();
 	cell.emb_ansv()  = result;
 	cell.ansv()      = result + d_value;
 }
@@ -746,7 +746,7 @@ char	CFunction::Comma(CValue &answer, std::vector<int> &sid, CStatement &st, CLo
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
-			t_array.push_back(CValueSub(addv));
+			t_array.emplace_back(CValueSub(addv));
 		}
 	}
 
@@ -766,7 +766,7 @@ char	CFunction::CommaAdd(CValue &answer, std::vector<int> &sid, CStatement &st, 
 	if ( answer.GetType() != F_TAG_ARRAY ) {
 		CValueSub st(answer);
 		answer.SetType(F_TAG_ARRAY);
-		answer.array().push_back(st);
+		answer.array().emplace_back(st);
 	}
 	CValueArray &t_array = answer.array();
 
@@ -780,7 +780,7 @@ char	CFunction::CommaAdd(CValue &answer, std::vector<int> &sid, CStatement &st, 
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
-			t_array.push_back(CValueSub(addv));
+			t_array.emplace_back(CValueSub(addv));
 		}
 	}
 
@@ -992,7 +992,7 @@ char	CFunction::Array(CCell &anscell, std::vector<int> &sid, CStatement &st, CLo
 int	CFunction::_in_(const CValue &src, const CValue &dst)
 {
 	if (src.IsString() && dst.IsString())
-		return (dst.s_value.find(src.s_value) != yaya::string_t::npos) ? 1 : 0;
+		return (dst.s_value.find(src.s_value) != aya::string_t::npos) ? 1 : 0;
 
 	return 0;
 }
@@ -1037,7 +1037,7 @@ char	CFunction::ExecFunctionWithArgs(CValue &answer, std::vector<int> &sid, CSta
 			}
 		}
 		else {
-			arg.array().push_back(CValueSub(addv));
+			arg.array().emplace_back(CValueSub(addv));
 		}
 	}
 
@@ -1109,11 +1109,11 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<int> &sid, C
 			}
 		}
 		else {
-			arg.array().push_back(CValueSub(addv));
+			arg.array().emplace_back(CValueSub(addv));
 		}
 
-		valuearg.push_back(addv);
-		pcellarg.push_back(&(st.cell()[*it]));
+		valuearg.emplace_back(addv);
+		pcellarg.emplace_back(&(st.cell()[*it]));
 	}
 
 	// 実行　%[n]処理関数のみ特例扱い
@@ -1219,7 +1219,7 @@ void CFunction::EncodeArrayOrder(CCell &vcell, const CValue &order, CLocalVariab
 		result = order;
 		break;
 	default:
-		result.array().push_back(CValueSub(order));
+		result.array().emplace_back(CValueSub(order));
 		break;
 	};
 
@@ -1230,7 +1230,7 @@ void CFunction::EncodeArrayOrder(CCell &vcell, const CValue &order, CLocalVariab
 			adddlm = pvm->variable().GetDelimiter(vcell.index);
 		else if (vcell.value_GetType() == F_TAG_LOCALVARIABLE)
 			adddlm = lvar.GetDelimiter(vcell.name);
-		result.array().push_back(adddlm);
+		result.array().emplace_back(adddlm);
 	}
 }
 
@@ -1261,13 +1261,13 @@ void	CFunction::FeedLineToTail(int &line)
  *  機能概要：  関数名に対応する配列の序数を取得します
  * -----------------------------------------------------------------------
  */
-int	CFunctionDef::GetFunctionIndexFromName(const yaya::string_t& name)
+int	CFunctionDef::GetFunctionIndexFromName(const aya::string_t& name)
 {
 	if ( map.empty() ) {
 		RebuildFunctionMap();
 	}
 
-	yaya::indexmap::const_iterator it = map.find(name);
+	aya::indexmap::const_iterator it = map.find(name);
 	if ( it != map.end() ) {
 		return it->second;
 	}
@@ -1279,9 +1279,9 @@ int	CFunctionDef::GetFunctionIndexFromName(const yaya::string_t& name)
  *  機能概要：  関数名に対応する配列の序数を追加します
  * -----------------------------------------------------------------------
  */
-void CFunctionDef::AddFunctionIndex(const yaya::string_t& name,int index)
+void CFunctionDef::AddFunctionIndex(const aya::string_t& name,int index)
 {
-	map.insert(yaya::indexmap::value_type(name, index));
+	map.insert(aya::indexmap::value_type(name, index));
 }
 
 /* -----------------------------------------------------------------------
@@ -1303,7 +1303,7 @@ void CFunctionDef::RebuildFunctionMap(void)
 {
 	ClearFunctionIndex();
 	for (size_t fcnt = 0; fcnt < func.size(); ++fcnt) {
-		map.insert(yaya::indexmap::value_type(func[fcnt].name, static_cast<int>(fcnt)));
+		map.insert(aya::indexmap::value_type(func[fcnt].name, static_cast<int>(fcnt)));
 	}
 }
 

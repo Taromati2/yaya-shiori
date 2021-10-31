@@ -40,7 +40,7 @@ typedef CValue (CSystemFunction::*SysFuncProc)(CSF_FUNCPARAM &p);
 typedef struct CSF_FUNCTABLE
 {
 	SysFuncProc func;
-	yaya::char_t* name;
+	aya::char_t* name;
 } CSF_FUNCTABLE;
 
 class	CSystemFunction
@@ -68,14 +68,14 @@ private:
 public:
 	CSystemFunction(CAyaVM &vmr);
 
-	static int FindIndex(const yaya::string_t &str);
-	static int FindIndexLongestMatch(const yaya::string_t &str,int max_len = 0);
+	static int FindIndex(const aya::string_t &str);
+	static int FindIndexLongestMatch(const aya::string_t &str,int max_len = 0);
 
-	static const yaya::char_t* GetNameFromIndex(int idx);
+	static const aya::char_t* GetNameFromIndex(int idx);
 	static int GetMaxNameLength(void);
 
 	static int HistoryIndex(void);
-	static const yaya::char_t* HistoryFunctionName(void);
+	static const aya::char_t* HistoryFunctionName(void);
 
 	void	SetLso(int order) { lso = order; }
 
@@ -87,7 +87,7 @@ private:
 	CValue	*GetRePosPtr(void) { return &re_pos; }
 	CValue	*GetReLenPtr(void) { return &re_len; }
 
-	bool ProcessTranslateSyntax(std::vector<yaya::char_t> &array,yaya::string_t &str, const yaya::string_t &d, int l);
+	bool ProcessTranslateSyntax(std::vector<aya::char_t> &array,aya::string_t &str, const aya::string_t &d, int l);
 
 protected:
 	CValue	TOINT(CSF_FUNCPARAM &p);
@@ -260,8 +260,6 @@ protected:
 	CValue	DUMPVAR(CSF_FUNCPARAM &p);
 	CValue	TRANSLATE(CSF_FUNCPARAM &p);
 
-	CValue	LICENSE(CSF_FUNCPARAM &p);
-
 	CValue	FSEEK(CSF_FUNCPARAM &p);
 	CValue	FTELL(CSF_FUNCPARAM &p);
 
@@ -278,15 +276,15 @@ protected:
 	CValue	GETFUNCINFO(CSF_FUNCPARAM &p);
 	CValue	PROCESSGLOBALDEFINE(CSF_FUNCPARAM &p);
 
-	CValue	RE_SPLIT_CORE(const CValue &arg, const yaya::string_t &d, int l, const yaya::char_t *fncname, size_t num);
+	CValue	RE_SPLIT_CORE(const CValue &arg, const aya::string_t &d, int l, const aya::char_t *fncname, size_t num);
 
-	void	StoreReResultDetails(const yaya::string_t &str,MatchResult &result);
+	void	StoreReResultDetails(const aya::string_t &str,MatchResult &result);
 	void	ClearReResultDetails(void);
-	void	AppendReResultDetail(const yaya::string_t &str, int pos, int len);
+	void	AppendReResultDetail(const aya::string_t &str, int pos, int len);
 	void	SetError(int code);
 
-	int		GetCharset(const CValueSub &var,const wchar_t *fname, const yaya::string_t &d, int l);
-	yaya::string_t	ToFullPath(const yaya::string_t &str);
+	int		GetCharset(const CValueSub &var,const wchar_t *fname, const aya::string_t &d, int l);
+	aya::string_t	ToFullPath(const aya::string_t &str);
 };
 
 //----

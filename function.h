@@ -59,8 +59,8 @@ public:
 	~CStatement(void) {}
 
 	void deep_copy(CStatement &from) {
-		yaya::shared_ptr_deep_copy(from.m_cell,this->m_cell);
-		yaya::shared_ptr_deep_copy(from.m_serial,this->m_serial);
+		aya::shared_ptr_deep_copy(from.m_cell,this->m_cell);
+		aya::shared_ptr_deep_copy(from.m_serial,this->m_serial);
 	}
 
 	//////////////////////////////////////////////
@@ -131,11 +131,11 @@ private:
 	CAyaVM *pvm;
 	
 public:
-	yaya::string_t				name;			// 名前
-	yaya::string_t::size_type	namelen;		// 名前の長さ
+	aya::string_t				name;			// 名前
+	aya::string_t::size_type	namelen;		// 名前の長さ
 	std::vector<CStatement>		statement;		// 命令郡
 	CDuplEvInfo					dupl_func;		// 重複回避制御
-	yaya::string_t				dicfilename;	// 対応する辞書ファイル名
+	aya::string_t				dicfilename;	// 対応する辞書ファイル名
 
 protected:
 	int					statelenm1;		// statementの長さ-1（1を減じているのは終端の"}"を処理しないためです）
@@ -145,7 +145,7 @@ private:
 	CFunction(void);
 
 public:
-	CFunction(CAyaVM &vmr, const yaya::string_t& n, int ct, const yaya::string_t& df, int lc) : pvm(&vmr) , name(n) , dupl_func(ct) , dicfilename(df) , linecount(lc)
+	CFunction(CAyaVM &vmr, const aya::string_t& n, int ct, const aya::string_t& df, int lc) : pvm(&vmr) , name(n) , dupl_func(ct) , dicfilename(df) , linecount(lc)
 	{
 		namelen     = name.size();
 	}
@@ -161,7 +161,7 @@ public:
 
 	int     ReindexUserFunctions(void);
 
-	const yaya::string_t&	GetFileName() const {return dicfilename;}
+	const aya::string_t&	GetFileName() const {return dicfilename;}
 	size_t	GetLineNumBegin() const { return linecount;}
 	size_t	GetLineNumEnd() const   { return statement.empty() ? 0 : statement[statement.size()-1].linecount;}
 
@@ -197,13 +197,13 @@ protected:
 class CFunctionDef
 {
 private:
-	yaya::indexmap map;
+	aya::indexmap map;
 
 public:
 	std::vector<CFunction> func;
 	
-	int  GetFunctionIndexFromName(const yaya::string_t& name);
-	void AddFunctionIndex(const yaya::string_t& name,int index);
+	int  GetFunctionIndexFromName(const aya::string_t& name);
+	void AddFunctionIndex(const aya::string_t& name,int index);
 	void ClearFunctionIndex(void);
 	void RebuildFunctionMap(void);
 	void deep_copy_func(CFunctionDef &from);
