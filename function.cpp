@@ -474,7 +474,11 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output,size_t line,int 
 	CValue	t_value;
 	int type;
 	int fromtype = value.GetType();
-	CValueHash::const_iterator hash_iterator = value.hash().begin();
+
+	CValueHash::const_iterator hash_iterator;
+	if ( fromtype == F_TAG_HASH ) {
+		hash_iterator = value.hash().begin();
+	}
 	
 	for(int foreachcount = 0; foreachcount < sz; ++foreachcount ) {
 		// 代入する要素値を取得
@@ -487,7 +491,7 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output,size_t line,int 
 			}
 			else if ( fromtype == F_TAG_HASH ) {
 				t_value.SetType(F_TAG_ARRAY);
-				t_value.array().push_back(hash_iterator->first);
+				//t_value.array().push_back(hash_iterator->first); //second(value)�����ŗǂ�
 				t_value.array().push_back(hash_iterator->second);
 				hash_iterator++;
 			}
@@ -1063,14 +1067,12 @@ char	CFunction::SubstToArray(CCell &vcell, CCell &ocell, CValue &answer, CStatem
 
 	// 更新
     if (value.GetType() == F_TAG_HASH) {
-        if (answer.GetType() == F_TAG_HASH) {
-            if (answer.hash().empty()) {
-                value.hash().erase(t_order.array()[0]);
-            }
-        }
-        else {
+        if (answer.GetType() != F_TAG_HASH) { //hash�̗v�f��hash�����ł���Ƃ������Ȃ��ƂɂȂ�̂őʖ�
             value.hash()[CValueSub(t_order.array()[0])] = CValueSub(answer);
         }
+		else {
+			pvm->logger().Error(E_W, 8, dicfilename, linecount);
+		}
     }
     else {
 	    value.SetArrayValue(t_order, answer);
