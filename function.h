@@ -187,7 +187,7 @@ public:
 	}
 
 protected:
-	int		ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, int type, int &exitcode);
+	int		ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, int type, int &exitcode, bool inpool=0);
 
 	CValueSub&	GetResultFromPoolArray(CValue& result);
 
