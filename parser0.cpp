@@ -900,7 +900,8 @@ int	CParser0::MakeFunction(const aya::string_t& name, choicetype_t chtype, const
 char	CParser0::StoreInternalStatement(int targetfunc, aya::string_t &str, int& depth, const aya::string_t& dicfilename, int linecount)
 {
 	// パラメータのないステートメント
-	auto&targetfunction=vm.function_parse().func[targetfunc];
+	CFunction& targetfunction = vm.function_parse().func[targetfunc];
+
 	if(!str.size())
 		return 1;
 	// {
