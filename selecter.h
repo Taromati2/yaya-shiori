@@ -47,6 +47,9 @@ const struct { aya::char_t *name; choicetype_t type; } choicetype[] = {
 	{ L"sequential_pool",CHOICETYPE_SEQUENTIAL_POOL } ,
 };
 
+
+choicetype_t GetDefaultBlockChoicetype(choicetype_t nowtype);
+
 class CAyaVM;
 
 //----
