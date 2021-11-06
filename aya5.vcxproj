@@ -173,6 +173,9 @@
       <BaseAddress>0x14900000</BaseAddress>
       <ImportLibrary>.\Debug/aya.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <OptimizeReferences>false</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -266,6 +269,7 @@
       <GenerateMapFile>true</GenerateMapFile>
       <MapFileName>.\Debug_EXE/aya.map</MapFileName>
       <TargetMachine>MachineX86</TargetMachine>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
