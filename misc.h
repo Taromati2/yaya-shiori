@@ -78,27 +78,31 @@ inline bool IsSpace(const aya::char_t &c) {
 
 //----
 
-// 関数呼び出しの深さを検査するためのクラス
+// 関数呼び出しの限界を検査するためのクラス
 
-#define	CALLDEPTH_MAX	32	/* 呼び出し深さ上限のデフォルト値 */
-
-class	CCallDepth
+#define	CCALLLIMIT_CALLDEPTH_MAX	32		//呼び出し限界デフォルト
+#define	CCALLLIMIT_LOOP_MAX			10000	//ループ処理限界デフォルト
+class	CCallLimit
 {
 protected:
-	size_t	depth;
-	size_t	maxdepth;
+	int	depth;
+	int	maxdepth;
+	int maxloop;
 	std::vector<aya::string_t> stack;
 
 public:
-	CCallDepth(void) { depth = 0; maxdepth = CALLDEPTH_MAX; }
+	CCallLimit(void) { depth = 0; maxdepth = CCALLLIMIT_CALLDEPTH_MAX; maxloop = CCALLLIMIT_LOOP_MAX; }
 
 	void	SetMaxDepth(int value) { maxdepth = value; }
 	int 	GetMaxDepth(void) { return maxdepth; }
 
-	void	Init(void) { depth = 0; }
+	void	SetMaxLoop(int value) { maxloop = value; }
+	int		GetMaxLoop(void) { return maxloop; }
 
-	char	Add(const aya::string_t &str) {
-		if(maxdepth && depth > maxdepth)
+	void	InitCall(void) { depth = 0; }
+
+	char	AddCall(const aya::string_t &str) {
+		if (maxdepth && depth > maxdepth)
 			return 0;
 
 		depth++;
@@ -106,14 +110,14 @@ public:
 		return 1;
 	}
 
-	void	Del(void) {
-		if( depth ) {
+	void	DeleteCall(void) {
+		if ( depth ) {
 			depth--;
 			stack.erase(stack.end()-1);
 		}
 	}
 
-	std::vector<aya::string_t> &Stack(void) {
+	std::vector<aya::string_t> &StackCall(void) {
 		return stack;
 	}
 };

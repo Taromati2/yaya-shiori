@@ -597,9 +597,14 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// fncdepth
-	else if(cmd == L"fncdepth") {
+	else if ( cmd == L"fncdepth" ) {
 		int	f_depth = aya::ws_atoi(param, 10);
-		vm.calldepth().SetMaxDepth((f_depth < 2 && f_depth != 0) ? 2 : f_depth);
+		vm.call_limit().SetMaxDepth((f_depth < 2 && f_depth != 0) ? 2 : f_depth);
+		return true;
+	}
+	else if ( cmd == L"looplimit" ) {
+		int	loop_max = aya::ws_atoi(param, 10);
+		vm.call_limit().SetMaxLoop(loop_max);
 		return true;
 	}
 	// checkparser closed function
@@ -701,8 +706,12 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 		return Ccct::CharsetIDToTextW(extension_charset);
 	}
 	// fncdepth
-	else if(cmd == L"fncdepth") {
-		return CValue(vm.calldepth().GetMaxDepth());
+	else if ( cmd == L"fncdepth" ) {
+		return CValue(vm.call_limit().GetMaxDepth());
+	}
+	// looplimit
+	else if ( cmd == L"looplimit" ) {
+		return CValue(vm.call_limit().GetMaxLoop());
 	}
 	// checkparser closed function
 	else if(cmd == L"checkparser") {
@@ -1154,7 +1163,7 @@ void	CBasis::ExecuteLoad(void)
 	CValueSub	arg0(base_path);
 	arg.array().emplace_back(arg0);
 	// 実行　結果は使用しないのでそのまま捨てる
-	vm.calldepth().Init();
+	vm.call_limit().InitCall();
 	CLocalVariable	lvar;
 	vm.logger().Io(0, base_path);
 	CValue	result;
@@ -1206,7 +1215,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	}
 
 	// 実行
-	vm.calldepth().Init();
+	vm.call_limit().InitCall();
 	CLocalVariable	lvar;
 	CValue	result;
 	vm.function_exec().func[funcpos].Execute(result, arg, lvar);
@@ -1284,7 +1293,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	}
 	
 	// 実行
-	vm.calldepth().Init();
+	vm.call_limit().InitCall();
 	CLocalVariable	lvar;
 
 	CValue	result;
@@ -1329,7 +1338,7 @@ void	CBasis::ExecuteUnload(void)
 
 	// 実行　引数無し　結果は使用しないのでそのまま捨てる
 	CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
-	vm.calldepth().Init();
+	vm.call_limit().InitCall();
 	CLocalVariable	lvar;
 	aya::string_t empty;
 	vm.logger().Io(0, empty);
