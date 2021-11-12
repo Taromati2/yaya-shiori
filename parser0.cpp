@@ -816,8 +816,7 @@ char	CParser0::DefineFunctions(std::vector<aya::string_t> &s, const aya::string_
 				// 重複回避オプションの判定
 				choicetype_t	chtype = CHOICETYPE_RANDOM;
 				if (d1.size()) {
-					chtype = CSelecter::StringToChoiceType(d1);
-					//vm.logger().Error(E_E, 30, d1, dicfilename, linecount);
+					chtype = CSelecter::StringToChoiceType(d1, vm, dicfilename, linecount);
 				}
 				// 作成
 				targetfunction = MakeFunction(d0, chtype, dicfilename, linecount);
@@ -901,8 +900,7 @@ char	CParser0::StoreInternalStatement(int targetfunc, aya::string_t &str, int& d
 		m_defaultBlockChoicetypeStack.emplace_back(chtype);
 		aya::string_t	d0, d1;
 		if (Split(str, d0, d1, L":")){
-			chtype = CSelecter::StringToChoiceType(d0);
-			//vm.logger().Error(E_E, 30, d0, dicfilename, linecount);
+			chtype = CSelecter::StringToChoiceType(d0, vm, dicfilename, linecount);
 		}
 		depth++;
 		targetfunction.statement.emplace_back(CStatement(ST_OPEN, linecount, new CDuplEvInfo(chtype)));

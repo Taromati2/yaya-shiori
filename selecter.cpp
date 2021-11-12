@@ -15,6 +15,8 @@
 #include "globaldef.h"
 #include "sysfunc.h"
 #include "ayavm.h"
+#include "wsex.h"
+#include "messages.h"
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -272,31 +274,48 @@ choicetype_t CSelecter::GetDefaultBlockChoicetype(choicetype_t nowtype)
  *  機能概要：  文字列->choicetype_t
  * -----------------------------------------------------------------------
  */
-choicetype_t CSelecter::StringToChoiceType(const aya::string_t& ctypestr)
+choicetype_t CSelecter::StringToChoiceType(const aya::string_t& ctypestr, CAyaVM &vm, const aya::string_t& dicfilename, int linecount)
 {
 	unsigned int outtype = CHOICETYPE_PICKONE_FLAG;
 
-	if ( ctypestr.find(L"pool") != aya::string_t::npos ) {
+	aya::string_t checkstr = ctypestr;
+
+	if ( checkstr.find(L"pool") != aya::string_t::npos ) {
 		outtype = CHOICETYPE_POOL_FLAG;
+		aya::ws_replace(checkstr,L"pool",L"");
 	}
-	else if ( ctypestr.find(L"void") != aya::string_t::npos ) {
+	else if ( checkstr.find(L"void") != aya::string_t::npos ) {
 		outtype = CHOICETYPE_VOID_FLAG;
+		aya::ws_replace(checkstr,L"void",L"");
 	}
 
-	if ( outtype == CHOICETYPE_VOID_FLAG ) {
-		return static_cast<choicetype_t>(outtype);
+	unsigned int choicetype = 0;
+
+	if ( outtype != CHOICETYPE_VOID_FLAG ) {
+		choicetype = CHOICETYPE_RANDOM_FLAG;
+
+		if ( checkstr.find(L"sequential") != aya::string_t::npos ) {
+			choicetype = CHOICETYPE_SEQUENTIAL_FLAG;
+			aya::ws_replace(checkstr,L"sequential",L"");
+		}
+		else if ( checkstr.find(L"array") != aya::string_t::npos ) {
+			choicetype = CHOICETYPE_ARRAY_FLAG;
+			aya::ws_replace(checkstr,L"array",L"");
+		}
+		else if ( checkstr.find(L"nonoverlap") != aya::string_t::npos ) {
+			choicetype = CHOICETYPE_NONOVERLAP_FLAG;
+			aya::ws_replace(checkstr,L"nonoverlap",L"");
+		}
+		else {
+			aya::ws_replace(checkstr,L"random",L"");
+		}
 	}
 
-	unsigned int choicetype = CHOICETYPE_RANDOM_FLAG;
+	aya::ws_replace(checkstr,L"_",L"");
 
-	if ( ctypestr.find(L"sequential") != aya::string_t::npos ) {
-		choicetype = CHOICETYPE_SEQUENTIAL_FLAG;
-	}
-	else if ( ctypestr.find(L"array") != aya::string_t::npos ) {
-		choicetype = CHOICETYPE_ARRAY_FLAG;
-	}
-	else if ( ctypestr.find(L"nonoverlap") != aya::string_t::npos ) {
-		choicetype = CHOICETYPE_NONOVERLAP_FLAG;
+	if ( checkstr.size() > 0 ) {
+		//なにか余分なものがあったぞ
+		vm.logger().Error(E_E, 30, ctypestr, dicfilename, linecount);
 	}
 
 	return static_cast<choicetype_t>(outtype | choicetype);
