@@ -1164,7 +1164,7 @@ void	CBasis::ExecuteLoad(void)
 	arg.array().emplace_back(arg0);
 	// 実行　結果は使用しないのでそのまま捨てる
 	vm.call_limit().InitCall();
-	CLocalVariable	lvar;
+	CLocalVariable	lvar(vm);
 	vm.logger().Io(0, base_path);
 	CValue	result;
 	vm.function_exec().func[funcpos].Execute(result, arg, lvar);
@@ -1216,7 +1216,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	// 実行
 	vm.call_limit().InitCall();
-	CLocalVariable	lvar;
+	CLocalVariable	lvar(vm);
 	CValue	result;
 	vm.function_exec().func[funcpos].Execute(result, arg, lvar);
 
