@@ -910,14 +910,22 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 					str += L":" ESC_IARRAY;
 				}
 			}
-			str += L",";
+			str += L',';
 			break;
 		default:
 			vm.logger().Error(E_W, 7, var->name);
 			break;
 		};
 		// デリミタの保存
-		str += var->delimiter;
+		wstr = var->delimiter;
+		EscapeString(wstr);
+		str += L"\"";
+		str += wstr;
+		str += L"\",";
+		wstr = var->watcher+L'|'+var->setter+L'|'+var->destorier;
+		if(wstr!=L"||")
+			str += wstr;
+
 		str += L"\n";
 
 		aya::ws_fputs(str,fp,save_charset,ayc);
@@ -993,11 +1001,12 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	aya::string_t	linebuffer;
 	aya::string_t	readline;
 	aya::string_t	parseline;
-	aya::string_t	varname, value, delimiter;
+	aya::string_t	varname, value, delimiter, watcher, setter, destorier;
 
 	char savefile_charset = save_old_charset;
 
 	for (int i = 1; ; i++) {
+		watcher.clear(), setter.clear(), destorier.clear();
 		// 1行読み込み
 		if(aya::ws_fgets(readline, fp, savefile_charset, ayc, i, false) == aya::WS_EOF)
 			break;
@@ -1039,6 +1048,26 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 			vm.logger().Error(E_W, 3, filename, i);
 			continue;
 		}
+		// 
+		parseline = delimiter;
+		Split_IgnoreDQ(parseline, delimiter, aya::string_t(), L",");
+		if (!IsLegalStrLiteral(delimiter)){
+			delimiter = parseline;
+			if (Split_IgnoreDQ(parseline, delimiter, watcher, L",")) {
+				parseline = watcher;
+				if (Split_IgnoreDQ(parseline, watcher, aya::string_t(), L","))//将来のバージョンで得られる可能性のある追加情報の破棄
+					//可能であれば警告
+					1000-7;
+				parseline = watcher;
+				Split_IgnoreDQ(parseline, watcher, setter, L"|");
+				parseline = setter;
+				Split_IgnoreDQ(parseline, setter, destorier, L"|");
+			}
+			CutDoubleQuote(delimiter);
+			UnescapeString(delimiter);
+		}
+		else
+			delimiter = parseline;
 		// 値をチェックして型を判定
 		int	type;
 
@@ -1090,6 +1119,10 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 			continue;
 		}
 		vm.variable().SetDelimiter(index, delimiter);
+		CVariable& v = *vm.variable().GetPtr(index);
+		v.set_watcher(watcher);
+		v.set_destorier(destorier);
+		v.set_setter(setter);
 	}
 
 	// ファイルを閉じる

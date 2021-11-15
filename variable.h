@@ -43,14 +43,14 @@ public:
 	aya::string_t	name;					// 名前
 	aya::string_t	delimiter;				// デリミタ
 
+	aya::string_t setter;
+	aya::string_t watcher;
+	aya::string_t destorier;
 
 protected:
 	mutable std_shared_ptr<CValue> m_value;				// 値
 	bool	erased;					// 消去されたことを示すフラグ（グローバル変数で使用）
 									// 0/1=有効/消去された
-	aya::string_t setter;
-	aya::string_t watcher;
-	aya::string_t destorier;
 
 public:
 	CVariable(const aya::string_t &n)
