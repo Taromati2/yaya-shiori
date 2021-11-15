@@ -244,7 +244,7 @@ void	CLog::Error(int mode, int id, const aya::char_t *ref, const aya::string_t &
 	if(dicfilename.empty())
 		logstr = L"-(-) : ";
 	else {
-		logstr = dicfilename + L"(";
+		logstr = dicfilename + L'(';
 		if(linecount == -1)
 			logstr += L"-) : ";
 		else {

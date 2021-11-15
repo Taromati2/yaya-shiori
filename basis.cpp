@@ -477,7 +477,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		CDirEnumEntry entry;
 
 		while (ef.next(entry)) {
-			aya::string_t relpath_and_cs = param1 + L"\\" + entry.name + L"," + param2;
+			aya::string_t relpath_and_cs = param1 + L"\\" + entry.name + L',' + param2;
 
 			if(entry.isdir) {
 				SetParameter(L"dicdir",relpath_and_cs,dics);
@@ -537,7 +537,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				#if defined(WIN32) || defined(_WIN32_WCE)
 				base_path += L"\\";
 				#elif defined(POSIX)
-				base_path += L"/";
+				base_path += L'/';
 				#endif
 			}
 			return true;
@@ -861,17 +861,17 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 
 		// 名前の保存
 		str = var->name;
-		str += L",";
+		str += L',';
 
 		// 値の保存
 		switch(var->value_const().GetType()) {
 		case F_TAG_INT:	
 			str += aya::ws_itoa(var->value_const().i_value);
-			str += L",";
+			str += L',';
 			break;
 		case F_TAG_DOUBLE:
 			str += aya::ws_ftoa(var->value_const().d_value);
-			str += L",";
+			str += L',';
 			break;
 		case F_TAG_STRING:
 			wstr = var->value_const().s_value;
@@ -890,7 +890,7 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
 
 				for(itv = itvbegin; itv != var->value_const().array().end(); itv++) {
 					if(itv != itvbegin)
-						str += L":";
+						str += L':';
 					wstr = itv->GetValueString();
 					EscapeString(wstr);
 
