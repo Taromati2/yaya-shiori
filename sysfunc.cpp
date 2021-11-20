@@ -3177,6 +3177,11 @@ CValue CSystemFunction::PROCESSGLOBALDEFINE(CSF_FUNCPARAM &p)
 	return CValue(aret);
 }
 
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::FUNCDECL_READ
+ *  変数読み込みフック　FUNCDECL_READ(変数名,関数名)
+ * -----------------------------------------------------------------------
+ */
 CValue CSystemFunction::FUNCDECL_READ(CSF_FUNCPARAM& p)
 {
 	size_t arg_size = p.arg.array_size();
@@ -3218,23 +3223,28 @@ CValue CSystemFunction::FUNCDECL_READ(CSF_FUNCPARAM& p)
 	return CValue(F_TAG_NOP, 0/*dmy*/);
 }
 
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::FUNCDECL_WRITE
+ *  変数書き込みフック　FUNCDECL_WRITE(変数名,関数名)
+ * -----------------------------------------------------------------------
+ */
 CValue CSystemFunction::FUNCDECL_WRITE(CSF_FUNCPARAM& p)
 {
 	size_t arg_size = p.arg.array_size();
 
 	if (!arg_size) {
-		vm.logger().Error(E_W, 8, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 8, L"FUNCDECL_WRITE", p.dicname, p.line);
 		SetError(8);
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
 	//文字列かどうかチェック - 警告は吐くが処理続行
 	if ( ! p.arg.array()[0].IsString() ) {
-		vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 9, L"FUNCDECL_WRITE", p.dicname, p.line);
 		SetError(9);
 	}
 	if ( ! p.arg.array()[1].IsString() ) {
-		vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 9, L"FUNCDECL_WRITE", p.dicname, p.line);
 		SetError(9);
 	}
 
@@ -3253,29 +3263,34 @@ CValue CSystemFunction::FUNCDECL_WRITE(CSF_FUNCPARAM& p)
 		else if(func_name.empty())
 			pv->set_setter(L"");
 		else
-			vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+			vm.logger().Error(E_W, 9, L"FUNCDECL_WRITE", p.dicname, p.line);
 	}
 
 	return CValue(F_TAG_NOP, 0/*dmy*/);
 }
 
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::FUNCDECL_ERASE
+ *  変数削除フック　FUNCDECL_ERASE(変数名,関数名)
+ * -----------------------------------------------------------------------
+ */
 CValue CSystemFunction::FUNCDECL_ERASE(CSF_FUNCPARAM& p)
 {
 	size_t arg_size = p.arg.array_size();
 
 	if (!arg_size) {
-		vm.logger().Error(E_W, 8, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 8, L"FUNCDECL_ERASE", p.dicname, p.line);
 		SetError(8);
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
 	//文字列かどうかチェック - 警告は吐くが処理続行
 	if ( ! p.arg.array()[0].IsString() ) {
-		vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 9, L"FUNCDECL_ERASE", p.dicname, p.line);
 		SetError(9);
 	}
 	if ( ! p.arg.array()[1].IsString() ) {
-		vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+		vm.logger().Error(E_W, 9, L"FUNCDECL_ERASE", p.dicname, p.line);
 		SetError(9);
 	}
 
@@ -3294,7 +3309,7 @@ CValue CSystemFunction::FUNCDECL_ERASE(CSF_FUNCPARAM& p)
 		else if(func_name.empty())
 			pv->set_destorier(L"");
 		else
-			vm.logger().Error(E_W, 9, L"FUNCDECL_READ", p.dicname, p.line);
+			vm.logger().Error(E_W, 9, L"FUNCDECL_ERASE", p.dicname, p.line);
 	}
 
 	return CValue(F_TAG_NOP, 0/*dmy*/);
