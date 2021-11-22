@@ -99,7 +99,7 @@ public:
 	void	SetMaxLoop(int value) { maxloop = value; }
 	int		GetMaxLoop(void) { return maxloop; }
 
-	void	InitCall(void) { depth = 0; }
+	void	InitCall(void) { depth = 0; stack.clear(); }
 
 	char	AddCall(const aya::string_t &str) {
 		depth++;
