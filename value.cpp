@@ -20,14 +20,15 @@
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
-#undef max
-#undef min
 #ifdef _DEBUG
 #include <crtdbg.h>
 #define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 #endif
 ////////////////////////////////////////
+
+#undef max
+#undef min
 
 //からっぽ変数（ダミー用）
 const CValue emptyvalue;

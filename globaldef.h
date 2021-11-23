@@ -49,8 +49,13 @@ namespace aya {
 #else
 	typedef long long int int64;
 	typedef unsigned long long int uint64;
+#ifdef _MSVC_LANG
+#if _MSVC_LANG >= 201703
 	static_assert(sizeof(int64)==8);
 	static_assert(sizeof(uint64)==8);
+#endif
+#endif //_MSVC_LANG
+
 #endif //1200
 
 	typedef wchar_t char_t;

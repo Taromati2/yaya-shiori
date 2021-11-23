@@ -17,14 +17,15 @@
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
-#undef max
-#undef min
 #ifdef _DEBUG
 #include <crtdbg.h>
 #define new new( _NORMAL_BLOCK, __FILE__, __LINE__)
 #endif
 #endif
 ////////////////////////////////////////
+
+#undef max
+#undef min
 
 /* -----------------------------------------------------------------------
  *  関数名  ：  CValueSub::CValueSub

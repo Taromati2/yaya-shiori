@@ -3972,7 +3972,7 @@ CValue	CSystemFunction::GETSECCOUNT(CSF_FUNCPARAM &p)
  */
 CValue	CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p)
 {
-	//for compat (64bit‚É‚È‚Á‚½‚Ì‚Å‚¢‚ç‚È‚­‚È‚Á‚½)
+	//for compat (64bitã«ãªã£ãŸã®ã§ã„ã‚‰ãªããªã£ãŸ)
 	if (p.arg.array_size() > 0) {
 		if (p.arg.array()[0].GetValueInt()) {
 			return CValue(0);
@@ -3996,7 +3996,7 @@ CValue	CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p)
 	struct timezone tz;
 	gettimeofday(&tv, &tz);
 
-	return static_cast<aya::int_t>(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+	return CValue(static_cast<aya::int_t>(tv.tv_sec * 1000 + tv.tv_usec / 1000));
 #endif
 }
 
@@ -4513,13 +4513,13 @@ CValue	CSystemFunction::RE_REPLACEEX(CSF_FUNCPARAM &p)
 		SetError(9);
 	}
 
-	size_t count = -1;
+	aya::int_t count = -1;
 	if ( p.arg.array_size() >= 4 ) {
 		if (!p.arg.array()[3].IsInt()) {
 			vm.logger().Error(E_W, 9, L"RE_REPLACEEX", p.dicname, p.line);
 			SetError(9);
 		}
-		count = static_cast<size_t>( p.arg.array()[3].GetValueInt() );
+		count = static_cast<aya::int_t>( p.arg.array()[3].GetValueInt() );
 		if ( count <= 0 ) { count = -1; }
 	}
 
@@ -4582,10 +4582,10 @@ CValue	CSystemFunction::RE_REPLACEEX(CSF_FUNCPARAM &p)
 		aya::char_t *result;
 
 		if ( arg2.size() > 0 ) {
-			result = regex.Replace(arg0.c_str(),arg2.c_str(),0,count,&t_result);
+			result = regex.Replace(arg0.c_str(),arg2.c_str(),0,(int)count,&t_result);
 		}
 		else {
-			result = regex.Replace(arg0.c_str(),L"",0,count,&t_result);
+			result = regex.Replace(arg0.c_str(),L"",0,(int)count,&t_result);
 		}
 
 		str_result = result;
