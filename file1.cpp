@@ -217,7 +217,7 @@ int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
 		return 0;
 
 	if(len<1){ //0=デフォルトサイズ指定
-		len = static_cast<size_t>( size );
+		len = (size_t)size;
 	}
 
 	char f_buffer[1024];
@@ -265,7 +265,7 @@ int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &typ
 		return 0;
 
 	if(len<1){ //0=デフォルトサイズ指定
-		len = static_cast<size_t>( size );
+		len = (size_t)size;
 	}
 
 	char f_buffer[3*3*3*3*3*3*3]; //3の倍数にすること base64対策

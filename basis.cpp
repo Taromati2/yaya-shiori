@@ -1157,7 +1157,7 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 				var.array().emplace_back(CValueSub());
 			}
 			else if(IsIntString(par)) {
-				var.array().emplace_back(CValueSub(aya::ws_atoi(par, 10)));
+				var.array().emplace_back(CValueSub(aya::ws_atoll(par, 10)));
 			}
 			else if(IsDoubleButNotIntString(par)) {
 				var.array().emplace_back(CValueSub(aya::ws_atof(par)));

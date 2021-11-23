@@ -29,7 +29,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 char	SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, aya::char_t *sepstr);
 char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr);
 char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr);
-int		SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter);
+size_t	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter);
 
 void	CutSpace(aya::string_t &str);
 void	CutStartSpace(aya::string_t &str);

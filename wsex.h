@@ -22,7 +22,7 @@ namespace aya {
 	static const int WS_EOF = -1;
 
 	int		ws_atoi(const aya::string_t &str, int base = 10);
-	aya::int_t	ws_atoll(const aya::string_t &str);
+	aya::int_t ws_atoll(const aya::string_t& str, int base = 10);
 	double	ws_atof(const aya::string_t &str);
 
 	aya::string_t	ws_lltoa(aya::int_t num, int base = 10);
@@ -30,7 +30,7 @@ namespace aya {
 	aya::string_t	ws_ftoa(double num);
 
 	void	ws_eraseend(aya::string_t &str, wchar_t c);
-	void	ws_replace(aya::string_t &str, const wchar_t *before, const wchar_t *after, int count = 0);
+	void	ws_replace(aya::string_t& str, const wchar_t* before, const wchar_t* after, aya::int_t count = 0);
 
 	FILE	*w_fopen(const aya::char_t *fname, const aya::char_t *mode); 
 	//void	write_utf8bom(FILE *fp);

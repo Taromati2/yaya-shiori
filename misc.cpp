@@ -205,7 +205,7 @@ char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_
  *　返値　　：　分割数(array.size())
  * -----------------------------------------------------------------------
  */
-int	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter)
+size_t	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter)
 {
 	if(!str.size())
 		return 0;
