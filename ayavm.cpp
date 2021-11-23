@@ -177,11 +177,7 @@ int CAyaVM::genrand_sysfunc_int(int n)
 
 aya::int_t CAyaVM::genrand_sysfunc_ll(aya::int_t n)
 {
-	aya::int_t r = genrand_int32(rs_sysfunc);
-	r <<= 32;
-	r += genrand_int32(rs_sysfunc);
-
-	return r % n;
+	return genrand_int64(rs_sysfunc) % n;
 }
 
 void CAyaVM::genrand_sysfunc_srand(int n)
