@@ -3980,7 +3980,7 @@ CValue	CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p)
 	}
 
 #if defined(WIN32)
-	typedef aya::uint64 (WINAPI *DefGetTickCount64)();
+	typedef std::uint64_t (WINAPI *DefGetTickCount64)();
 
 	DefGetTickCount64 pGetTickCount64 = (DefGetTickCount64)::GetProcAddress(::GetModuleHandle("kernel32"),"GetTickCount64");
 
