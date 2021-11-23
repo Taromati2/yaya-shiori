@@ -27,7 +27,7 @@ protected:
 	aya::string_t	name;
 	FILE	*fp;
 	int		charset;
-	long	size;
+	aya::int_t size;
 	aya::string_t	mode;
 
 	int	bomcheck;
@@ -52,7 +52,7 @@ public:
 	int	Open(void);
 	int	Close(void);
 
-	inline long Size(void) const { return size; }
+	inline aya::int_t Size(void) const { return size; }
 
 	int	Write(const aya::string_t &istr);
 	int	WriteBin(const aya::string_t &istr, const aya::char_t alt);
@@ -62,8 +62,8 @@ public:
 	int	ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt);
 	int	ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &type);
 
-	int FSeek(int offset,int origin);
-	int FTell();
+	aya::int_t FSeek(aya::int_t offset,int origin);
+	aya::int_t FTell();
 };
 
 //----
@@ -93,10 +93,10 @@ public:
 	int		ReadBin(const aya::string_t &name, aya::string_t &ostr, size_t len, aya::char_t alt);
 	int		ReadEncode(const aya::string_t &name, aya::string_t &ostr, size_t len, const aya::string_t &type);
 
-	long    Size(const aya::string_t &name);
+	aya::int_t Size(const aya::string_t &name);
 
-	int FSeek(const aya::string_t &name,int offset,const aya::string_t &mode);
-	int FTell(const aya::string_t &name);
+	aya::int_t FSeek(const aya::string_t &name, aya::int_t offset,const aya::string_t &mode);
+	aya::int_t FTell(const aya::string_t &name);
 };
 
 //----

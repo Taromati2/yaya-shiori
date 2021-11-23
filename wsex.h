@@ -22,8 +22,10 @@ namespace aya {
 	static const int WS_EOF = -1;
 
 	int		ws_atoi(const aya::string_t &str, int base = 10);
+	aya::int_t	ws_atoll(const aya::string_t &str);
 	double	ws_atof(const aya::string_t &str);
 
+	aya::string_t	ws_lltoa(aya::int_t num, int base = 10);
 	aya::string_t	ws_itoa(int num, int base = 10);
 	aya::string_t	ws_ftoa(double num);
 

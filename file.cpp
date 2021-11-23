@@ -280,7 +280,7 @@ int	CFile::ReadEncode(const aya::string_t &name, aya::string_t &ostr, size_t len
  *  返値　　：　<0失敗 >=0成功
  * -----------------------------------------------------------------------
  */
-long CFile::Size(const aya::string_t &name)
+aya::int_t CFile::Size(const aya::string_t &name)
 {
 	std::list<CFile1>::const_iterator it = std::find(filelist.begin(),filelist.end(),name);
 	if( it != filelist.end() ) {
@@ -297,7 +297,7 @@ long CFile::Size(const aya::string_t &name)
  *  返値　　：　0/1=失敗/成功
  * -----------------------------------------------------------------------
  */
-int CFile::FSeek(const aya::string_t &name,int offset,const aya::string_t &s_mode)
+aya::int_t CFile::FSeek(const aya::string_t &name, aya::int_t offset,const aya::string_t &s_mode)
 {
 	int mode;
 
@@ -329,7 +329,7 @@ int CFile::FSeek(const aya::string_t &name,int offset,const aya::string_t &s_mod
  *  返値　　：　-1/その他=失敗/成功（ftellの結果）
  * -----------------------------------------------------------------------
  */
-int CFile::FTell(const aya::string_t &name)
+aya::int_t CFile::FTell(const aya::string_t &name)
 {
 	std::list<CFile1>::iterator it = std::find(filelist.begin(),filelist.end(),name);
 	if( it != filelist.end() ) {

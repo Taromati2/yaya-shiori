@@ -36,7 +36,7 @@
 ////////////////////////////////////////
 
 /* -----------------------------------------------------------------------
-*  関数名  ：  aya::ws_atoi
+*  関数名  ：  aya::ws_atoi / ws_atoll
 *  機能概要：  aya::string_tをintへ変換
 * -----------------------------------------------------------------------
 */
@@ -47,6 +47,18 @@ int	aya::ws_atoi(const aya::string_t &str, int base)
 	
 	wchar_t	*dmy;
 	return (int)wcstol(str.c_str(), &dmy, base);
+}
+
+aya::int_t	aya::ws_atoll(const aya::string_t &str)
+{
+	if (!str.size())
+		return 0;
+	
+#ifdef INT64_IS_NOT_STD
+	return (aya::int_t)_wtoi64(str.c_str());
+#else
+	return (aya::int_t)_wtoll(str.c_str());
+#endif
 }
 
 /* -----------------------------------------------------------------------
@@ -69,6 +81,11 @@ double	aya::ws_atof(const aya::string_t &str)
 * -----------------------------------------------------------------------
 */
 aya::string_t aya::ws_itoa(int num, int rdx)
+{
+	return ws_lltoa(static_cast<aya::int_t>(num), rdx);
+}
+
+aya::string_t aya::ws_lltoa(aya::int_t num, int rdx)
 {
 	int idx;
 

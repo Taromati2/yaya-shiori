@@ -42,7 +42,7 @@ protected:
 public:
 	aya::string_t	s_value;				// 文字列値
 	double	d_value;				// 実数値
-	int		i_value;				// 整数値
+	aya::int_t		i_value;				// 整数値
 
 private:
 	int CalcEscalationTypeNum(const int rhs) const;
@@ -53,6 +53,9 @@ public:
 		type(F_TAG_VOID) , s_value(L""), d_value(0.0), i_value(0) { }
 
 	CValueSub(int value) :
+		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
+
+	CValueSub(aya::int_t value) :
 		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
 
 	CValueSub(double value) :
@@ -81,11 +84,11 @@ public:
 
 	inline bool		IsNum(void) const { return type == F_TAG_INT || type == F_TAG_DOUBLE || type == F_TAG_VOID; }
 
-	int		GetValueInt(void) const;
-	double	GetValueDouble(void) const;
+	aya::int_t		GetValueInt(void) const;
+	double			GetValueDouble(void) const;
 	aya::string_t	GetValueString(void) const;
 
-	CValueSub	&operator =(int value);
+	CValueSub	&operator =(aya::int_t value);
 	CValueSub	&operator =(double value);
 	CValueSub	&operator =(const aya::string_t &value);
 	CValueSub	&operator =(const aya::char_t *value);
@@ -127,8 +130,8 @@ protected:
 	int	type;						// 型
 public:
 	aya::string_t	s_value;				// 文字列値
-	double	d_value;				// 実数値
-	int		i_value;				// 整数値
+	double			d_value;				// 実数値
+	aya::int_t		i_value;				// 整数値
 
 private:
 	mutable std_shared_ptr<CValueArray> m_array;		// 汎用配列
@@ -176,6 +179,9 @@ public:
 	}
 
 	CValue(int value) :
+		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
+
+	CValue(aya::int_t value) :
 		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
 
 	CValue(double value) :
@@ -246,8 +252,8 @@ public:
 		return 0;
 	}
 
-	int		GetValueInt(void) const;
-	double	GetValueDouble(void) const;
+	aya::int_t		GetValueInt(void) const;
+	double			GetValueDouble(void) const;
 	aya::string_t	GetValueString(void) const;
 	aya::string_t	GetValueStringForLogging(void) const;
 
@@ -255,7 +261,7 @@ public:
 
 	int		DecodeArrayOrder(int &order, int &order1, aya::string_t &delimiter) const;
 
-	CValue	&operator =(int value);
+	CValue	&operator =(aya::int_t value);
 	CValue	&operator =(double value);
 	CValue	&operator =(const aya::string_t &value);
 	CValue	&operator =(const aya::char_t *value);
