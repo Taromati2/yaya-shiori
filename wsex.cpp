@@ -61,7 +61,7 @@ aya::int_t	aya::ws_atoll(const aya::string_t &str, int base)
 		return _wtoi64(str.c_str());
 	}
 	else {
-		return (yaya::int_t)wcstol(str.c_str(),NULL,base);
+		return (aya::int_t)wcstol(str.c_str(),NULL,base);
 	}
 #endif
 #else
