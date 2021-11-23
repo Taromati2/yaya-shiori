@@ -4006,7 +4006,8 @@ CValue CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p) {
 #if defined(WIN32)
 CValue	CSystemFunction::GETMEMINFO(CSF_FUNCPARAM &p)
 {
-	MEMORYSTATUSEX	meminfo;
+	MEMORYSTATUSEX	meminfo{};
+	meminfo.dwLength=sizeof(meminfo);
 	GlobalMemoryStatusEx(&meminfo);
 
 	CValue	result(F_TAG_ARRAY, 0/*dmy*/);
