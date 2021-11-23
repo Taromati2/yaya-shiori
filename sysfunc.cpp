@@ -4466,7 +4466,7 @@ CValue	CSystemFunction::RE_REPLACE(CSF_FUNCPARAM &p)
 			vm.logger().Error(E_W, 9, L"RE_REPLACE", p.dicname, p.line);
 			SetError(9);
 		}
-		count = static_cast<size_t>( p.arg.array()[3].GetValueInt() );
+		count = (size_t)p.arg.array()[3].GetValueInt();
 		if ( count <= 0 ) { count = 0; }
 		else { count += 1; }
 	}
@@ -4479,7 +4479,7 @@ CValue	CSystemFunction::RE_REPLACE(CSF_FUNCPARAM &p)
 		return CValue(arg0);
 
 	// まずsplitする
-	CValue	splits = RE_SPLIT_CORE(p.arg, p.dicname, p.line, L"RE_REPLACE", (size_t)count);
+	CValue	splits = RE_SPLIT_CORE(p.arg, p.dicname, p.line, L"RE_REPLACE", count);
 	int	num = splits.array_size();
 	if (!num || num == 1)
 		return CValue(arg0);
@@ -5042,7 +5042,7 @@ CValue	CSystemFunction::LETTONAME(CSF_FUNCPARAM &p)
  */
 CValue	CSystemFunction::LSO(CSF_FUNCPARAM &)
 {
-	return CValue(lso);
+	return CValue((aya::int_t)lso);
 }
 
 /* -----------------------------------------------------------------------
