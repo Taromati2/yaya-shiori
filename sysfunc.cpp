@@ -3996,7 +3996,7 @@ CValue	CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p)
 	struct timezone tz;
 	gettimeofday(&tv, &tz);
 
-	return CValue(static_cast<aya::int_t>(tv.tv_sec * 1000 + tv.tv_usec / 1000));
+	return CValue(static_cast<aya::int_t>(tv.tv_sec) * 1000 + static_cast<aya::int_t>(tv.tv_usec) / 1000);
 #endif
 }
 
@@ -4111,8 +4111,11 @@ CValue	CSystemFunction::RE_ASEARCH(CSF_FUNCPARAM &p)
 	int	sz = p.arg.array_size();
 
 	if (sz < 2) {
-		vm.logger().Error(E_W, 8, L"RE_ASEARCHEX", p.dicname, p.line);
-		SetError(8);
+		//check real arg size : if search target is empty array , arg array is 1
+		if (p.valuearg.size() < 2) {
+			vm.logger().Error(E_W, 8, L"RE_ASEARCH", p.dicname, p.line);
+			SetError(8);
+		}
 		return CValue(-1);
 	}
 
@@ -4129,18 +4132,18 @@ CValue	CSystemFunction::RE_ASEARCH(CSF_FUNCPARAM &p)
 				}
 			}
 			catch(const std::runtime_error &) {
-				vm.logger().Error(E_W, 16, L"RE_ASEARCHEX", p.dicname, p.line);
+				vm.logger().Error(E_W, 16, L"RE_ASEARCH", p.dicname, p.line);
 				SetError(16);
 			}
 			catch(...) {
-				vm.logger().Error(E_W, 17, L"RE_ASEARCHEX", p.dicname, p.line);
+				vm.logger().Error(E_W, 17, L"RE_ASEARCH", p.dicname, p.line);
 				SetError(17);
 			}
 		}
 
 	}
 	catch(...) {
-		vm.logger().Error(E_W, 17, L"RE_ASEARCHEX", p.dicname, p.line);
+		vm.logger().Error(E_W, 17, L"RE_ASEARCH", p.dicname, p.line);
 		SetError(17);
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
 	}
@@ -4153,8 +4156,11 @@ CValue	CSystemFunction::RE_ASEARCHEX(CSF_FUNCPARAM &p)
 	int	sz = p.arg.array_size();
 
 	if (sz < 2) {
-		vm.logger().Error(E_W, 8, L"RE_ASEARCHEX", p.dicname, p.line);
-		SetError(8);
+		//check real arg size : if search target is empty array , arg array is 1
+		if (p.valuearg.size() < 2) {
+			vm.logger().Error(E_W, 8, L"RE_ASEARCHEX", p.dicname, p.line);
+			SetError(8);
+		}
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
 	}
 
@@ -5403,9 +5409,9 @@ CValue	CSystemFunction::ASEARCH(CSF_FUNCPARAM &p)
 	int	sz = p.arg.array_size();
 
 	if (sz < 2) {
-		//要素1コ＝空配列の探索である。正常。
-		if (sz < 1) {
-			vm.logger().Error(E_W, 8, L"ASEARCHEX", p.dicname, p.line);
+		//check real arg size : if search target is empty array , arg array is 1
+		if (p.valuearg.size() < 2) {
+			vm.logger().Error(E_W, 8, L"ASEARCH", p.dicname, p.line);
 			SetError(8);
 		}
 		return CValue(-1);
@@ -5426,8 +5432,8 @@ CValue	CSystemFunction::ASEARCHEX(CSF_FUNCPARAM &p)
 	int	sz = p.arg.array_size();
 
 	if (sz < 2) {
-		//要素1コ＝空配列の探索である。正常。
-		if (sz < 1) {
+		//check real arg size : if search target is empty array , arg array is 1
+		if (p.valuearg.size() < 2) {
 			vm.logger().Error(E_W, 8, L"ASEARCHEX", p.dicname, p.line);
 			SetError(8);
 		}
@@ -6305,10 +6311,10 @@ aya::string_t	CSystemFunction::ToFullPath(const aya::string_t &str)
 aya::string_t CSystemFunction::ToFullPath(const aya::string_t &str)
 {
 	if (str.length() > 0 && str[0] == L'/') {
-	return str;
+		return str;
 	}
 	else {
-	return vm.basis().path + str;
+		return vm.basis().path + str;
 	}
 }
 #endif
