@@ -1327,8 +1327,6 @@ void	CParser0::StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells)
 		int	tagtype  = 0;
 		int	taglen   = 0;
 		
-//		wcout << endl << "str: " << str << endl;
-//		wcout << "WordMatch:" << endl;
 		int in_dq = 0;
 		int	in_sq = 0;
 		int strlen = (int)str.size();
@@ -1368,42 +1366,10 @@ void	CParser0::StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells)
 
 				tagpoint = i;
 
-//				wcout << "d0: " << d0 << endl;
-//				wcout << "d1: " << d1 << endl;
 				break;
 			}
 		}
-/*		wcout << "  tagpoint: " << tagpoint << endl;
-		wcout << "  tagtype: " << tagtype << endl;
-		wcout << "  taglen: " << taglen << endl;
-		wcout << "  bstr: " << bstr << endl;
 
-		wcout << "Aya5:" << endl;
-		tagpoint = -1;
-		tagtype  = 0;
-		taglen   = 0;
-
-		for(size_t i = 0; i < FORMULATAG_NUM; i++) {
-		aya::string_t	d0, d1;
-			if (!Split_IgnoreDQ(str, d0, d1, (wchar_t *)formulatag[i]))
-				continue;
-			int	d_point = d0.size();
-			if (tagpoint == -1 ||
-				(tagpoint != -1 && ((tagpoint > d_point) || tagpoint == d_point && taglen < formulatag_len[i]))) {
-				tagpoint = d_point;
-				tagtype  = i;
-				taglen   = formulatag_len[i];
-				bstr = d1;
-//				wcout << "d0: " << d0 << endl;
-//				wcout << "d1: " << d1 << endl;
-			}
-		}
-
-		wcout << "  tagpoint: " << tagpoint << endl;
-		wcout << "  tagtype: " << tagtype << endl;
-		wcout << "  taglen: " << taglen << endl;
-		wcout << "  bstr: " << bstr << endl;
-*/
 		// 見つからない場合は最後の項を登録して抜ける
 		if (tagpoint == -1) {
 			CCell	addcell(F_TAG_NOP);
