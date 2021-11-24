@@ -30,6 +30,8 @@ class CDirEnumEntry
 public:
 	aya::string_t name;
 	bool isdir;
+
+	CDirEnumEntry() { isdir = false; }
 };
 
 class CDirEnum {
