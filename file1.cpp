@@ -58,18 +58,18 @@ int	CFile1::Open(void)
 	}
 
 #ifdef POSIX
-	yaya::int_t cur = ftello(fp);
+	aya::int_t cur = ftello(fp);
 	fseeko(fp, 0, SEEK_SET);
-	yaya::int_t start = ftello(fp);
+	aya::int_t start = ftello(fp);
 	fseeko(fp, 0, SEEK_END);
-	yaya::int_t end = ftello(fp);
+	aya::int_t end = ftello(fp);
 	fseeko(fp, cur, SEEK_SET);
 #else
-	yaya::int_t cur = _ftelli64(fp);
+	aya::int_t cur = _ftelli64(fp);
 	_fseeki64(fp,0,SEEK_SET);
-	yaya::int_t start = _ftelli64(fp);
+	aya::int_t start = _ftelli64(fp);
 	_fseeki64(fp,0,SEEK_END);
-	yaya::int_t end = _ftelli64(fp);
+	aya::int_t end = _ftelli64(fp);
 	_fseeki64(fp,cur,SEEK_SET);
 #endif
 
