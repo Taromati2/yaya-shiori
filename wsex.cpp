@@ -78,9 +78,8 @@ double	aya::ws_atof(const aya::string_t &str)
 {
 	if(!str.size())
 		return 0.0;
-	
-	wchar_t	*dmy;
-	return wcstod(str.c_str(), &dmy);
+
+	return wcstod(str.c_str(), NULL);
 }
 
 /* -----------------------------------------------------------------------
