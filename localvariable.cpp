@@ -64,7 +64,7 @@ CVariable	*CLocalVariable::GetArgvPtr(void)
  */
 void	CLocalVariable::AddDepth(void)
 {
-	stack.emplace_back(CLVSubStack());
+	stack.emplace_back();
 	depth++;
 }
 
@@ -88,14 +88,14 @@ void	CLocalVariable::DelDepth(void)
  */
 void	CLocalVariable::Make(const aya::char_t *name)
 {
-	stack[depth].substack.emplace_back(CVariable(name));
+	stack[depth].substack.emplace_back(name);
 }
 
 //----
 
 void	CLocalVariable::Make(const aya::string_t &name)
 {
-	stack[depth].substack.emplace_back(CVariable(name));
+	stack[depth].substack.emplace_back(name);
 }
 
 //----

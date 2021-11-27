@@ -97,8 +97,8 @@ int	CFunction::Execute(CValue &result, const CValue &arg, CLocalVariable &lvar)
 		if(funcpos >= 0) {
 			//_argv[0] = dicname _argv[1] = linenum
 			CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
-			arg.array().emplace_back(CValueSub(dicfilename));
-			arg.array().emplace_back(CValueSub(linecount));
+			arg.array().emplace_back(dicfilename);
+			arg.array().emplace_back(linecount);
 
 			pvm->function_exec().func[funcpos].Execute(arg);
 		}
@@ -262,8 +262,8 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 					if (funcpos >= 0) {
 						//_argv[0] = dicname _argv[1] = linenum
 						CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
-						arg.array().emplace_back(CValueSub(dicfilename));
-						arg.array().emplace_back(CValueSub(st.linecount));
+						arg.array().emplace_back(dicfilename);
+						arg.array().emplace_back(st.linecount);
 
 						pvm->function_exec().func[funcpos].Execute(arg);
 					}
@@ -307,8 +307,8 @@ int	CFunction::ExecuteInBrace(int line, CValue &result, CLocalVariable &lvar, in
 					if (funcpos >= 0) {
 						//_argv[0] = dicname _argv[1] = linenum
 						CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
-						arg.array().emplace_back(CValueSub(dicfilename));
-						arg.array().emplace_back(CValueSub(st.linecount));
+						arg.array().emplace_back(dicfilename);
+						arg.array().emplace_back(st.linecount);
 
 						pvm->function_exec().func[funcpos].Execute(arg);
 					}
@@ -813,7 +813,7 @@ char	CFunction::Comma(CValue &answer, std::vector<int> &sid, CStatement &st, CLo
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
-			t_array.emplace_back(CValueSub(addv));
+			t_array.emplace_back(addv);
 		}
 	}
 
@@ -847,7 +847,7 @@ char	CFunction::CommaAdd(CValue &answer, std::vector<int> &sid, CStatement &st, 
 			t_array.insert(t_array.end(), addv.array().begin(), addv.array().end());
 		}
 		else {
-			t_array.emplace_back(CValueSub(addv));
+			t_array.emplace_back(addv);
 		}
 	}
 
@@ -1107,7 +1107,7 @@ char	CFunction::ExecFunctionWithArgs(CValue &answer, std::vector<int> &sid, CSta
 			}
 		}
 		else {
-			arg.array().emplace_back(CValueSub(addv));
+			arg.array().emplace_back(addv);
 		}
 	}
 
@@ -1179,7 +1179,7 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<int> &sid, C
 			}
 		}
 		else {
-			arg.array().emplace_back(CValueSub(addv));
+			arg.array().emplace_back(addv);
 		}
 
 		valuearg.emplace_back(addv);
@@ -1289,7 +1289,7 @@ void CFunction::EncodeArrayOrder(CCell &vcell, const CValue &order, CLocalVariab
 		result = order;
 		break;
 	default:
-		result.array().emplace_back(CValueSub(order));
+		result.array().emplace_back(order);
 		break;
 	};
 

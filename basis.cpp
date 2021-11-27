@@ -462,7 +462,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				cset = cx;
 			}
 		}
-		dics->emplace_back(CDic1(filename,cset));
+		dics->emplace_back(filename,cset);
 		return true;
 	}
 	// dicdir
@@ -654,7 +654,7 @@ static void CBasis_ConvertStringArray(const std::vector<aya::string_t> &array,CV
 	std::vector<aya::string_t>::const_iterator itr = array.begin();
 
 	while (itr != array.end()) {
-		var.array().emplace_back(CValueSub(*itr));
+		var.array().emplace_back(*itr);
 		++itr;
 	}
 }
@@ -1153,18 +1153,18 @@ void	CBasis::RestoreArrayVariable(CValue &var, aya::string_t &value)
 
 		if(par != ESC_IARRAY) {
 			if(par == ESC_IVOID) {
-				var.array().emplace_back(CValueSub());
+				var.array().emplace_back();
 			}
 			else if(IsIntString(par)) {
-				var.array().emplace_back(CValueSub(aya::ws_atoll(par, 10)));
+				var.array().emplace_back(aya::ws_atoll(par, 10));
 			}
 			else if(IsDoubleButNotIntString(par)) {
-				var.array().emplace_back(CValueSub(aya::ws_atof(par)));
+				var.array().emplace_back(aya::ws_atof(par));
 			}
 			else {
 				CutDoubleQuote(par);
 				UnescapeString(par);
-				var.array().emplace_back(CValueSub(par));
+				var.array().emplace_back(par);
 			}
 		}
 
@@ -1193,7 +1193,7 @@ void	CBasis::ExecuteLoad(void)
 
 	// 第一引数（dllのパス）を作成
 	CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
-	arg.array().emplace_back(CValueSub(base_path));
+	arg.array().emplace_back(base_path);
 
 	// 実行　結果は使用しないのでそのまま捨てる
 	vm.call_limit().InitCall();
@@ -1240,7 +1240,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	if (wistr != NULL) {
 		vm.logger().Io(0, wistr);
-		arg.array().emplace_back(CValueSub(wistr));
+		arg.array().emplace_back(wistr);
 		free(wistr);
 		wistr = NULL;
 	}

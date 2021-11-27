@@ -640,11 +640,10 @@ char	CParser0::GetPreProcess(aya::string_t &str, std::vector<CDefine>& defines, 
 
 	// 種別の判定と情報の保持
 	if (pname == L"#define") {
-		CDefine	adddefine(bef, aft, dicfilename);
-		defines.emplace_back(adddefine);
+		defines.emplace_back(bef, aft, dicfilename);
 	}
 	else if (pname == L"#globaldefine") {
-		gdefines.emplace_back(CDefine(bef, aft, dicfilename));
+		gdefines.emplace_back(bef, aft, dicfilename);
 	}
 	else {
 		vm.logger().Error(E_E, 76, pname, dicfilename, linecount);
@@ -871,7 +870,7 @@ int	CParser0::MakeFunction(const aya::string_t& name, choicetype_t chtype, const
 			return -1;
 */
 
-	vm.function_parse().func.emplace_back(CFunction(vm, name, chtype, dicfilename, linecount));
+	vm.function_parse().func.emplace_back(vm, name, chtype, dicfilename, linecount);
 	vm.function_parse().AddFunctionIndex(name,vm.function_parse().func.size()-1);
 	m_defaultBlockChoicetypeStack.clear();
 	m_defaultBlockChoicetypeStack.emplace_back(CSelecter::GetDefaultBlockChoicetype(chtype));
@@ -903,44 +902,44 @@ char	CParser0::StoreInternalStatement(int targetfunc, aya::string_t &str, int& d
 			chtype = CSelecter::StringToChoiceType(d0, vm, dicfilename, linecount);
 		}
 		depth++;
-		targetfunction.statement.emplace_back(CStatement(ST_OPEN, linecount, new CDuplEvInfo(chtype)));
+		targetfunction.statement.emplace_back(ST_OPEN, linecount, new CDuplEvInfo(chtype));
 		return 1;
 	}
 	// }
 	else if (str == L"}") {
 		m_defaultBlockChoicetypeStack.pop_back();
 		depth--;
-		targetfunction.statement.emplace_back(CStatement(ST_CLOSE, linecount));
+		targetfunction.statement.emplace_back(ST_CLOSE, linecount);
 		return 1;
 	}
 	// others　elseへ書き換えてしまう
 	else if (str == L"others") {
-		targetfunction.statement.emplace_back(CStatement(ST_ELSE, linecount));
+		targetfunction.statement.emplace_back(ST_ELSE, linecount);
 		return 1;
 	}
 	// else
 	else if (str == L"else") {
-		targetfunction.statement.emplace_back(CStatement(ST_ELSE, linecount));
+		targetfunction.statement.emplace_back(ST_ELSE, linecount);
 		return 1;
 	}
 	// break
 	else if (str == L"break") {
-		targetfunction.statement.emplace_back(CStatement(ST_BREAK, linecount));
+		targetfunction.statement.emplace_back(ST_BREAK, linecount);
 		return 1;
 	}
 	// continue
 	else if (str == L"continue") {
-		targetfunction.statement.emplace_back(CStatement(ST_CONTINUE, linecount));
+		targetfunction.statement.emplace_back(ST_CONTINUE, linecount);
 		return 1;
 	}
 	// return
 	else if (str == L"return") {
-		targetfunction.statement.emplace_back(CStatement(ST_RETURN, linecount));
+		targetfunction.statement.emplace_back(ST_RETURN, linecount);
 		return 1;
 	}
 	// --
 	else if (str == L"--") {
-		targetfunction.statement.emplace_back(CStatement(ST_COMBINE, linecount));
+		targetfunction.statement.emplace_back(ST_COMBINE, linecount);
 		return 1;
 	}
 
@@ -1392,7 +1391,7 @@ void	CParser0::StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells)
 				}
 			}
 			// 演算子の登録
-			cells.emplace_back(CCell(tagtype + F_TAG_ORIGIN));
+			cells.emplace_back(tagtype + F_TAG_ORIGIN);
 			// 元の文字列から取り出し済の要素を削る
 			str = bstr;
 		}
