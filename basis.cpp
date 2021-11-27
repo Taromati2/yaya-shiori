@@ -597,12 +597,12 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	}
 	// fncdepth
 	else if ( cmd == L"fncdepth" ) {
-		int	f_depth = aya::ws_atoi(param, 10);
+		size_t f_depth = (size_t)aya::ws_atoll(param, 10);
 		vm.call_limit().SetMaxDepth((f_depth < 2 && f_depth != 0) ? 2 : f_depth);
 		return true;
 	}
 	else if ( cmd == L"looplimit" ) {
-		int	loop_max = aya::ws_atoi(param, 10);
+		size_t loop_max = (size_t)aya::ws_atoll(param, 10);
 		vm.call_limit().SetMaxLoop(loop_max);
 		return true;
 	}
@@ -1186,7 +1186,7 @@ void	CBasis::ExecuteLoad(void)
 		return;
 	}
 
-	int funcpos = loadindex.Find(vm,L"load");
+	ptrdiff_t funcpos = loadindex.Find(vm,L"load");
 	if(funcpos < 0) {
 		return;
 	}
@@ -1221,7 +1221,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 		return NULL;
 	}
 
-	int funcpos = requestindex.Find(vm,L"request");
+	ptrdiff_t funcpos = requestindex.Find(vm,L"request");
 
 	if(funcpos < 0) {
 		GlobalFree(h);
@@ -1232,7 +1232,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	// 入力文字列を取得
 	std::string	istr;
-	istr.assign((char *)h, 0, (int)*len);
+	istr.assign((char *)h, 0, (size_t)*len);
 
 	// 第一引数（入力文字列）を作成　ここで文字コードをUCS-2へ変換
 	CValue	arg(F_TAG_ARRAY, 0/*dmy*/);
@@ -1257,8 +1257,8 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	}
 	catch (const std::bad_alloc&) {
 		CBasisFuncPos shiori_OnMemoryLimit;
-		int funcpos = shiori_OnMemoryLimit.Find(vm, L"shiori.OnMemoryLimit");
-		int lock = vm.call_limit().temp_unlock();
+		ptrdiff_t funcpos = shiori_OnMemoryLimit.Find(vm, L"shiori.OnMemoryLimit");
+		size_t lock = vm.call_limit().temp_unlock();
 
 		if(funcpos >= 0) {
 			vm.function_exec().func[funcpos].Execute();//get info from GETCALLSTACK
@@ -1380,7 +1380,7 @@ void	CBasis::ExecuteUnload(void)
 		return;
 	}
 
-	int funcpos = unloadindex.Find(vm,L"unload");
+	ptrdiff_t funcpos = unloadindex.Find(vm,L"unload");
 	if(funcpos < 0) {
 		return;
 	}
@@ -1398,7 +1398,7 @@ void	CBasis::ExecuteUnload(void)
  *  機能概要：  関数位置を探し、位置と「探したかどうか」をキャッシュします
  * -----------------------------------------------------------------------
  */
-int CBasisFuncPos::Find(CAyaVM &vm,const aya::char_t *name)
+ptrdiff_t CBasisFuncPos::Find(CAyaVM &vm,const aya::char_t *name)
 {
 	if(is_try_find) {
 		return pos_saved;

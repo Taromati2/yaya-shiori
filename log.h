@@ -77,11 +77,11 @@ public:
 	void	Message(int id, int mode = 0);
 	void	Filename(const aya::string_t &filename);
 
-	void	Error(int mode, int id, const aya::char_t *ref, const aya::string_t &dicfilename, int linecount);
-	void	Error(int mode, int id, const aya::string_t &ref, const aya::string_t &dicfilename, int linecount);
+	void	Error(int mode, int id, const aya::char_t *ref, const aya::string_t &dicfilename, ptrdiff_t linecount);
+	void	Error(int mode, int id, const aya::string_t &ref, const aya::string_t &dicfilename, ptrdiff_t linecount);
 	void	Error(int mode, int id, const aya::char_t *ref);
 	void	Error(int mode, int id, const aya::string_t &ref);
-	void	Error(int mode, int id, const aya::string_t &dicfilename, int linecount);
+	void	Error(int mode, int id, const aya::string_t &dicfilename, ptrdiff_t linecount);
 	void	Error(int mode, int id);
 
 	void	Io(char io, const aya::char_t *str);

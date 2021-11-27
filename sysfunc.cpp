@@ -312,9 +312,9 @@ const CSF_FUNCTABLE CSystemFunction::sysfunc[] = {
 //このグローバル変数はマルチインスタンスでも共通
 class CSystemFunctionInit {
 public:
-	int sysfunc_len[SYSFUNC_NUM];
-	int sysfunc_len_max;
-	int sysfunc_len_min;
+	size_t sysfunc_len[SYSFUNC_NUM];
+	size_t sysfunc_len_max;
+	size_t sysfunc_len_min;
 	size_t sysfunc_his_pos;
 	aya::indexmap sysfunc_map;
 
@@ -360,7 +360,7 @@ CSystemFunction::CSystemFunction(CAyaVM &vmr)
  *  機能概要：  システム関数の名前の最大値を返します
  * -----------------------------------------------------------------------
  */
-int CSystemFunction::GetMaxNameLength(void)
+size_t CSystemFunction::GetMaxNameLength(void)
 {
 	return sysfuncinit.sysfunc_len_max;
 }
@@ -370,7 +370,7 @@ int CSystemFunction::GetMaxNameLength(void)
  *  機能概要：  システム関数を探索します
  * -----------------------------------------------------------------------
  */
-int CSystemFunction::FindIndex(const aya::string_t &str)
+ptrdiff_t CSystemFunction::FindIndex(const aya::string_t &str)
 {
 	if ( str.size() == 0 ) { return -1; }
 
@@ -385,9 +385,9 @@ int CSystemFunction::FindIndex(const aya::string_t &str)
  *  機能概要：  いちばん長くマッチするシステム関数を探索します
  * -----------------------------------------------------------------------
  */
-int CSystemFunction::FindIndexLongestMatch(const aya::string_t &str,int max_len)
+size_t CSystemFunction::FindIndexLongestMatch(const aya::string_t &str, size_t max_len)
 {
-	int found_len = 0;
+	size_t found_len = 0;
 	for(size_t i = 0; i < SYSFUNC_NUM; i++) {
 		if ( sysfuncinit.sysfunc_len[i] <= max_len ) { continue; }
 
@@ -416,7 +416,7 @@ const aya::char_t* CSystemFunction::GetNameFromIndex(int idx)
  *  機能概要：  履歴系の定数を返します
  * -----------------------------------------------------------------------
  */
-int CSystemFunction::HistoryIndex(void)
+size_t CSystemFunction::HistoryIndex(void)
 {
 	return sysfuncinit.sysfunc_his_pos;
 }
@@ -1641,7 +1641,7 @@ CValue	CSystemFunction::STRLEN(CSF_FUNCPARAM &p)
 		SetError(9);
 	}
 
-	return CValue((int)p.arg.array()[0].GetValueString().size());
+	return CValue((aya::int_t)p.arg.array()[0].GetValueString().size());
 }
 
 /* -----------------------------------------------------------------------
@@ -3161,8 +3161,8 @@ CValue CSystemFunction::GETFUNCINFO(CSF_FUNCPARAM &p)
 	const CFunction *it = &vm.function_exec().func[size_t(index)];
 
 	result.array().emplace_back(it->GetFileName());
-	result.array().emplace_back((int)it->GetLineNumBegin());
-	result.array().emplace_back((int)it->GetLineNumEnd());
+	result.array().emplace_back((aya::int_t)it->GetLineNumBegin());
+	result.array().emplace_back((aya::int_t)it->GetLineNumEnd());
 
 	return result;
 }
@@ -3392,7 +3392,7 @@ CValue	CSystemFunction::FSIZE(CSF_FUNCPARAM &p)
 	//すでに開いているファイルならそっちから情報をパクる
 	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
 	aya::int_t size = vm.files().Size(fullpath);
-	if ( size >= 0 ) { return CValue((int)size); }
+	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
 	// パスをMBCSに変換
 	char *s_filestr = Ccct::Ucs2ToMbcs(fullpath, CHARSET_DEFAULT);
@@ -3407,13 +3407,12 @@ CValue	CSystemFunction::FSIZE(CSF_FUNCPARAM &p)
 	s_filestr = NULL;
 	if (hFile == INVALID_HANDLE_VALUE)
 		return CValue(-1);
-	unsigned long	result = GetFileSize(hFile, NULL);
+	LARGE_INTEGER result;
+	if(!GetFileSizeEx(hFile, &result))
+		result.QuadPart=-1;
 	CloseHandle(hFile);
 
-	if (result == 0xFFFFFFFF)
-		return CValue(-1);
-
-	return CValue((int)result);
+	return CValue((aya::int_t)result.QuadPart);
 }
 #elif defined(POSIX)
 CValue CSystemFunction::FSIZE(CSF_FUNCPARAM &p) {
@@ -3430,8 +3429,8 @@ CValue CSystemFunction::FSIZE(CSF_FUNCPARAM &p) {
 	}
 
 	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
-	long size = vm.files().Size(fullpath);
-	if ( size >= 0 ) { return CValue((int)size); }
+	aya::int_t size = vm.files().Size(fullpath);
+	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
 	std::string path = narrow(fullpath);
 	fix_filepath(path);
@@ -3548,7 +3547,7 @@ CValue	CSystemFunction::ArraySize(CSF_FUNCPARAM &p)
 		else if (p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE)
 			delimiter = p.lvar.GetDelimiter(p.pcellarg[0]->name);
 
-		return CValue((int)SplitToMultiString(p.valuearg[0].s_value, NULL, delimiter));
+		return CValue((aya::int_t)SplitToMultiString(p.valuearg[0].s_value, NULL, delimiter));
 	}
 	else if ( p.valuearg[0].IsVoid() ) {
 		return CValue(0);
@@ -4778,7 +4777,7 @@ CValue	CSystemFunction::ISINTSTR(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	return CValue((int)IsIntString(p.arg.array()[0].s_value));
+	return CValue((aya::int_t)IsIntString(p.arg.array()[0].s_value));
 }
 
 /* -----------------------------------------------------------------------
@@ -6046,8 +6045,8 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 	result.array().emplace_back(0);
 	result.array().emplace_back(0);
 	result.array().emplace_back(0);
-	result.array().emplace_back((int)sb.st_ctime);
-	result.array().emplace_back((int)sb.st_mtime);
+	result.array().emplace_back((aya::int_t)sb.st_ctime);
+	result.array().emplace_back((aya::int_t)sb.st_mtime);
 #endif
 
 	return result;

@@ -377,7 +377,7 @@ void	CLogExCode::StructSerialString(CStatement *st, aya::string_t &formula)
 				continue;
 			}
 
-			for(std::vector<int>::iterator it2 = it->index.begin(); it2 != it->index.end(); it2++) {
+			for(std::vector<size_t>::iterator it2 = it->index.begin(); it2 != it->index.end(); it2++) {
 				if(it2 != it->index.begin())
 					formula += L',';
 				tmpstr = aya::ws_itoa(*it2);
