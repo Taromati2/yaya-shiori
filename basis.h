@@ -116,6 +116,8 @@ public:
 
 	void	ExecuteLoad(void);
 	aya::global_t	ExecuteRequest(aya::global_t h, long *len, bool is_debug);
+	void	CallOnMemoryLimit();
+	void	CallOnMemoryError();
 	void	ExecuteUnload(void);
 
 	void	SaveVariable(const aya::char_t* pName = NULL);
