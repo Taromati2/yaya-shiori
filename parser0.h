@@ -58,7 +58,7 @@ public:
 		; //NOOP
 	}
 	char	Parse(int charset, const std::vector<CDic1>& dics);
-	char	ParseEmbedString(aya::string_t& str, CStatement &st, const aya::string_t &dicfilename, int linecount);
+	char	ParseEmbedString(aya::string_t& str, CStatement &st, const aya::string_t &dicfilename, ptrdiff_t linecount);
 
 	int		DynamicLoadDictionary(const aya::string_t& dicfilename, int charset);
 	int		DynamicAppendRuntimeDictionary(const aya::string_t& codes);
@@ -72,31 +72,31 @@ protected:
 	bool	ParseAfterLoad(const aya::string_t &dicfilename);
 	char	LoadDictionary1(const aya::string_t& filename, std::vector<CDefine>& gdefines, int charset);
 	char	GetPreProcess(aya::string_t& str, std::vector<CDefine>& defines, std::vector<CDefine>& gdefines, const aya::string_t& dicfilename,
-					int linecount);
+			ptrdiff_t linecount);
 
 	void	ExecInternalPreProcess(aya::string_t &str,const aya::string_t &file,int line);
 
 	char	IsCipheredDic(const aya::string_t& filename);
 	void	SeparateFactor(std::vector<aya::string_t> &s, aya::string_t &line);
-	char	DefineFunctions(std::vector<aya::string_t> &s, const aya::string_t& dicfilename, int linecount, int &depth, int &targetfunction);
-	int		MakeFunction(const aya::string_t& name, choicetype_t chtype, const aya::string_t& dicfilename, int linecount);
-	char	StoreInternalStatement(int targetfunc, aya::string_t &str, int& depth, const aya::string_t& dicfilename, int linecount);
-	char	MakeStatement(int type, int targetfunc, aya::string_t &str, const aya::string_t& dicfilename, int linecount);
-	char	StructWhen(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, int linecount);
-	char	StructFormula(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, int linecount);
+	char	DefineFunctions(std::vector<aya::string_t> &s, const aya::string_t& dicfilename, ptrdiff_t linecount, size_t&depth, ptrdiff_t&targetfunction);
+	ptrdiff_t MakeFunction(const aya::string_t& name, choicetype_t chtype, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	char	StoreInternalStatement(size_t targetfunc, aya::string_t& str, size_t& depth, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	char	MakeStatement(int type, size_t targetfunc, aya::string_t &str, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	char	StructWhen(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	char	StructFormula(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
 	void	StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells);
 
 	char	AddSimpleIfBrace(const aya::string_t &dicfilename);
 
 	char	SetCellType(const aya::string_t &dicfilename);
-	char	SetCellType1(CCell& scell, char emb, const aya::string_t& dicfilename, int linecount);
+	char	SetCellType1(CCell& scell, char emb, const aya::string_t& dicfilename, ptrdiff_t linecount);
 
 	char	MakeCompleteFormula(const aya::string_t &dicfilename);
 	char	ParseEmbeddedFactor(const aya::string_t& dicfilename);
 	char	ParseEmbeddedFactor1(CStatement& st, const aya::string_t& dicfilename);
 	void	ConvertPlainString(const aya::string_t& dicfilename);
 	void	ConvertPlainString1(CStatement& st, const aya::string_t& dicfilename);
-	char	ConvertEmbedStringToFormula(aya::string_t& str, const aya::string_t& dicfilename, int linecount);
+	char	ConvertEmbedStringToFormula(aya::string_t& str, const aya::string_t& dicfilename, ptrdiff_t linecount);
 	char	CheckDepthAndSerialize(const aya::string_t& dicfilename);
 	char	CheckDepth1(CStatement& st, const aya::string_t& dicfilename);
 	char	CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicfilename);
