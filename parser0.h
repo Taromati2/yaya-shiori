@@ -74,7 +74,7 @@ protected:
 	char	GetPreProcess(aya::string_t& str, std::vector<CDefine>& defines, std::vector<CDefine>& gdefines, const aya::string_t& dicfilename,
 			ptrdiff_t linecount);
 
-	void	ExecInternalPreProcess(aya::string_t &str,const aya::string_t &file,int line);
+	void	ExecInternalPreProcess(aya::string_t &str,const aya::string_t &file, ptrdiff_t line);
 
 	char	IsCipheredDic(const aya::string_t& filename);
 	void	SeparateFactor(std::vector<aya::string_t> &s, aya::string_t &line);
