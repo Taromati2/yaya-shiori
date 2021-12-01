@@ -42,7 +42,13 @@ namespace aya {
 		return ws_fputs(str.c_str(),stream,charset,ayc);
 	}
 
-	int snprintf(aya::char_t *buf,size_t count,const aya::char_t *format,...);
+	#if defined(__GNUC__)
+		int snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...)__attribute__((format(printf, 3, 4)));
+	#elif defined(_MSC_VER)
+		int snprintf(_Pre_notnull_ _Always_(_Post_z_) aya::char_t* buf, size_t count, _Printf_format_string_ const aya::char_t* format, ...);
+	#else
+		int snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...);
+	#endif
 };
 
 //----
