@@ -1244,7 +1244,7 @@ CValue	CSystemFunction::SRAND(CSF_FUNCPARAM &p)
 	else if (p.arg.array()[0].IsDouble()) {
 		union {
 			double d;
-			unsigned long long i[1];
+			std::uint64_t i[1];
 		} num;
 
 		num.d = p.arg.array()[0].GetValueDouble();
@@ -1252,7 +1252,7 @@ CValue	CSystemFunction::SRAND(CSF_FUNCPARAM &p)
 		vm.genrand_sysfunc_srand_array(num.i,1);
 	}
 	else if (p.arg.array()[0].IsString()) {
-		std::vector<unsigned long long> num;
+		std::vector<std::uint64_t> num;
 
 		aya::string_t str = p.arg.array()[0].GetValueString();
 
