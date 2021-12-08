@@ -451,10 +451,10 @@ aya::string_t CSelecter::ChoiceTypeToString(choicetype_t ctype)
 		break;
 	}
 
-	while(aret[0]=='_')
-		aret=aret.substr(1);
-	while(*aret.rbegin()=='_')
-		aret.pop_back();
+	auto beg = aret.find_first_not_of(L'_');
+	auto end = aret.find_last_not_of(L'_');
+	auto siz = end - beg + 1;
+	aret = aret.substr(beg, siz);
 
 	return aret;
 }
