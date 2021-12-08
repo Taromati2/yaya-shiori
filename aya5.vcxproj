@@ -181,6 +181,17 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\Debug/aya5.bsc</OutputFile>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>del E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp</Command>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>ren E:\ssp\ghost\Taromati2\ghost\master\shiori\aya.dll tmp
+copy E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp E:\ssp\ghost\Taromati2\ghost\master\shiori\aya.dll</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -c reload
+del E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -233,6 +244,21 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <OutputFile>.\Release/aya5.bsc</OutputFile>
     </Bscmake>
+    <PreBuildEvent>
+      <Command>del E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>
+      </Message>
+    </PreBuildEvent>
+    <PreLinkEvent>
+      <Command>ren E:\ssp\ghost\Taromati2\ghost\master\shiori\aya.dll tmp
+copy E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp E:\ssp\ghost\Taromati2\ghost\master\shiori\aya.dll</Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -c reload
+del E:\ssp\ghost\Taromati2\ghost\master\shiori\tmp</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug EXE|Win32'">
     <Midl>
