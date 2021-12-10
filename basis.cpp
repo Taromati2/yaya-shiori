@@ -603,6 +603,11 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		vm.call_limit().SetMaxLoop(loop_max);
 		return true;
 	}
+	else if ( cmd == L"maxlognum" ) {
+		size_t maxlognum = (size_t)aya::ws_atoll(param, 10);
+		vm.logger().SetMaxLogNum(maxlognum);
+		return true;
+	}
 	// checkparser closed function
 	else if(cmd == L"checkparser") {
 		checkparser = param == L"on";
@@ -703,11 +708,15 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 	}
 	// fncdepth
 	else if ( cmd == L"fncdepth" ) {
-		return CValue(vm.call_limit().GetMaxDepth());
+		return CValue((aya::int_t)vm.call_limit().GetMaxDepth());
 	}
 	// looplimit
 	else if ( cmd == L"looplimit" ) {
-		return CValue(vm.call_limit().GetMaxLoop());
+		return CValue((aya::int_t)vm.call_limit().GetMaxLoop());
+	}
+	// maxlognum
+	else if ( cmd == L"maxlognum" ) {
+		return CValue((aya::int_t)vm.logger().GetMaxLogNum());
 	}
 	// checkparser closed function
 	else if(cmd == L"checkparser") {
