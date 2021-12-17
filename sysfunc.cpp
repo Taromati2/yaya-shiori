@@ -2962,9 +2962,7 @@ CValue	CSystemFunction::DICUNLOAD(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
-
-	int err = vm.parser0().DynamicUnloadDictionary(fullpath);
+	int err = vm.parser0().DynamicUnloadDictionary(p.arg.array()[0].s_value);
 
 	if ( err > 1 ) {
 		SetError(err);

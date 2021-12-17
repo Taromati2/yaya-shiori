@@ -60,7 +60,7 @@ public:
 
 	int		DynamicLoadDictionary(const aya::string_t& dicfilename, int charset);
 	int		DynamicAppendRuntimeDictionary(const aya::string_t& codes);
-	int		DynamicUnloadDictionary(const aya::string_t& dicfilename);
+	int		DynamicUnloadDictionary(aya::string_t dicfilename);
 	int		DynamicUndefFunc(const aya::string_t& funcname);
 
 	//changed to public, for processglobaldefine
@@ -100,7 +100,7 @@ protected:
 	char	CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicfilename);
 	char	MakeCompleteConvertionWhenToIf(const aya::string_t& dicfilename);
 
-	char	IsDicFileAlreadyExist(const aya::string_t& dicfilename);
+	char	IsDicFileAlreadyExist(aya::string_t dicfilename);
 };
 
 //----
