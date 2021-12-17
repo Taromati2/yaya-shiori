@@ -27,11 +27,9 @@ public:
 	aya::string_t	before;
 	aya::string_t	after;
 	aya::string_t	dicfilename;
+	aya::string_t	dicfilename_fullpath;
 public:
-	CDefine(const aya::string_t &bef, const aya::string_t &aft, const aya::string_t &df) : 
-	  before(bef) , after(aft) , dicfilename(df)
-	{
-	}
+	CDefine(CAyaVM& vm, const aya::string_t& bef, const aya::string_t& aft, const aya::string_t& df);
 
 	CDefine(void) {}
 	~CDefine(void) {}
