@@ -71,6 +71,7 @@ CBasis::CBasis(CAyaVM &vmr) : vm(vmr)
 	iolog       = 1;
 
 	dic_charset       = CHARSET_SJIS;
+	setting_charset   = CHARSET_SJIS;
 	output_charset    = CHARSET_UTF8;
 	file_charset      = CHARSET_SJIS;
 	save_charset      = CHARSET_UTF8;
@@ -380,7 +381,9 @@ void	CBasis::LoadBaseConfigureFile(std::vector<CDic1> &dics)
 
 	// ファイルを開く
 	aya::string_t	filename = load_path + modulename + config_file_name_trailer + L".txt";
-	LoadBaseConfigureFile_Base(filename,dics,dic_charset);
+
+	// 読み込み当初は文字コードが定義されていないので、CHARSET_UNDEFにする
+	LoadBaseConfigureFile_Base(filename,dics,CHARSET_UNDEF);
 }
 
 void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1> &dics,char cset)
@@ -399,11 +402,21 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 	aya::string_t	cmd, param;
 	size_t line=0;
 
-	while (true) {
+	char cset_real;
+
+	while ( true ) {
 		line += 1;
 
 		// 1行読み込み
-		if(aya::ws_fgets(readline, fp, cset, 0, line) == aya::WS_EOF) {
+		cset_real = cset;
+
+		if ( cset == CHARSET_UNDEF ) {
+			//後の設定で変更されている可能性があるので、毎回上書きすること
+			//always overwrite cset_real because setting_charset may be modified in SetParameter function
+			cset_real = setting_charset;
+		}
+
+		if (aya::ws_fgets(readline, fp, cset_real, 0, line) == aya::WS_EOF) {
 			// ファイルを閉じる
 			fclose(fp);
 			break;
@@ -446,8 +459,8 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 
 		aya::string_t filename = load_path + param1;
 
-		char cset = dic_charset;
-		if(param2.size()) {
+		char cset = setting_charset;
+		if ( param2.size() ) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
 			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
@@ -463,8 +476,8 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 
 		aya::string_t filename = load_path + param1;
 
-		char cset = dic_charset;
-		if(param2.size()) {
+		char cset = setting_charset;
+		if ( param2.size() ) {
 			char cx = Ccct::CharsetTextToID(param2.c_str());
 			if(cx != CHARSET_DEFAULT) {
 				cset = cx;
@@ -599,6 +612,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	// charset
 	else if(cmd == L"charset") {
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
+		setting_charset   = dic_charset;
 		output_charset    = dic_charset;
 		file_charset      = dic_charset;
 		save_charset      = dic_charset;
@@ -611,7 +625,11 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		dic_charset       = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
-	else if(cmd == L"charset.output") {
+	else if (cmd == L"charset.setting") {
+		setting_charset   = Ccct::CharsetTextToID(param.c_str());
+		return true;
+	}
+	else if (cmd == L"charset.output") {
 		output_charset    = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
@@ -729,6 +747,9 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 	// charset
 	else if(cmd == L"charset.dic") {
 		return Ccct::CharsetIDToTextW(dic_charset);
+	}
+	else if(cmd == L"charset.setting") {
+		return Ccct::CharsetIDToTextW(setting_charset);
 	}
 	else if(cmd == L"charset.output") {
 		return Ccct::CharsetIDToTextW(output_charset);
