@@ -131,6 +131,7 @@ public:
 
 	char	IsSuppress(void);
 
+	aya::string_t	ToFullPath(const aya::string_t& str);
 protected:
 	void	SetSuppress(void);
 	void	ResetSuppress(void);

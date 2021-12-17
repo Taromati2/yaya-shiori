@@ -290,7 +290,6 @@ protected:
 	void	SetError(int code);
 
 	int		GetCharset(const CValueSub &var,const wchar_t *fname, const aya::string_t &d, int l);
-	aya::string_t	ToFullPath(const aya::string_t &str);
 };
 
 //----

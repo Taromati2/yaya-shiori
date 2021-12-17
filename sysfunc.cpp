@@ -779,7 +779,7 @@ CValue	CSystemFunction::LOADLIB(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	int	excode = vm.libs().Add(ToFullPath(p.arg.array()[0].s_value));
+	int	excode = vm.libs().Add(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	if (!excode) {
 		vm.logger().Error(E_W, 13, L"LOADLIB", p.dicname, p.line);
 		SetError(13);
@@ -806,7 +806,7 @@ CValue	CSystemFunction::UNLOADLIB(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	int	result = vm.libs().Delete(ToFullPath(p.arg.array()[0].s_value));
+	int	result = vm.libs().Delete(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"UNLOADLIB", p.dicname, p.line);
@@ -840,7 +840,7 @@ CValue	CSystemFunction::REQUESTLIB(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	result;
-	if (!vm.libs().Request(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, result)) {
+	if (!vm.libs().Request(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, result)) {
 		vm.logger().Error(E_W, 13, L"REQUESTLIB", p.dicname, p.line);
 		SetError(13);
 	}
@@ -1193,7 +1193,7 @@ CValue	CSystemFunction::CHARSETLIBEX(CSF_FUNCPARAM &p)
 		if ( charset < 0 ) {
 			return CValue(0);
 		}
-		int result = vm.libs().SetCharsetDynamic(ToFullPath(p.arg.array()[0].s_value),charset);
+		int result = vm.libs().SetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].s_value),charset);
 
 		if (!result) {
 			vm.logger().Error(E_W, 13, L"CHARSETLIBEX", p.dicname, p.line);
@@ -1203,7 +1203,7 @@ CValue	CSystemFunction::CHARSETLIBEX(CSF_FUNCPARAM &p)
 		return CValue(result);
 	}
 	else {
-		int result = vm.libs().GetCharsetDynamic(ToFullPath(p.arg.array()[0].s_value));
+		int result = vm.libs().GetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 		if ( result < 0 ) {
 			return CValue();
 		}
@@ -2028,7 +2028,7 @@ CValue	CSystemFunction::FOPEN(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	return CValue(vm.files().Add(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value));
+	return CValue(vm.files().Add(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value));
 }
 
 /* -----------------------------------------------------------------------
@@ -2049,7 +2049,7 @@ CValue	CSystemFunction::FCLOSE(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	int	result = vm.files().Delete(ToFullPath(p.arg.array()[0].s_value));
+	int	result = vm.files().Delete(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"FCLOSE", p.dicname, p.line);
@@ -2082,7 +2082,7 @@ CValue	CSystemFunction::FREAD(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	r_value;
-	int	result = vm.files().Read(ToFullPath(p.arg.array()[0].s_value), r_value);
+	int	result = vm.files().Read(vm.basis().ToFullPath(p.arg.array()[0].s_value), r_value);
 	CutCrLf(r_value);
 
 	if (!result) {
@@ -2131,7 +2131,7 @@ CValue	CSystemFunction::FREADBIN(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	r_value;
-	int	result = vm.files().ReadBin(ToFullPath(p.arg.array()[0].GetValueString()), r_value, readsize, alt);
+	int	result = vm.files().ReadBin(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), r_value, readsize, alt);
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"FREADBIN", p.dicname, p.line);
@@ -2172,7 +2172,7 @@ CValue	CSystemFunction::FREADENCODE(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	r_value;
-	int	result = vm.files().ReadEncode(ToFullPath(p.arg.array()[0].GetValueString()), r_value, readsize, type);
+	int	result = vm.files().ReadEncode(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), r_value, readsize, type);
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"FREADENCODE", p.dicname, p.line);
@@ -2203,7 +2203,7 @@ CValue	CSystemFunction::FWRITE(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if (!vm.files().Write(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value + aya::string_t(L"\n"))) {
+	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value + aya::string_t(L"\n"))) {
 		vm.logger().Error(E_W, 13, L"FWRITE", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2241,7 +2241,7 @@ CValue	CSystemFunction::FWRITEBIN(CSF_FUNCPARAM &p)
 		alt = p.arg.array()[2].s_value[0];
 	}
 
-	if (!vm.files().WriteBin(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, alt) ) {
+	if (!vm.files().WriteBin(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, alt) ) {
 		vm.logger().Error(E_W, 13, L"FWRITEBIN", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2280,7 +2280,7 @@ CValue	CSystemFunction::FWRITEDECODE(CSF_FUNCPARAM &p)
 		type = p.arg.array()[2].s_value;
 	}
 
-	if (!vm.files().WriteDecode(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, type) ) {
+	if (!vm.files().WriteDecode(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, type) ) {
 		vm.logger().Error(E_W, 13, L"FWRITEDECODE", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2307,7 +2307,7 @@ CValue	CSystemFunction::FWRITE2(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if (!vm.files().Write(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value)) {
+	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value)) {
 		vm.logger().Error(E_W, 13, L"FWRITE2", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2335,7 +2335,7 @@ CValue	CSystemFunction::FSEEK(CSF_FUNCPARAM &p){
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	aya::int_t result=vm.files().FSeek(ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].i_value ,p.arg.array()[2].s_value);
+	aya::int_t result=vm.files().FSeek(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].i_value ,p.arg.array()[2].s_value);
 	return CValue(result);
 }
 
@@ -2356,7 +2356,7 @@ CValue	CSystemFunction::FTELL(CSF_FUNCPARAM &p){
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	aya::int_t result=vm.files().FTell(ToFullPath(p.arg.array()[0].s_value));
+	aya::int_t result=vm.files().FTell(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	return CValue(result);
 }
 
@@ -2432,8 +2432,8 @@ CValue CSystemFunction::FCOPY(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2540,8 +2540,8 @@ CValue CSystemFunction::FMOVE(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2572,7 +2572,7 @@ CValue	CSystemFunction::MKDIR(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_dirstr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_dirstr == NULL) {
 		vm.logger().Error(E_E, 89, L"MKDIR", p.dicname, p.line);
 		return CValue(0);
@@ -2599,7 +2599,7 @@ CValue CSystemFunction::MKDIR(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string dirstr = narrow(ToFullPath(p.arg.array()[0].s_value));
+	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	fix_filepath(dirstr);
 
 	// 実行
@@ -2629,7 +2629,7 @@ CValue	CSystemFunction::RMDIR(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_dirstr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_dirstr == NULL) {
 		vm.logger().Error(E_E, 89, L"RMDIR", p.dicname, p.line);
 		return CValue(0);
@@ -2656,7 +2656,7 @@ CValue CSystemFunction::RMDIR(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string dirstr = narrow(ToFullPath(p.arg.array()[0].s_value));
+	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	fix_filepath(dirstr);
 
 	// 実行。
@@ -2686,7 +2686,7 @@ CValue	CSystemFunction::FDEL(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_filestr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_filestr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"FDEL", p.dicname, p.line);
 		return CValue(0);
@@ -2713,7 +2713,7 @@ CValue CSystemFunction::FDEL(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string filestr = narrow(ToFullPath(p.arg.array()[0].s_value));
+	std::string filestr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	fix_filepath(filestr);
 
 	// 実行
@@ -2744,12 +2744,12 @@ CValue	CSystemFunction::FRENAME(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_filestr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_filestr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"FRENAME", p.dicname, p.line);
 		return CValue(0);
 	}
-	char	*d_filestr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[1].s_value), CHARSET_DEFAULT);
+	char	*d_filestr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[1].s_value), CHARSET_DEFAULT);
 	if (d_filestr == NULL) {
 		free(s_filestr);
 		s_filestr = NULL;
@@ -2783,8 +2783,8 @@ CValue CSystemFunction::FRENAME(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2823,13 +2823,13 @@ CValue	CSystemFunction::FDIGEST(CSF_FUNCPARAM &p)
 	const char *s_filestr;
 
 #if defined(WIN32)
-	s_filestr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	s_filestr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"FDIGEST", p.dicname, p.line);
 		return CValue(-1);
 	}
 #elif defined(POSIX)
-	std::string path = narrow(ToFullPath(p.arg.array()[0].s_value));
+	std::string path = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	fix_filepath(path);
 	s_filestr = path.c_str();
 #endif
@@ -2925,7 +2925,7 @@ CValue	CSystemFunction::DICLOAD(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
 	char cset = vm.basis().GetDicCharset();
 
 	if ( p.arg.array_size() >= 2 && p.arg.array()[1].s_value.size() ) {
@@ -3140,7 +3140,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(CSF_FUNCPARAM &p)
 		}
 	}
 
-	gdefines.emplace_back(defname, defbody, L"_RUNTIME_DIC_");
+	gdefines.emplace_back(vm, defname, defbody, L"_RUNTIME_DIC_");
 	return CValue(0);
 }
 
@@ -3405,7 +3405,7 @@ CValue	CSystemFunction::FSIZE(CSF_FUNCPARAM &p)
 	}
 
 	//すでに開いているファイルならそっちから情報をパクる
-	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
 	aya::int_t size = vm.files().Size(fullpath);
 	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
@@ -3443,7 +3443,7 @@ CValue CSystemFunction::FSIZE(CSF_FUNCPARAM &p) {
 		return CValue(-1);
 	}
 
-	aya::string_t fullpath = ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
 	aya::int_t size = vm.files().Size(fullpath);
 	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
@@ -3491,7 +3491,7 @@ CValue	CSystemFunction::FENUM(CSF_FUNCPARAM &p)
 		}
 	}
 
-	CDirEnum ef(ToFullPath(p.arg.array()[0].s_value));
+	CDirEnum ef(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	CDirEnumEntry entry;
 	int count = 0;
 	CValue result(F_TAG_STRING,0);
@@ -5960,7 +5960,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 
 #if defined(WIN32)
 	// パスをMBCSに変換
-	char	*s_filestr = Ccct::Ucs2ToMbcs(ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_filestr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"FATTRIB", p.dicname, p.line);
 		return CValue(-1);
@@ -6042,7 +6042,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 	s_filestr = NULL;
 
 #elif defined(POSIX)
-	std::string path = narrow(ToFullPath(p.arg.array()[0].s_value));
+	std::string path = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
 	fix_filepath(path);
 
 	struct stat sb;
@@ -6319,34 +6319,6 @@ int CSystemFunction::GetCharset(const CValueSub &var,const wchar_t *fname, const
 	return -1;
 }
 
-
-/* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::ToFullPath
- *  機能概要：  渡された文字列が相対パス表記なら絶対パスに書き換えます
- * -----------------------------------------------------------------------
- */
-#if defined(WIN32)
-aya::string_t	CSystemFunction::ToFullPath(const aya::string_t &str)
-{
-	aya::char_t	drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-	_wsplitpath(str.c_str(), drive, dir, fname, ext);
-
-	if (!::wcslen(drive))
-		return vm.basis().base_path + str;
-
-	return str;
-}
-#elif defined(POSIX)
-aya::string_t CSystemFunction::ToFullPath(const aya::string_t &str)
-{
-	if (str.length() > 0 && str[0] == L'/') {
-		return str;
-	}
-	else {
-		return vm.basis().path + str;
-	}
-}
-#endif
 
 /* -----------------------------------------------------------------------
  *  関数名  ：  CSystemFunction::READFMO
