@@ -667,7 +667,7 @@ CValue	CSystemFunction::ISFUNC(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	int	i = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
 	if(i != -1)
 		return CValue(1);
 
@@ -3233,7 +3233,7 @@ CValue CSystemFunction::GETFUNCINFO(CSF_FUNCPARAM &p)
 
 	aya::string_t name = p.arg.array()[0].GetValueString();
 
-	int index = vm.function_exec().GetFunctionIndexFromName(name);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(name);
 
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"GETFUNCINFO", p.dicname, p.line);
@@ -3319,7 +3319,7 @@ CValue CSystemFunction::FUNCDECL_READ(CSF_FUNCPARAM& p)
 			return CValue(1);
 		}
 		else {
-			int	i = vm.function_exec().GetFunctionIndexFromName(func_name);
+			ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(func_name);
 
 			if(i != -1) {
 				pv->set_watcher(func_name);
@@ -3378,7 +3378,7 @@ CValue CSystemFunction::FUNCDECL_WRITE(CSF_FUNCPARAM& p)
 			return CValue(1);
 		}
 		else {
-			int	i = vm.function_exec().GetFunctionIndexFromName(func_name);
+			ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(func_name);
 
 			if(i != -1) {
 				pv->set_setter(func_name);
@@ -3437,7 +3437,7 @@ CValue CSystemFunction::FUNCDECL_ERASE(CSF_FUNCPARAM& p)
 			return CValue(1);
 		}
 		else {
-			int	i = vm.function_exec().GetFunctionIndexFromName(func_name);
+			ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(func_name);
 
 			if(i != -1) {
 				pv->set_destorier(func_name);
