@@ -908,11 +908,11 @@ char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, siz
 	if (str[str.size()-1]==L'{') {
 		// blockと重複回避オプションを取得
 		choicetype_t	chtype = CSelecter::GetDefaultBlockChoicetype(m_defaultBlockChoicetypeStack[m_defaultBlockChoicetypeStack.size()-1]);
-		m_defaultBlockChoicetypeStack.emplace_back(chtype);
 		aya::string_t	d0, d1;
 		if (Split(str, d0, d1, L":")){
 			chtype = CSelecter::StringToChoiceType(d0, vm, dicfilename, linecount);
 		}
+		m_defaultBlockChoicetypeStack.emplace_back(chtype);
 		depth++;
 		targetfunction.statement.emplace_back(ST_OPEN, linecount, new CDuplEvInfo(chtype));
 		return 1;
