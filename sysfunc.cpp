@@ -212,7 +212,7 @@ const CSF_FUNCTABLE CSystemFunction::sysfunc[] = {
 	{ &CSystemFunction::ATAN , L"ATAN" } ,
 	// 文字列操作(6)
 	{ &CSystemFunction::SPLIT , L"SPLIT" } ,
-	{ &CSystemFunction::ARRAYDEDUPLIC , L"ARRAYDEDUPLIC" },
+	{ &CSystemFunction::ARRAYDEDUP , L"ARRAYDEDUP" },
 	// ファイル操作(2)
 	{ &CSystemFunction::FATTRIB , L"FATTRIB" } ,
 	// 型取得/変換(3)
@@ -5917,7 +5917,13 @@ CValue	CSystemFunction::GETSETTING(CSF_FUNCPARAM &p)
 	SetError(12);
 	return CValue(F_TAG_NOP, 0/*dmy*/);
 }
-CValue	CSystemFunction::ARRAYDEDUPLIC(CSF_FUNCPARAM &p)
+
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::ARRAYDEDUP
+ * -----------------------------------------------------------------------
+ */
+CValue	CSystemFunction::ARRAYDEDUP(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size())
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
@@ -5931,6 +5937,7 @@ CValue	CSystemFunction::ARRAYDEDUPLIC(CSF_FUNCPARAM &p)
 	result.array() = { tmpset.begin(),tmpset.end() };
 	return result;
 }
+
 /* -----------------------------------------------------------------------
  *  関数名  ：  CSystemFunction::SPLIT
  * -----------------------------------------------------------------------
@@ -6865,7 +6872,10 @@ CValue	CSystemFunction::DUMPVAR(CSF_FUNCPARAM &p)
 	return CValue(F_TAG_NOP, 0/*dmy*/);
 }
 
-//LINT
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetFuncUsedBy
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
@@ -6899,6 +6909,11 @@ CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
 	result.array() = { name_set.begin(),name_set.end() };
 	return result;
 }
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetUserDefFuncUsedBy
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
@@ -6932,6 +6947,11 @@ CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
 	result.array() = { name_set.begin(),name_set.end() };
 	return result;
 }
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetGlobalVarUsedBy
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
@@ -6965,6 +6985,11 @@ CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
 	result.array() = { name_set.begin(),name_set.end() };
 	return result;
 }
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetLocalVarUsedBy
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
@@ -7003,6 +7028,11 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 
 	return result;
 }
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetGlobalVarLetted
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetGlobalVarLetted(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
@@ -7044,6 +7074,11 @@ CValue	CSystemFunction::LINT_GetGlobalVarLetted(CSF_FUNCPARAM &p)
 	result.array() = { name_set.begin(),name_set.end() };
 	return result;
 }
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::LINT_GetLocalVarLetted
+ * -----------------------------------------------------------------------
+ */
 CValue	CSystemFunction::LINT_GetLocalVarLetted(CSF_FUNCPARAM &p)
 {
 	if (!p.arg.array_size()) {
