@@ -26,6 +26,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <set>
 #include <unordered_set>
 
 #include "fix_unistd.h"
@@ -5929,7 +5930,7 @@ CValue	CSystemFunction::ARRAYDEDUP(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
 
 	CValue result(F_TAG_ARRAY, 0/*dmy*/);
-	std::unordered_set<CValueSub> tmpset;
+	std::set<CValueSub> tmpset;
 
 	for(auto&i:p.arg.array())
 		tmpset.insert(i);
