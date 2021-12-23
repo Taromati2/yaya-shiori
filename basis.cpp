@@ -1423,7 +1423,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 
 	if (wistr != NULL) {
 		vm.logger().Io(0, wistr);
-		arg.array().emplace_back(CValueSub(wistr));
+		arg.array().emplace_back(wistr);
 		free(wistr);
 		wistr = NULL;
 	}
