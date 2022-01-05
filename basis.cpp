@@ -1265,9 +1265,8 @@ void	CBasis::ExecuteLoad(void)
 	vm.call_limit().InitCall();
 	CLocalVariable	lvar(vm);
 	vm.logger().Io(0, base_path);
-	CValue	result;
 
-	vm.function_exec().func[funcpos].Execute(result, arg, lvar);
+	vm.function_exec().func[funcpos].Execute(arg, lvar);
 	aya::string_t empty;
 	vm.logger().Io(1, empty);
 }
@@ -1319,7 +1318,7 @@ aya::global_t	CBasis::ExecuteRequest(aya::global_t h, long *len, bool is_debug)
 	CValue	result;
 	try{
 		CLocalVariable	lvar(vm);
-		vm.function_exec().func[funcpos].Execute(result, arg, lvar);
+		result = vm.function_exec().func[funcpos].Execute(arg, lvar);
 	}
 	catch (const aya::memory_error&) {
 		if(vm.call_limit().StackCall().size()>512)
