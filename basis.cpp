@@ -831,7 +831,7 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 void	CBasis::SaveVariable(const aya::char_t* pName)
 {
 	// 変数の保存
-	std::string old_locale = setlocale(LC_NUMERIC,NULL);
+	std::string old_locale = aya::get_safe_str(setlocale(LC_NUMERIC,NULL));
 	setlocale(LC_NUMERIC,"English"); //小数点問題回避
 
 	bool ayc = encode_savefile;
@@ -1011,7 +1011,7 @@ void	CBasis::SaveVariable(const aya::char_t* pName)
  */
 void	CBasis::RestoreVariable(const aya::char_t* pName)
 {
-	std::string old_locale = setlocale(LC_NUMERIC,NULL);
+	std::string old_locale = aya::get_safe_str(setlocale(LC_NUMERIC,NULL));
 	setlocale(LC_NUMERIC,"English"); //小数点問題回避
 
 	bool ayc = encode_savefile;

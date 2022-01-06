@@ -49,6 +49,12 @@ namespace aya {
 	#else
 		int snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...);
 	#endif
+
+	template<class T>
+	const T* get_safe_str(const T*a) {
+		static constexpr T Zero_Termination_String[1] = { 0 };
+		return a ? a : Zero_Termination_String;
+	}
 };
 
 //----
