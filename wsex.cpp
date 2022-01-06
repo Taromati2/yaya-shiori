@@ -409,9 +409,9 @@ int aya::ws_fputs(const aya::char_t *str, FILE *stream, int charset, int ayc)
 * -----------------------------------------------------------------------
 */
 #if defined(__GNUC__)
-int aya::snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...)__attribute__((format(printf, 3, 4)));
+int aya::snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...)__attribute__((format(printf, 3, 4)))
 #elif defined(_MSC_VER)
-int aya::snprintf(_Pre_notnull_ _Always_(_Post_z_) aya::char_t *buf,size_t count, _Printf_format_string_ const aya::char_t *format,...)
+int aya::snprintf(_Pre_notnull_ aya::char_t *buf,size_t count, _Printf_format_string_ const aya::char_t *format,...)
 #else
 int aya::snprintf(aya::char_t* buf, size_t count, const aya::char_t* format, ...)
 #endif
