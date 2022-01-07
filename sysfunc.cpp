@@ -6922,7 +6922,7 @@ CValue	CSystemFunction::DUMPVAR(CSF_FUNCPARAM &p)
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetFuncUsedBy
+ *  関数名  ：  CSystemFunction::LINT.GetFuncUsedBy
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
@@ -6960,7 +6960,7 @@ CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetUserDefFuncUsedBy
+ *  関数名  ：  CSystemFunction::LINT.GetUserDefFuncUsedBy
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
@@ -6998,7 +6998,7 @@ CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetGlobalVarUsedBy
+ *  関数名  ：  CSystemFunction::LINT.GetGlobalVarUsedBy
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
@@ -7036,7 +7036,7 @@ CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetLocalVarUsedBy
+ *  関数名  ：  CSystemFunction::LINT.GetLocalVarUsedBy
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
@@ -7062,7 +7062,8 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 
 	CValue result(F_TAG_ARRAY, 0/*dmy*/);
 	const CFunction *it = &vm.function_exec().func[size_t(index)];
-	auto& array = result.array();
+	std::vector<CValueSub>& array = result.array();
+	size_t value_count = 0;
 
 	for(auto&s:it->statement){
 		if(s.type==ST_OPEN)
@@ -7070,16 +7071,27 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 		else if(s.type==ST_CLOSE)
 			array.emplace_back(L"}");
 		else
-			for(auto c:s.cell())
-				if(c.value_GetType()==F_TAG_LOCALVARIABLE)
+			for (auto c : s.cell())
+				if ( c.value_GetType() == F_TAG_LOCALVARIABLE ) {
 					array.emplace_back(c.name);
+					++value_count;
+				}
+	}
+
+	if ( value_count == 0 ) {
+		//no local variable detected. clear all and return empty array.
+		array.clear();
+	}
+	else {
+		//erase last "}", because all user function has terminator ST_CLOSE.
+		array.pop_back();
 	}
 
 	return result;
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetGlobalVarLetted
+ *  関数名  ：  CSystemFunction::LINT.GetGlobalVarLetted
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetGlobalVarLetted(CSF_FUNCPARAM &p)
@@ -7125,7 +7137,7 @@ CValue	CSystemFunction::LINT_GetGlobalVarLetted(CSF_FUNCPARAM &p)
 }
 
 /* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::LINT_GetLocalVarLetted
+ *  関数名  ：  CSystemFunction::LINT.GetLocalVarLetted
  * -----------------------------------------------------------------------
  */
 CValue	CSystemFunction::LINT_GetLocalVarLetted(CSF_FUNCPARAM &p)
@@ -7154,6 +7166,7 @@ CValue	CSystemFunction::LINT_GetLocalVarLetted(CSF_FUNCPARAM &p)
 	auto& array = result.array();
 	const CCell* sid_0_cell = 0;
 	size_t o_index;
+	size_t value_count = 0;
 
 	for(auto&s:it->statement){
 		if (s.type == ST_OPEN)
@@ -7166,10 +7179,21 @@ CValue	CSystemFunction::LINT_GetLocalVarLetted(CSF_FUNCPARAM &p)
 				const CCell& o_cell = s.cell()[o_index];
 				if(F_TAG_ISLET(o_cell.value_GetType())){
 					sid_0_cell = &(s.cell()[se.index[0]]);
-					if(sid_0_cell->value_GetType()==F_TAG_LOCALVARIABLE)
+					if(sid_0_cell->value_GetType()==F_TAG_LOCALVARIABLE){
 						array.emplace_back(sid_0_cell->name);
+						++value_count;
+					}
 				}
 			}
+	}
+
+	if ( value_count == 0 ) {
+		//no local variable detected. clear all and return empty array.
+		array.clear();
+	}
+	else {
+		//erase last "}", because all user function has terminator ST_CLOSE.
+		array.pop_back();
 	}
 
 	return result;

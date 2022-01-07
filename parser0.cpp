@@ -1499,9 +1499,9 @@ char	CParser0::SetCellType1(CCell& scell, char emb, const aya::string_t& dicfile
 	// 関数
 	ptrdiff_t i = vm.function_parse().GetFunctionIndexFromName(scell.value_const().s_value);
 	if(i >= 0) {
-		scell.name = scell.value_const().s_value;
+		scell.name  = scell.value_const().s_value;
 		scell.value_SetType(F_TAG_USERFUNC);
-		scell.index     = i;
+		scell.index = i;
 		scell.value_Delete();
 		return 0;
 	}
@@ -1523,7 +1523,8 @@ char	CParser0::SetCellType1(CCell& scell, char emb, const aya::string_t& dicfile
 	ptrdiff_t sysidx = CSystemFunction::FindIndex(scell.value_const().s_value);
 	if ( sysidx >= 0 ) {
 		scell.value_SetType(F_TAG_SYSFUNC);
-		scell.index     = sysidx;
+		scell.index = sysidx;
+		scell.name  = scell.value_const().s_value;
 		scell.value_Delete();
 		return 0;
 	}
@@ -1608,13 +1609,14 @@ char	CParser0::SetCellType1(CCell& scell, char emb, const aya::string_t& dicfile
 	case 0:
 		// グローバル変数
 		scell.value_SetType(F_TAG_VARIABLE);
-		scell.index     = vm.variable().Make(scell.value_const().s_value, 1);
+		scell.index  = vm.variable().Make(scell.value_const().s_value, 1);
+		scell.name   = scell.value_const().s_value;
 		scell.value_Delete();
 		return 0;
 	case 16:
 		// ローカル変数
 		scell.value_SetType(F_TAG_LOCALVARIABLE);
-		scell.name      = scell.value_const().s_value;
+		scell.name   = scell.value_const().s_value;
 		scell.value_Delete();
 		return 0;
 	case 3:
