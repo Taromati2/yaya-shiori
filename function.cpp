@@ -1274,7 +1274,7 @@ void	CFunction::ExecHistoryP2(CCell& cell, CStatement &st)
 	if (index < 0)
 		return;
 
-	aya::int_t start = std::min<aya::int_t>(st.cell().size()-1,cell.ansv_const().GetValueInt());
+	aya::int_t start = std::min(aya::int_t(st.cell().size())-1,cell.ansv_const().GetValueInt());
 
 	for(aya::int_t i = start ; i >= 0; i--) {
 		if (st.cell()[(size_t)i].value_GetType() == F_TAG_STRING_EMBED) {
