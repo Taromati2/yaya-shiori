@@ -403,7 +403,7 @@ CFunction::ExecutionInBraceResult	CFunction::ExecuteInBrace(size_t line, CLocalV
 
 		if (result.GetType() == F_TAG_ARRAY) {
 			for(size_t j = 0; j < result.array_size(); ++j) {
-				pool_of_uplv.emplace_back(CValue(result.array()[j]));
+				pool_of_uplv.emplace_back(result.array()[j]);
 			}
 		}
 		else

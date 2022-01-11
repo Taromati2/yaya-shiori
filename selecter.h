@@ -137,7 +137,7 @@ public:
 	void clear() {
 		areanum = 0;
 		values.clear();
-		values.emplace_back(CVecValue());
+		values.emplace_back();
 	}
 protected:
 	CValue	StructArray1(size_t index);

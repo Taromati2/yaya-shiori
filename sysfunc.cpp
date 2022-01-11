@@ -6951,7 +6951,7 @@ CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
 	std::unordered_set<aya::string_t> name_set;
 
 	for(auto&s:it->statement)
-		for(auto c:s.cell())
+		for(auto&c:s.cell())
 			if (F_TAG_ISFUNC(c.value_GetType()))
 				name_set.insert(c.name);
 
@@ -6989,7 +6989,7 @@ CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
 	std::unordered_set<aya::string_t> name_set;
 
 	for(auto&s:it->statement)
-		for(auto c:s.cell())
+		for(auto&c:s.cell())
 			if (c.value_GetType() == F_TAG_USERFUNC)
 				name_set.insert(c.name);
 
@@ -7027,7 +7027,7 @@ CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
 	std::unordered_set<aya::string_t> name_set;
 
 	for(auto&s:it->statement)
-		for(auto c:s.cell())
+		for(auto&c:s.cell())
 			if (c.value_GetType() == F_TAG_VARIABLE)
 				name_set.insert(vm.variable().GetName(c.index));
 
@@ -7071,7 +7071,7 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 		else if(s.type==ST_CLOSE)
 			array.emplace_back(L"}");
 		else
-			for (auto c : s.cell())
+			for (auto&c : s.cell())
 				if ( c.value_GetType() == F_TAG_LOCALVARIABLE ) {
 					array.emplace_back(c.name);
 					++value_count;
