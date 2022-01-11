@@ -70,7 +70,7 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 		CutCrLf(line);
 
 		if( line.substr(0,3)==L"!!!" ) {
-			aya::string_t&type = line.substr(3);
+			aya::string_t type = line.substr(3);
 
 			if( type == L"msgf" ) {
 				ptr = &msgf;
@@ -120,7 +120,7 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 {
 	ayamsg::MessageArray *ptr;
-	aya::char_t *emsg;
+	const aya::char_t *emsg;
 
 	if(mode == E_F) {
 		ptr = &ayamsg::msgf;

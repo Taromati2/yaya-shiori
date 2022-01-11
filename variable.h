@@ -209,7 +209,7 @@ public:
 
 	int		GetIndex(const aya::string_t &name);
 
-	aya::string_t	GetName(int index) { return var[index].name; }
+	aya::string_t	GetName(size_t index) { return var[index].name; }
 	size_t		GetNumber(void) { return var.size(); }
 	CVariable	*GetPtr(size_t index) { return &(var[index]); }
 	CVariable	*GetPtr(const aya::string_t& name) {
@@ -220,25 +220,25 @@ public:
 			return NULL;
 	}
 
-	CValue			*GetValuePtr(int index) { return &(var[index].value()); }
-	const CValue	*GetValuePtr(int index) const { return &(var[index].value_const()); }
+	CValue			*GetValuePtr(size_t index) { return &(var[index].value()); }
+	const CValue	*GetValuePtr(size_t index) const { return &(var[index].value_const()); }
 
-	void	SetType(int index, int type) { var[index].value().SetType(type); }
+	void	SetType(size_t index, int type) { var[index].value().SetType(type); }
 
-	const CValue&	GetValue(int index) const { return var[index].value_const(); }
+	const CValue&	GetValue(size_t index) const { return var[index].value_const(); }
 
-	aya::string_t&	GetDelimiter(int index) { return var[index].delimiter; }
+	aya::string_t&	GetDelimiter(size_t index) { return var[index].delimiter; }
 
-	void	SetValue(int index, const CValue &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, aya::int_t value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, double value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, const aya::string_t &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, const aya::char_t *value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, const CValueArray &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(int index, const CValueSub &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetDelimiter(int index, const aya::string_t value) { var[index].Enable(); var[index].delimiter = value; }
+	void	SetValue(size_t index, const CValue &value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, aya::int_t value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, double value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, const aya::string_t &value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, const aya::char_t *value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, const CValueArray &value) { var[index].Enable(); var[index].value() = value; }
+	void	SetValue(size_t index, const CValueSub &value) { var[index].Enable(); var[index].value() = value; }
+	void	SetDelimiter(size_t index, const aya::string_t value) { var[index].Enable(); var[index].delimiter = value; }
 
-	void	EnableValue(int index) { var[index].Enable(); }
+	void	EnableValue(size_t index) { var[index].Enable(); }
 
 	void	Erase(const aya::string_t &name)
 	{
