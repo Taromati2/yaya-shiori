@@ -1245,7 +1245,7 @@ char	CFunction::ExecSystemFunctionWithArgs(CCell& cell, std::vector<size_t> &sid
  *  処理は二段階で行われます。前処理では本処理のための値を演算子の項へセットします。
  * -----------------------------------------------------------------------
  */
-void	CFunction::ExecHistoryP1(int start_index, CCell& cell, const CValue &arg, CStatement &st)
+void	CFunction::ExecHistoryP1(size_t start_index, CCell& cell, const CValue &arg, CStatement &st)
 {
 	if (arg.array_size()) {
 		cell.ansv()    = CValue(start_index);
@@ -1274,12 +1274,12 @@ void	CFunction::ExecHistoryP2(CCell& cell, CStatement &st)
 	if (index < 0)
 		return;
 
-	aya::int_t start = std::min(aya::int_t(st.cell().size())-1,cell.ansv_const().GetValueInt());
+	size_t start = (size_t)std::min(aya::int_t(st.cell().size())-1,cell.ansv_const().GetValueInt());
 
-	for(aya::int_t i = start ; i >= 0; i--) {
-		if (st.cell()[(size_t)i].value_GetType() == F_TAG_STRING_EMBED) {
+	for(size_t i = start ; i >= 0; i--) {
+		if (st.cell()[i].value_GetType() == F_TAG_STRING_EMBED) {
 			if (!index) {
-				cell.ansv_shared() = st.cell()[(size_t)i].emb_ansv_shared();
+				cell.ansv_shared() = st.cell()[i].emb_ansv_shared();
 				return;
 			}
 			index--;
