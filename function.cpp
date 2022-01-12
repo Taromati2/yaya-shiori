@@ -1274,9 +1274,9 @@ void	CFunction::ExecHistoryP2(CCell& cell, CStatement &st)
 	if (index < 0)
 		return;
 
-	size_t start = (size_t)std::min(aya::int_t(st.cell().size())-1,cell.ansv_const().GetValueInt());
+	ptrdiff_t start = std::min(aya::int_t(st.cell().size())-1,cell.ansv_const().GetValueInt());
 
-	for(size_t i = start ; i >= 0; i--) {
+	for(ptrdiff_t i = start ; i >= 0; i--) {
 		if (st.cell()[i].value_GetType() == F_TAG_STRING_EMBED) {
 			if (!index) {
 				cell.ansv_shared() = st.cell()[i].emb_ansv_shared();
