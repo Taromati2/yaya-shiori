@@ -87,11 +87,12 @@ public:
 	double			GetValueDouble(void) const;
 	aya::string_t	GetValueString(void) const;
 
-	CValueSub	&operator =(aya::int_t value);
-	CValueSub	&operator =(double value);
-	CValueSub	&operator =(const aya::string_t &value);
-	CValueSub	&operator =(const aya::char_t *value);
-	CValueSub	&operator =(const CValue &v);
+	CValueSub	&operator =(aya::int_t value)&;
+	CValueSub	&operator =(double value)&;
+	CValueSub	&operator =(const aya::string_t &value)&;
+	CValueSub	&operator =(aya::string_t&& value)&;
+	CValueSub	&operator =(const aya::char_t *value)&;
+	CValueSub	&operator =(const CValue &v)&;
 
 	CValueSub	operator +(const CValueSub &value) const;
 	CValueSub	operator -(const CValueSub &value) const;
@@ -99,11 +100,11 @@ public:
 	CValueSub	operator /(const CValueSub &value) const;
 	CValueSub	operator %(const CValueSub &value) const;
 
-	void	operator +=(const CValueSub &value);
-	void	operator -=(const CValueSub &value);
-	void	operator *=(const CValueSub &value);
-	void	operator /=(const CValueSub &value);
-	void	operator %=(const CValueSub &value);
+	void	operator +=(const CValueSub &value)&;
+	void	operator -=(const CValueSub &value)&;
+	void	operator *=(const CValueSub &value)&;
+	void	operator /=(const CValueSub &value)&;
+	void	operator %=(const CValueSub &value)&;
 
 	inline bool operator ==(const CValueSub &value) const {
 		return Compare(value);
@@ -282,14 +283,15 @@ public:
 
 	bool	DecodeArrayOrder(size_t& order, size_t& order1, aya::string_t& delimiter) const;
 
-	CValue	&operator =(aya::int_t value);
-	CValue	&operator =(double value);
-	CValue	&operator =(const aya::string_t &value);
-	CValue	&operator =(const aya::char_t *value);
-	CValue	&operator =(const CValueArray &value);
-	CValue	&operator =(const CValueSub &value);
+	CValue	&operator =(aya::int_t value)&;
+	CValue	&operator =(double value)&;
+	CValue	&operator =(const aya::string_t &value)&;
+	CValue	&operator =(aya::string_t&& value)&;
+	CValue	&operator =(const aya::char_t *value)&;
+	CValue	&operator =(const CValueArray &value)&;
+	CValue	&operator =(const CValueSub &value)&;
 
-	void SubstToArray(CValueArray &value);
+	void SubstToArray(CValueArray &value)&;
 
 	CValue	operator +(const CValue &value) const;
 	CValue	operator -(const CValue &value) const;
@@ -297,11 +299,11 @@ public:
 	CValue	operator /(const CValue &value) const;
 	CValue	operator %(const CValue &value) const;
 
-	void	operator +=(const CValue &value);
-	void	operator -=(const CValue &value);
-	void	operator *=(const CValue &value);
-	void	operator /=(const CValue &value);
-	void	operator %=(const CValue &value);
+	void	operator +=(const CValue &value)&;
+	void	operator -=(const CValue &value)&;
+	void	operator *=(const CValue &value)&;
+	void	operator /=(const CValue &value)&;
+	void	operator %=(const CValue &value)&;
 
 	CValue	operator [](const CValue &value) const;
 
