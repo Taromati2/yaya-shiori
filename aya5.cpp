@@ -29,6 +29,7 @@ class CAyaVMWrapper;
 static CAyaVMWrapper* vm=NULL;
 static aya::string_t modulename;
 static void (*loghandler)(const aya::char_t *str, int mode, int id)=NULL;
+static long logsend_hwnd = 0;
 
 //////////DEBUG/////////////////////////
 #ifdef _WINDOWS
@@ -48,6 +49,10 @@ public:
 		vm = new CAyaVM();
 
 		vm->logger().Set_loghandler(loghandler);
+		if (logsend_hwnd != 0) {
+			SetLogRcvWnd(logsend_hwnd);
+			logsend_hwnd = 0;
+		}
 
 		vm->basis().SetModuleName(modulename,L"",L"normal");
 
@@ -248,6 +253,9 @@ extern "C" DLLEXPORT BOOL_TYPE FUNCATTRIB logsend(long hwnd)
 {
 	if( vm ) {
 		vm->SetLogRcvWnd(hwnd);
+	}
+	else {
+		logsend_hwnd = hwnd;
 	}
 
 	return TRUE;
