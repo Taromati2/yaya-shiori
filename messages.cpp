@@ -143,11 +143,17 @@ const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 		emsg = L"//msg M";
 	}
 
-	if( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
-		aya::char_t buf[64] = L"";
-		aya::snprintf(buf,63,L"%04d",id);
+	if ( id < 0 || ptr->size() <= static_cast<size_t>(id) ) { //catch overflow
+		if ( id == 0 && ptr == &ayamsg::msgj ) {
+			//need special care, because msgj id=0 will call before loading configure file.
+			return L"// AYA request log (before loading base configure file)\r\n// load time: ";
+		}
+		else {
+			aya::char_t buf[64] = L"";
+			aya::snprintf(buf,63,L"%04d",id);
 
-		return aya::string_t(emsg) + buf + L" : (please specify messagetxt)\r\n";
+			return aya::string_t(emsg) + buf + L" : (please specify messagetxt)\r\n";
+		}
 	}
 	else {
 		return (*ptr)[id];
