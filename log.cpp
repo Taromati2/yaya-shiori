@@ -92,6 +92,8 @@ void	CLog::Start(const aya::string_t &p, int cs, HWND hw, char il)
 		}
 	}
 
+	timer.restart();
+
 	// 文字列作成
 	aya::string_t	str = ayamsg::GetTextFromTable(E_J,0);
 	str += GetDateString();
@@ -323,8 +325,6 @@ void	CLog::Io(char io, const aya::char_t *str)
 {
 	if(!enable || !iolog)
 		return;
-
-	static	aya::timer		timer;
 
 	if(!io) {
 		//ignoreiolog機能。
