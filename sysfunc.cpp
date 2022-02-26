@@ -1890,8 +1890,8 @@ CValue CSystemFunction::ToLowerOrUpper(CSF_FUNCPARAM &p,const aya::char_t *funcn
 		}
 	}
 	else {
-		char *pOldLocale = setlocale(LC_CTYPE,locale.c_str());
-
+		std::string old_locale = aya::get_safe_str(setlocale(LC_CTYPE,NULL));
+		setlocale(LC_CTYPE,locale.c_str());
 
 		if ( isUpper ) {
 			for ( size_t i = 0; i < len; ++i ) {
@@ -1904,7 +1904,7 @@ CValue CSystemFunction::ToLowerOrUpper(CSF_FUNCPARAM &p,const aya::char_t *funcn
 			}
 		}
 
-		setlocale(LC_CTYPE,pOldLocale);
+		setlocale(LC_CTYPE,old_locale.c_str());
 	}
 
 	return CValue(result);
