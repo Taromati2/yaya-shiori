@@ -186,7 +186,8 @@
       </Command>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![unload,shiori]"</Command>
+      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![unload,shiori]"
+sleep 1</Command>
     </PreLinkEvent>
     <PostBuildEvent>
       <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![load,shiori]"</Command>
@@ -252,7 +253,8 @@
       </Message>
     </PreBuildEvent>
     <PreLinkEvent>
-      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![unload,shiori]"</Command>
+      <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![unload,shiori]"
+sleep 1</Command>
     </PreLinkEvent>
     <PostBuildEvent>
       <Command>E:\ssp\ghost\Taromati2\ghost\master\saori\ghost_terminal.exe -g Taromati2 -s "\![load,shiori]"</Command>
