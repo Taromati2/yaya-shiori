@@ -198,7 +198,7 @@ int	CFile1::WriteDecode(const aya::string_t &istr, const aya::string_t &type)
  */
 int	CFile1::Read(aya::string_t &ostr)
 {
-	ostr = L"";
+	ostr.clear();
 
 	if(fp == NULL)
 		return 0;
@@ -220,7 +220,7 @@ int	CFile1::Read(aya::string_t &ostr)
  */
 int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
 {
-	ostr = L"";
+	ostr.clear();
 
 	if(fp == NULL)
 		return 0;
@@ -268,7 +268,7 @@ int	CFile1::ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt)
  */
 int	CFile1::ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &type)
 {
-	ostr = L"";
+	ostr.clear();
 
 	if(fp == NULL)
 		return 0;

@@ -128,7 +128,7 @@ aya::string_t	CValueSub::GetValueString(void) const
 	case F_TAG_STRING:
 		return s_value;
 	default:
-		return aya::string_t(L"");
+		return aya::string_t();
 	};
 }
 

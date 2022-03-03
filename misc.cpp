@@ -44,7 +44,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
-		dstr1 = L"";
+		dstr1.clear();
 		return 0;
 	}
 
@@ -65,7 +65,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
-		dstr1 = L"";
+		dstr1.clear();
 		return 0;
 	}
 
@@ -91,7 +91,7 @@ char	SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &ds
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
-		dstr1 = L"";
+		dstr1.clear();
 		return 0;
 	}
 
@@ -177,7 +177,7 @@ char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_
 	aya::string_t::size_type seppoint = Find_IgnoreDQ(str,sepstr);
 	if( seppoint == aya::string_t::npos ) {
 		dstr0 = str;
-		dstr1 = L"";
+		dstr1.clear();
 		return 0;
 	}
 
