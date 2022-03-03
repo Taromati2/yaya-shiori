@@ -347,17 +347,17 @@ public:
 	}
 	const CValueArray& array(void) const {
 		if( ! m_array.get() ) {
-			m_array.reset(new CValueArray);
+			m_array=std::make_shared<CValueArray>();
 		}
 		return *m_array;
 	}
 	CValueArray& array(void) {
 		if( ! m_array.get() ) {
-			m_array.reset(new CValueArray);
+			m_array=std::make_shared<CValueArray>();
 		}
 		else if( m_array.use_count() >= 2 ) {
 			CValueArray *pV = m_array.get();
-			m_array.reset(new CValueArray(*pV));
+			m_array=std::make_shared<CValueArray>(*pV);
 		}
 		return *m_array;
 	}

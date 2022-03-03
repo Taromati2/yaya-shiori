@@ -139,7 +139,7 @@ namespace aya {
 
 	template<class T> void shared_ptr_deep_copy(const std_shared_ptr<T> &from,std_shared_ptr<T> &to) {
 		if( from.get() ) {
-			to.reset(new T(*from));
+			to = std::make_shared<T>(*from);
 		}
 		else {
 			to.reset();
