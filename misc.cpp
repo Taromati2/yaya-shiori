@@ -360,10 +360,10 @@ void	CutSingleQuote(aya::string_t &str)
 		str.erase(len - 1, 1);
 }
 
-void RemoveInsideDoubleDoubleQuote(aya::string_t &str) {
+void EscapingInsideDoubleDoubleQuote(aya::string_t &str) {
 	aya::ws_replace(str, L"\"\"", L"\"");
 }
-void RemoveInsideDoubleSingleQuote(aya::string_t &str) {
+void EscapingInsideDoubleSingleQuote(aya::string_t &str) {
 	aya::ws_replace(str, L"\'\'", L"\'");
 }
 

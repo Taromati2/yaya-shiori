@@ -37,8 +37,8 @@ void	CutEndSpace(aya::string_t &str);
 
 void	CutDoubleQuote(aya::string_t &str);
 void	CutSingleQuote(aya::string_t &str);
-void	RemoveInsideDoubleDoubleQuote(aya::string_t &str);
-void	RemoveInsideDoubleSingleQuote(aya::string_t &str);
+void	EscapingInsideDoubleDoubleQuote(aya::string_t &str);
+void	EscapingInsideDoubleSingleQuote(aya::string_t &str);
 void	UnescapeSpecialString(aya::string_t &str);
 void	AddDoubleQuote(aya::string_t &str);
 void	CutCrLf(aya::string_t &str);
