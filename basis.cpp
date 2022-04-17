@@ -525,6 +525,16 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		CDirEnumEntry entry;
 
 		while (ef.next(entry)) {
+			const aya::char_t* ext = wcsrchr(entry.name.c_str(),L'.');
+			if ( ext ) {
+				if ( wcsicmp(ext,L".bak") == 0 ) {
+					continue;
+				}
+				if ( wcsicmp(ext,L".tmp") == 0 ) {
+					continue;
+				}
+			}
+
 			aya::string_t relpath_and_cs = param1 + L"\\" + entry.name + L',' + param2;
 
 			if(entry.isdir) {
