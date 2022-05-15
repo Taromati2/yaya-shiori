@@ -882,12 +882,19 @@ ptrdiff_t	CParser0::MakeFunction(const aya::string_t& name, choicetype_t chtype,
 			return -1;
 */
 
-	vm.function_parse().func.emplace_back(vm, name, chtype, dicfilename, linecount);
-	vm.function_parse().AddFunctionIndex(name,vm.function_parse().func.size()-1);
+	vm.function_parse().func.emplace_back(vm, name, dicfilename, linecount);
+	size_t index = vm.function_parse().func.size()-1;
+	vm.function_parse().AddFunctionIndex(name, index);
+	
+	CFunction& targetfunction = vm.function_parse().func[index];
+	targetfunction.statement.emplace_back(ST_OPEN, linecount, std::make_shared<CDuplEvInfo>(chtype));
+	
+	m_BlockhHeaderOfProcessing.clear();
+	m_BlockhHeaderOfProcessing.emplace_back(&targetfunction.statement[0]);
 	m_defaultBlockChoicetypeStack.clear();
 	m_defaultBlockChoicetypeStack.emplace_back(CSelecter::GetDefaultBlockChoicetype(chtype));
 
-	return vm.function_parse().func.size() - 1;
+	return index;
 }
 
 /* -----------------------------------------------------------------------
@@ -905,9 +912,9 @@ char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, siz
 	if(!str.size())
 		return 1;
 	// {
-	if (str[str.size()-1]==L'{') {
+	if(str.back() == L'{') {
 		// blockと重複回避オプションを取得
-		choicetype_t	chtype = CSelecter::GetDefaultBlockChoicetype(m_defaultBlockChoicetypeStack[m_defaultBlockChoicetypeStack.size()-1]);
+		choicetype_t	chtype = CSelecter::GetDefaultBlockChoicetype(m_defaultBlockChoicetypeStack.back());
 		aya::string_t	d0, d1;
 		if (Split(str, d0, d1, L":")){
 			chtype = CSelecter::StringToChoiceType(d0, vm, dicfilename, linecount);
@@ -915,10 +922,12 @@ char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, siz
 		m_defaultBlockChoicetypeStack.emplace_back(chtype);
 		depth++;
 		targetfunction.statement.emplace_back(ST_OPEN, linecount, std::make_shared<CDuplEvInfo>(chtype));
+		m_BlockhHeaderOfProcessing.push_back(&targetfunction.statement.back());
 		return 1;
 	}
 	// }
 	else if (str == L"}") {
+		m_BlockhHeaderOfProcessing.pop_back();
 		m_defaultBlockChoicetypeStack.pop_back();
 		depth--;
 		targetfunction.statement.emplace_back(ST_CLOSE, linecount);
@@ -951,6 +960,7 @@ char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, siz
 	}
 	// --
 	else if (str == L"--") {
+		m_BlockhHeaderOfProcessing.back()->ismutiarea = true;
 		targetfunction.statement.emplace_back(ST_COMBINE, linecount);
 		return 1;
 	}
