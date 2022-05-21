@@ -1320,7 +1320,7 @@ CValue	CSystemFunction::SRAND(CSF_FUNCPARAM &p)
 		union {
 			double d;
 			std::uint64_t i[1];
-		} num;
+		} num{};
 
 		num.d = p.arg.array()[0].GetValueDouble();
 
@@ -3026,7 +3026,7 @@ CValue	CSystemFunction::FDIGEST(CSF_FUNCPARAM &p)
 
 	fclose(pF);
 
-	aya::char_t md5str[65];
+	aya::char_t md5str[65]{};
 	md5str[digest_len*2] = 0; //ゼロ終端
 
 	for ( unsigned int i = 0 ; i < digest_len ; ++i ) {
@@ -3096,7 +3096,7 @@ CValue	CSystemFunction::STRDIGEST(CSF_FUNCPARAM &p)
 		digest_len = 16;
 	}
 
-	aya::char_t md5str[65];
+	aya::char_t md5str[65]{};
 	md5str[digest_len*2] = 0; //ゼロ終端
 
 	for ( unsigned int i = 0 ; i < digest_len ; ++i ) {
@@ -6435,7 +6435,7 @@ static time_t FileTimeToUnixTime(FILETIME &filetime)
 {
 	FILETIME localfiletime;
 	SYSTEMTIME systime;
-	struct tm utime;
+	struct tm  utime {};
 	FileTimeToLocalFileTime(&filetime, &localfiletime);
 	FileTimeToSystemTime(&localfiletime, &systime);
 	utime.tm_sec=systime.wSecond;
@@ -6469,7 +6469,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 	CValue	result(F_TAG_ARRAY, 0/*dmy*/);
 
 	if ( IsUnicodeAware() ) {
-		WIN32_FIND_DATAW ffdata;
+		WIN32_FIND_DATAW ffdata{};
 		if ( ::GetFileAttributesExW(fullpath.c_str(),GetFileExInfoStandard,&ffdata) ) {
 			result.array().emplace_back((ffdata.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE   ) ? 1 : 0);
 			result.array().emplace_back((ffdata.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED) ? 1 : 0);
@@ -6496,7 +6496,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 			return CValue(-1);
 		}
 
-		WIN32_FIND_DATAA ffdata;
+		WIN32_FIND_DATAA ffdata{};
 		if ( ::GetFileAttributesExA(s_filestr,GetFileExInfoStandard,&ffdata) ) {
 			result.array().emplace_back((ffdata.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE   ) ? 1 : 0);
 			result.array().emplace_back((ffdata.dwFileAttributes & FILE_ATTRIBUTE_COMPRESSED) ? 1 : 0);

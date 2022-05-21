@@ -226,7 +226,7 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 				return;
 			else if(order < sz) {
 				size_t	s_index = (size_t)std::max<aya::int_t>(order, 0);
-				size_t	e_index = (size_t)std::min<aya::int_t>(order1 + 1, sz);
+				size_t  e_index = (size_t)std::min<aya::int_t>(static_cast<aya::int_t>(order1) + 1, sz);
 
 				if( value.GetType() == F_TAG_ARRAY ) {
 					std::vector<aya::string_t>::iterator it = s_array.erase(s_array.begin() + s_index,s_array.begin() + e_index);
@@ -329,7 +329,7 @@ void	CValue::SetArrayValue(const CValue &oval, const CValue &value)
 			if(order < sz) {
 				// 配列中途の書き換え
 				size_t	s_index = (size_t)std::max<aya::int_t>(order, 0);
-				size_t	e_index = (size_t)std::min<aya::int_t>(order1 + 1, sz);
+				size_t  e_index = (size_t)std::min<aya::int_t>(static_cast<aya::int_t>(order1) + 1, sz);
 				
 				if( value.GetType() == F_TAG_ARRAY ) {
 					CValueArray::iterator it = array().erase(array().begin() + s_index,array().begin() + e_index);
@@ -1039,7 +1039,7 @@ CValue CValue::operator [](const CValue &value) const
 				return CValue();
 			else {
 				size_t	s_index = (size_t)std::max<aya::int_t>(order, 0);
-				size_t	e_index = (size_t)std::min<aya::int_t>(order1 + 1, sz);
+				size_t	e_index = (size_t)std::min<aya::int_t>(static_cast<aya::int_t>(order1) + 1, sz);
 				size_t	i       = 0;
 				size_t	j       = 0;
 				aya::string_t	result_str;
