@@ -77,6 +77,7 @@ CBasis::CBasis(CAyaVM &vmr) : vm(vmr)
 	save_charset      = CHARSET_UTF8;
 	save_old_charset  = CHARSET_SJIS;
 	extension_charset = CHARSET_SJIS;
+	log_charset       = CHARSET_UTF8;
 
 	encode_savefile = false;
 	auto_save = true;
@@ -188,7 +189,7 @@ void	CBasis::SetPath(aya::global_t h, int len)
 void	CBasis::SetLogRcvWnd(long hwnd)
 {
 	hlogrcvWnd = (HWND)hwnd;
-	vm.logger().Start(logpath, output_charset, hlogrcvWnd, iolog);
+	vm.logger().Start(logpath, log_charset, hlogrcvWnd, iolog);
 }
 #endif
 
@@ -199,7 +200,7 @@ void	CBasis::SetLogRcvWnd(long hwnd)
  */
 void CBasis::SetLogger(void)
 {
-	vm.logger().Start(logpath, output_charset, hlogrcvWnd, iolog);
+	vm.logger().Start(logpath, log_charset, hlogrcvWnd, iolog);
 }
 
 /* -----------------------------------------------------------------------
@@ -628,6 +629,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		save_charset      = dic_charset;
 		save_old_charset  = dic_charset;
 		extension_charset = dic_charset;
+		log_charset       = dic_charset;
 		return true;
 	}
 	// charset
@@ -657,6 +659,10 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	}
 	else if(cmd == L"charset.extension") {
 		extension_charset = Ccct::CharsetTextToID(param.c_str());
+		return true;
+	}
+	else if ( cmd == L"charset.log" ) {
+		log_charset = Ccct::CharsetTextToID(param.c_str());
 		return true;
 	}
 	// fncdepth
@@ -775,6 +781,9 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 	}
 	else if(cmd == L"charset.extension") {
 		return Ccct::CharsetIDToTextW(extension_charset);
+	}
+	else if ( cmd == L"charset.log" ) {
+		return Ccct::CharsetIDToTextW(log_charset);
 	}
 	// fncdepth
 	else if ( cmd == L"fncdepth" ) {
