@@ -152,7 +152,10 @@ const aya::string_t ayamsg::GetTextFromTable(int mode,int id)
 			aya::char_t buf[64] = L"";
 			aya::snprintf(buf,63,L"%04d",id);
 
-			return aya::string_t(emsg) + buf + L" : (please specify messagetxt)\r\n";
+			if(IsEmpty())
+				return aya::string_t(emsg) + buf + L" : (please specify messagetxt)\r\n";
+			else
+				return aya::string_t(emsg) + buf + L" : (not found, please update messagetxt or contact the developer)\r\n";
 		}
 	}
 	else {
