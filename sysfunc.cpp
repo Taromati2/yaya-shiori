@@ -723,11 +723,11 @@ CValue	CSystemFunction::ISFUNC(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t i = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if(i != -1)
 		return CValue(1);
 
-	if ( FindIndex(p.arg.array()[0].s_value) >= 0 ) {
+	if ( FindIndex(p.arg.array()[0].GetValueString()) >= 0 ) {
 		return CValue(2);
 	}
 
@@ -752,12 +752,12 @@ CValue	CSystemFunction::ISVAR(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	int	index = vm.variable().GetIndex(p.arg.array()[0].s_value);
+	int	index = vm.variable().GetIndex(p.arg.array()[0].GetValueString());
 	if (index >= 0)
 		return CValue(1);
 
 	int	depth = -1;
-	p.lvar.GetIndex(p.arg.array()[0].s_value, index, depth);
+	p.lvar.GetIndex(p.arg.array()[0].GetValueString(), index, depth);
 	if (index >= 0)
 		return CValue(2);
 
@@ -836,7 +836,7 @@ CValue	CSystemFunction::LOADLIB(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	int	excode = vm.libs().Add(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	int excode = vm.libs().Add(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	if (!excode) {
 		vm.logger().Error(E_W, 13, L"LOADLIB", p.dicname, p.line);
 		SetError(13);
@@ -863,7 +863,7 @@ CValue	CSystemFunction::UNLOADLIB(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	int	result = vm.libs().Delete(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	int result = vm.libs().Delete(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"UNLOADLIB", p.dicname, p.line);
@@ -897,7 +897,7 @@ CValue	CSystemFunction::REQUESTLIB(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	result;
-	if (!vm.libs().Request(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, result)) {
+	if(!vm.libs().Request(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString(), result)) {
 		vm.logger().Error(E_W, 13, L"REQUESTLIB", p.dicname, p.line);
 		SetError(13);
 	}
@@ -923,7 +923,7 @@ CValue	CSystemFunction::CHARSETTEXTTOID(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	return CValue(Ccct::CharsetTextToID(p.arg.array()[0].s_value.c_str()));
+	return CValue(Ccct::CharsetTextToID(p.arg.array()[0].GetValueString().c_str()));
 }
 
 /* -----------------------------------------------------------------------
@@ -1250,7 +1250,7 @@ CValue	CSystemFunction::CHARSETLIBEX(CSF_FUNCPARAM &p)
 		if ( charset < 0 ) {
 			return CValue(0);
 		}
-		int result = vm.libs().SetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].s_value),charset);
+		int result = vm.libs().SetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), charset);
 
 		if (!result) {
 			vm.logger().Error(E_W, 13, L"CHARSETLIBEX", p.dicname, p.line);
@@ -1260,7 +1260,7 @@ CValue	CSystemFunction::CHARSETLIBEX(CSF_FUNCPARAM &p)
 		return CValue(result);
 	}
 	else {
-		int result = vm.libs().GetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+		int result = vm.libs().GetCharsetDynamic(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 		if ( result < 0 ) {
 			return CValue();
 		}
@@ -1864,7 +1864,7 @@ CValue	CSystemFunction::INSERT(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t str = p.arg.array()[0].GetValueString();
-	return CValue(str.insert(static_cast<size_t>( p.arg.array()[1].GetValueInt() ), p.arg.array()[2].s_value));
+	return CValue(str.insert(static_cast<size_t>(p.arg.array()[1].GetValueInt()), p.arg.array()[2].GetValueString()));
 }
 
 /* -----------------------------------------------------------------------
@@ -2121,7 +2121,7 @@ CValue	CSystemFunction::FOPEN(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	return CValue(vm.files().Add(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value));
+	return CValue(vm.files().Add(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString()));
 }
 
 /* -----------------------------------------------------------------------
@@ -2142,7 +2142,7 @@ CValue	CSystemFunction::FCLOSE(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	int	result = vm.files().Delete(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	int result = vm.files().Delete(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 
 	if (!result) {
 		vm.logger().Error(E_W, 13, L"FCLOSE", p.dicname, p.line);
@@ -2175,7 +2175,7 @@ CValue	CSystemFunction::FREAD(CSF_FUNCPARAM &p)
 	}
 
 	aya::string_t	r_value;
-	int	result = vm.files().Read(vm.basis().ToFullPath(p.arg.array()[0].s_value), r_value);
+	int	result = vm.files().Read(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), r_value);
 	CutCrLf(r_value);
 
 	if (!result) {
@@ -2296,7 +2296,7 @@ CValue	CSystemFunction::FWRITE(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value + aya::string_t(L"\n"))) {
+	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString() + aya::string_t(L"\n"))) {
 		vm.logger().Error(E_W, 13, L"FWRITE", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2331,10 +2331,10 @@ CValue	CSystemFunction::FWRITEBIN(CSF_FUNCPARAM &p)
 			SetError(9);
 			return CValue(F_TAG_NOP, 0/*dmy*/);
 		}
-		alt = p.arg.array()[2].s_value[0];
+		alt = p.arg.array()[2].GetValueString()[0];
 	}
 
-	if (!vm.files().WriteBin(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, alt) ) {
+	if (!vm.files().WriteBin(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString(), alt) ) {
 		vm.logger().Error(E_W, 13, L"FWRITEBIN", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2370,10 +2370,10 @@ CValue	CSystemFunction::FWRITEDECODE(CSF_FUNCPARAM &p)
 			SetError(9);
 			return CValue(F_TAG_NOP, 0/*dmy*/);
 		}
-		type = p.arg.array()[2].s_value;
+		type = p.arg.array()[2].GetValueString();
 	}
 
-	if (!vm.files().WriteDecode(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value, type) ) {
+	if (!vm.files().WriteDecode(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString(), type) ) {
 		vm.logger().Error(E_W, 13, L"FWRITEDECODE", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2400,7 +2400,7 @@ CValue	CSystemFunction::FWRITE2(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].s_value)) {
+	if (!vm.files().Write(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueString())) {
 		vm.logger().Error(E_W, 13, L"FWRITE2", p.dicname, p.line);
 		SetError(13);
 	}
@@ -2428,7 +2428,7 @@ CValue	CSystemFunction::FSEEK(CSF_FUNCPARAM &p){
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	aya::int_t result=vm.files().FSeek(vm.basis().ToFullPath(p.arg.array()[0].s_value), p.arg.array()[1].i_value ,p.arg.array()[2].s_value);
+	aya::int_t result=vm.files().FSeek(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), p.arg.array()[1].GetValueInt() ,p.arg.array()[2].GetValueString());
 	return CValue(result);
 }
 
@@ -2449,7 +2449,7 @@ CValue	CSystemFunction::FTELL(CSF_FUNCPARAM &p){
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	aya::int_t result=vm.files().FTell(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	aya::int_t result=vm.files().FTell(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	return CValue(result);
 }
 
@@ -2478,13 +2478,13 @@ CValue	CSystemFunction::FCOPY(CSF_FUNCPARAM &p)
 
 	// 絶対パス化
 	aya::char_t	drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-	_wsplitpath(p.arg.array()[0].s_value.c_str(), drive, dir, fname, ext);
-	aya::string_t	s_path = ((::wcslen(drive)) ? aya::string_t() : vm.basis().base_path) + p.arg.array()[0].s_value;
+	_wsplitpath(p.arg.array()[0].GetValueString().c_str(), drive, dir, fname, ext);
+	aya::string_t	s_path = ((::wcslen(drive)) ? aya::string_t() : vm.basis().base_path) + p.arg.array()[0].GetValueString();
 
 	aya::char_t	fname2[_MAX_FNAME], ext2[_MAX_EXT];
-	_wsplitpath(p.arg.array()[1].s_value.c_str(), drive, dir, fname2, ext2);
+	_wsplitpath(p.arg.array()[1].GetValueString().c_str(), drive, dir, fname2, ext2);
 	aya::string_t	d_path = ((::wcslen(drive)) ?
-						aya::string_t() : vm.basis().base_path) + p.arg.array()[1].s_value + L"\\" + fname + ext;
+						aya::string_t() : vm.basis().base_path) + p.arg.array()[1].GetValueString() + L"\\" + fname + ext;
 
 	int result;
 
@@ -2532,8 +2532,8 @@ CValue CSystemFunction::FCOPY(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].GetValueString()));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2593,13 +2593,13 @@ CValue	CSystemFunction::FMOVE(CSF_FUNCPARAM &p)
 
 	// 絶対パス化
 	aya::char_t	drive[_MAX_DRIVE], dir[_MAX_DIR], fname[_MAX_FNAME], ext[_MAX_EXT];
-	_wsplitpath(p.arg.array()[0].s_value.c_str(), drive, dir, fname, ext);
-	aya::string_t	s_path = ((::wcslen(drive)) ? aya::string_t() : vm.basis().base_path) + p.arg.array()[0].s_value;
+	_wsplitpath(p.arg.array()[0].GetValueString().c_str(), drive, dir, fname, ext);
+	aya::string_t	s_path = ((::wcslen(drive)) ? aya::string_t() : vm.basis().base_path) + p.arg.array()[0].GetValueString();
 
 	aya::char_t	fname2[_MAX_FNAME], ext2[_MAX_EXT];
-	_wsplitpath(p.arg.array()[1].s_value.c_str(), drive, dir, fname2, ext2);
+	_wsplitpath(p.arg.array()[1].GetValueString().c_str(), drive, dir, fname2, ext2);
 	aya::string_t	d_path = ((::wcslen(drive)) ?
-						aya::string_t() : vm.basis().base_path) + p.arg.array()[1].s_value + L"\\" + fname + ext;
+						aya::string_t() : vm.basis().base_path) + p.arg.array()[1].GetValueString() + L"\\" + fname + ext;
 
 	int result;
 
@@ -2647,8 +2647,8 @@ CValue CSystemFunction::FMOVE(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].GetValueString()));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2679,7 +2679,7 @@ CValue	CSystemFunction::MKDIR(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), CHARSET_DEFAULT);
 	if (s_dirstr == NULL) {
 		vm.logger().Error(E_E, 89, L"MKDIR", p.dicname, p.line);
 		return CValue(0);
@@ -2706,7 +2706,7 @@ CValue CSystemFunction::MKDIR(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	fix_filepath(dirstr);
 
 	// 実行
@@ -2736,7 +2736,7 @@ CValue	CSystemFunction::RMDIR(CSF_FUNCPARAM &p)
 	}
 
 	// パスをMBCSに変換
-	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].s_value), CHARSET_DEFAULT);
+	char	*s_dirstr = Ccct::Ucs2ToMbcs(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()), CHARSET_DEFAULT);
 	if (s_dirstr == NULL) {
 		vm.logger().Error(E_E, 89, L"RMDIR", p.dicname, p.line);
 		return CValue(0);
@@ -2763,7 +2763,7 @@ CValue CSystemFunction::RMDIR(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string dirstr = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	fix_filepath(dirstr);
 
 	// 実行。
@@ -2793,7 +2793,7 @@ CValue	CSystemFunction::FDEL(CSF_FUNCPARAM &p)
 	}
 
 	int result;
-	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 
 	if ( IsUnicodeAware() ) {
 		result = (::DeleteFileW(fullpath.c_str()) ? 1 : 0);
@@ -2828,7 +2828,7 @@ CValue CSystemFunction::FDEL(CSF_FUNCPARAM &p) {
 	return CValue(0);
 	}
 
-	std::string filestr = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string filestr = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	fix_filepath(filestr);
 
 	// 実行
@@ -2860,8 +2860,8 @@ CValue	CSystemFunction::FRENAME(CSF_FUNCPARAM &p)
 
 	int result;
 
-	aya::string_t s_file = vm.basis().ToFullPath(p.arg.array()[0].s_value);
-	aya::string_t d_file = vm.basis().ToFullPath(p.arg.array()[1].s_value);
+	aya::string_t s_file = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
+	aya::string_t d_file = vm.basis().ToFullPath(p.arg.array()[1].GetValueString());
 
 	if ( IsUnicodeAware() ) {
 		result = ::MoveFileW(s_file.c_str(), d_file.c_str()) ? 1 : 0;
@@ -2907,8 +2907,8 @@ CValue CSystemFunction::FRENAME(CSF_FUNCPARAM &p) {
 	}
 
 	// 絶対パス化
-	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
-	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].s_value));
+	std::string src = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
+	std::string dest = narrow(vm.basis().ToFullPath(p.arg.array()[1].GetValueString()));
 	fix_filepath(src);
 	fix_filepath(dest);
 
@@ -2945,7 +2945,7 @@ CValue	CSystemFunction::FDIGEST(CSF_FUNCPARAM &p)
 
 	FILE *pF = NULL;
 
-	aya::string_t full_path = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t full_path = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 
 #if defined(WIN32)
 	if ( IsUnicodeAware() ) {
@@ -3124,11 +3124,11 @@ CValue	CSystemFunction::DICLOAD(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 	char cset = vm.basis().GetDicCharset();
 
-	if ( p.arg.array_size() >= 2 && p.arg.array()[1].s_value.size() ) {
-		char cx = Ccct::CharsetTextToID(p.arg.array()[1].s_value.c_str());
+	if ( p.arg.array_size() >= 2 && p.arg.array()[1].GetValueString().size() ) {
+		char cx = Ccct::CharsetTextToID(p.arg.array()[1].GetValueString().c_str());
 		if ( cx != CHARSET_DEFAULT ) {
 			cset = cx;
 		}
@@ -3161,7 +3161,7 @@ CValue	CSystemFunction::DICUNLOAD(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	int err = vm.parser0().DynamicUnloadDictionary(p.arg.array()[0].s_value);
+	int err = vm.parser0().DynamicUnloadDictionary(p.arg.array()[0].GetValueString());
 
 	if ( err > 1 ) {
 		SetError(err);
@@ -3189,7 +3189,7 @@ CValue	CSystemFunction::UNDEFFUNC(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t funcname = p.arg.array()[0].s_value;
+	aya::string_t funcname = p.arg.array()[0].GetValueString();
 
 	int err = vm.parser0().DynamicUndefFunc(funcname);
 
@@ -3219,7 +3219,7 @@ CValue	CSystemFunction::UNDEFGLOBALDEFINE(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t defname = p.arg.array()[0].s_value;
+	aya::string_t defname = p.arg.array()[0].GetValueString();
 
 	std::vector<CDefine> &gdefines = vm.gdefines();
 	std::vector<CDefine>::iterator itg = gdefines.begin();
@@ -3258,7 +3258,7 @@ CValue	CSystemFunction::ISGLOBALDEFINE(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t defname = p.arg.array()[0].s_value;
+	aya::string_t defname = p.arg.array()[0].GetValueString();
 
 	std::vector<CDefine> &gdefines = vm.gdefines();
 	std::vector<CDefine>::iterator itg = gdefines.begin();
@@ -3294,7 +3294,7 @@ CValue	CSystemFunction::APPEND_RUNTIME_DIC(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t def = p.arg.array()[0].s_value;
+	aya::string_t def = p.arg.array()[0].GetValueString();
 
 	int err = vm.parser0().DynamicAppendRuntimeDictionary(def);
 
@@ -3320,7 +3320,7 @@ CValue	CSystemFunction::SETGLOBALDEFINE(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	aya::string_t defname = p.arg.array()[0].s_value;
+	aya::string_t defname = p.arg.array()[0].GetValueString();
 	aya::string_t defbody = p.arg.array()[1].GetValueString();
 
 	std::vector<CDefine> &gdefines = vm.gdefines();
@@ -3635,7 +3635,7 @@ CValue	CSystemFunction::FSIZE(CSF_FUNCPARAM &p)
 	}
 
 	//すでに開いているファイルならそっちから情報をパクる
-	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 	aya::int_t size = vm.files().Size(fullpath);
 	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
@@ -3697,7 +3697,7 @@ CValue CSystemFunction::FSIZE(CSF_FUNCPARAM &p) {
 		return CValue(-1);
 	}
 
-	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 	aya::int_t size = vm.files().Size(fullpath);
 	if ( size >= 0 ) { return CValue((aya::int_t)size); }
 
@@ -3736,8 +3736,8 @@ CValue	CSystemFunction::FENUM(CSF_FUNCPARAM &p)
 	aya::string_t	delimiter = VAR_DELIMITER;
 	if (sz >= 2) {
 		if (p.arg.array()[1].IsString() &&
-			p.arg.array()[1].s_value.size())
-			delimiter = p.arg.array()[1].s_value;
+			p.arg.array()[1].GetValueString().size())
+			delimiter = p.arg.array()[1].GetValueString();
 		else {
 			vm.logger().Error(E_W, 9, L"FENUM", p.dicname, p.line);
 			SetError(9);
@@ -3745,15 +3745,15 @@ CValue	CSystemFunction::FENUM(CSF_FUNCPARAM &p)
 		}
 	}
 
-	CDirEnum ef(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	CDirEnum ef(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	CDirEnumEntry entry;
 	int count = 0;
 	CValue result(F_TAG_STRING,0);
 
 	while ( ef.next(entry) ) {
-		if ( count ) { result.s_value += delimiter; }
-		if ( entry.isdir ) { result.s_value +=  L"\\"; }
-		result.s_value += entry.name;
+		if ( count ) { result.GetValueString() += delimiter; }
+		if ( entry.isdir ) { result.GetValueString() +=  L"\\"; }
+		result.GetValueString() += entry.name;
 
 		count += 1;
 	}
@@ -3816,7 +3816,7 @@ CValue	CSystemFunction::ArraySize(CSF_FUNCPARAM &p)
 		else if (p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE)
 			delimiter = p.lvar.GetDelimiter(p.pcellarg[0]->name);
 
-		return CValue((aya::int_t)SplitToMultiString(p.valuearg[0].s_value, NULL, delimiter));
+		return CValue((aya::int_t)SplitToMultiString(p.valuearg[0].GetValueString(), NULL, delimiter));
 	}
 	else if ( p.valuearg[0].IsVoid() ) {
 		return CValue(0);
@@ -3851,16 +3851,16 @@ CValue	CSystemFunction::SETDELIM(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if (!delimiter->s_value.size()) {
+	if (!delimiter->GetValueString().size()) {
 		vm.logger().Error(E_W, 10, L"SETDELIM", p.dicname, p.line);
 		SetError(10);
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
 	if (p.pcellarg[0]->value_GetType() == F_TAG_VARIABLE)
-		vm.variable().SetDelimiter(p.pcellarg[0]->index, delimiter->s_value);
+		vm.variable().SetDelimiter(p.pcellarg[0]->index, delimiter->GetValueString());
 	else if (p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE)
-		p.lvar.SetDelimiter(p.pcellarg[0]->name, delimiter->s_value);
+		p.lvar.SetDelimiter(p.pcellarg[0]->name, delimiter->GetValueString());
 	else {
 		vm.logger().Error(E_W, 11, L"SETDELIM", p.dicname, p.line);
 		SetError(11);
@@ -3891,11 +3891,11 @@ CValue	CSystemFunction::IHASH(CSF_FUNCPARAM &p)
 	while ( itr != ite ) {
 		++itr;
 		if ( itr != ite ) {
-			result.hash().insert(std::pair<CValueSub,CValueSub>(*(itr-1),*(itr)));
+			result.hash().insert(std::pair<CValue,CValue>(*(itr-1),*(itr)));
 			++itr;
 		}
 		else {
-			result.hash().insert(std::pair<CValueSub,CValueSub>(*(itr-1),CValueSub()));
+			result.hash().insert(std::pair<CValue,CValue>(*(itr-1),CValue()));
 		}
 	}
 
@@ -3998,7 +3998,7 @@ CValue	CSystemFunction::HASH_EXIST(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	return CValue(p.valuearg[1].hash().find(CValueSub(p.valuearg[0])) != p.valuearg[1].hash().end() ? 1 : 0);
+	return CValue(p.valuearg[1].hash().find(CValue(p.valuearg[0])) != p.valuearg[1].hash().end() ? 1 : 0);
 }
 
 /* -----------------------------------------------------------------------
@@ -4548,7 +4548,7 @@ CValue	CSystemFunction::RE_ASEARCH(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	const CValueSub &key = p.arg.array()[0];
+	const CValue &key = p.arg.array()[0];
 
 	try {
 		CRegexpT<aya::char_t> regex(key.GetValueString().c_str(),re_option);
@@ -4593,7 +4593,7 @@ CValue	CSystemFunction::RE_ASEARCHEX(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
 	}
 
-	const CValueSub &key = p.arg.array()[0];
+	const CValue &key = p.arg.array()[0];
 	CValue res(F_TAG_ARRAY, 0/*dmy*/);
 
 	try {
@@ -5151,7 +5151,7 @@ CValue	CSystemFunction::CHRCODE(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	if (!p.arg.array()[0].s_value.size()) {
+	if (!p.arg.array()[0].GetValueString().size()) {
 		vm.logger().Error(E_W, 10, L"CHRCODE", p.dicname, p.line);
 		SetError(10);
 		return CValue(0);
@@ -5166,12 +5166,12 @@ CValue	CSystemFunction::CHRCODE(CSF_FUNCPARAM &p)
 			return CValue(0);
 		}
 		getpos = static_cast<size_t>( p.arg.array()[1].GetValueInt() );
-		if ( getpos >= p.arg.array()[0].s_value.length() ) {
-			getpos = p.arg.array()[0].s_value.length() - 1;
+		if ( getpos >= p.arg.array()[0].GetValueString().length() ) {
+			getpos = p.arg.array()[0].GetValueString().length() - 1;
 		}
 	}
 
-	return CValue(static_cast<aya::int_t>(p.arg.array()[0].s_value[getpos]));
+	return CValue(static_cast<aya::int_t>(p.arg.array()[0].GetValueString()[getpos]));
 }
 
 /* -----------------------------------------------------------------------
@@ -5192,7 +5192,7 @@ CValue	CSystemFunction::ISINTSTR(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	return CValue((aya::int_t)IsIntString(p.arg.array()[0].s_value));
+	return CValue((aya::int_t)IsIntString(p.arg.array()[0].GetValueString()));
 }
 
 /* -----------------------------------------------------------------------
@@ -5213,7 +5213,7 @@ CValue	CSystemFunction::ISREALSTR(CSF_FUNCPARAM &p)
 		return CValue(0);
 	}
 
-	return CValue( IsIntString(p.arg.array()[0].s_value) || IsDoubleButNotIntString(p.arg.array()[0].s_value) );
+	return CValue( IsIntString(p.arg.array()[0].GetValueString()) || IsDoubleButNotIntString(p.arg.array()[0].GetValueString()) );
 }
 
 /* -----------------------------------------------------------------------
@@ -5851,7 +5851,7 @@ CValue	CSystemFunction::ASEARCH(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	const CValueSub &key = p.arg.array()[0];
+	const CValue &key = p.arg.array()[0];
 	for (int i = 1; i < sz; i++) {
 		if (key.Compare(p.arg.array()[i])) {
 			return CValue(i - 1);
@@ -5875,7 +5875,7 @@ CValue	CSystemFunction::ASEARCHEX(CSF_FUNCPARAM &p)
 	}
 
 	CValue	result(F_TAG_ARRAY, 0/*dmy*/);
-	const CValueSub &key = p.arg.array()[0];
+	const CValue &key = p.arg.array()[0];
 	for(int i = 1; i < sz; i++) {
 		if (key.Compare(p.arg.array()[i])) {
 			result.array().emplace_back(i - 1);
@@ -6256,7 +6256,7 @@ CValue	CSystemFunction::ARRAYDEDUP(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_ARRAY, 0/*dmy*/);
 
 	CValue result(F_TAG_ARRAY, 0/*dmy*/);
-	std::set<CValueSub> tmpset;
+	std::set<CValue> tmpset;
 
 	for(auto&i:p.arg.array())
 		tmpset.insert(i);
@@ -6406,12 +6406,12 @@ CValue	CSystemFunction::HASH_SPLIT(CSF_FUNCPARAM &p)
 		spoint2 = element.find(sep_str2,0);
 
 		if ( spoint2 == aya::string_t::npos ) {
-			result.hash().insert(std::pair<CValueSub,CValueSub>(element,CValueSub()));
+			result.hash().insert(std::pair<CValue,CValue>(element,CValue()));
 		}
 		else {
 			if ( spoint2 != 0 ) {
-				result.hash().insert(std::pair<CValueSub,CValueSub>(CValueSub(element.substr(0,spoint2))
-					,CValueSub(element.substr(spoint2+sep_str2len,element.size()-spoint2-sep_str2len))));
+				result.hash().insert(std::pair<CValue,CValue>(CValue(element.substr(0,spoint2))
+					,CValue(element.substr(spoint2+sep_str2len,element.size()-spoint2-sep_str2len))));
 			}
 		}
 
@@ -6464,7 +6464,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 	}
 
 #if defined(WIN32)
-	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].s_value);
+	aya::string_t fullpath = vm.basis().ToFullPath(p.arg.array()[0].GetValueString());
 
 	CValue	result(F_TAG_ARRAY, 0/*dmy*/);
 
@@ -6519,7 +6519,7 @@ CValue	CSystemFunction::FATTRIB(CSF_FUNCPARAM &p)
 	}
 
 #elif defined(POSIX)
-	std::string path = narrow(vm.basis().ToFullPath(p.arg.array()[0].s_value));
+	std::string path = narrow(vm.basis().ToFullPath(p.arg.array()[0].GetValueString()));
 	fix_filepath(path);
 
 	struct stat sb;
@@ -6773,7 +6773,7 @@ void	CSystemFunction::SetError(int code)
 	lasterror = code;
 }
 
-int CSystemFunction::GetCharset(const CValueSub &var,const wchar_t *fname, const aya::string_t &d, int l)
+int CSystemFunction::GetCharset(const CValue &var,const wchar_t *fname, const aya::string_t &d, int l)
 {
 	if (var.IsNum()) {
 		int	charset = static_cast<int>( var.GetValueInt() );
@@ -6910,7 +6910,7 @@ CValue	CSystemFunction::EXECUTE_WAIT(CSF_FUNCPARAM &p)
 
 #if defined(WIN32)
 
-	char *s_filestr = Ccct::Ucs2ToMbcs(p.arg.array()[0].s_value, CHARSET_DEFAULT);
+	char *s_filestr = Ccct::Ucs2ToMbcs(p.arg.array()[0].GetValueString(), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"EXECUTE_WAIT", p.dicname, p.line);
 		return CValue(-1);
@@ -6918,8 +6918,8 @@ CValue	CSystemFunction::EXECUTE_WAIT(CSF_FUNCPARAM &p)
 
 	char *s_parameter = NULL;
 	if ( p.arg.array_size() >= 2 ) {
-		if ( p.arg.array()[1].s_value.size() ) {
-			s_parameter = Ccct::Ucs2ToMbcs(p.arg.array()[1].s_value, CHARSET_DEFAULT);
+		if ( p.arg.array()[1].GetValueString().size() ) {
+			s_parameter = Ccct::Ucs2ToMbcs(p.arg.array()[1].GetValueString(), CHARSET_DEFAULT);
 		}
 	}
 
@@ -6948,13 +6948,13 @@ CValue	CSystemFunction::EXECUTE_WAIT(CSF_FUNCPARAM &p)
 
 #elif defined(POSIX)
 
-	std::string path = narrow(p.arg.array()[0].s_value);
+	std::string path = narrow(p.arg.array()[0].GetValueString());
 	fix_filepath(path);
 
 	if ( p.arg.array_size() >= 2 ) {
-		if ( p.arg.array()[1].s_value.size() ) {
+		if ( p.arg.array()[1].GetValueString().size() ) {
 			path += ' ';
-			std::string tmp(p.arg.array()[1].s_value.begin(), p.arg.array()[1].s_value.end());
+			std::string tmp(p.arg.array()[1].GetValueString().begin(), p.arg.array()[1].GetValueString().end());
 			path += tmp;
 		}
 	}
@@ -6985,7 +6985,7 @@ CValue	CSystemFunction::GETENV(CSF_FUNCPARAM &p)
 		return aya::string_t();
 	}
 
-	char *s_name = Ccct::Ucs2ToMbcs(p.arg.array()[0].s_value, CHARSET_DEFAULT);
+	char *s_name = Ccct::Ucs2ToMbcs(p.arg.array()[0].GetValueString(), CHARSET_DEFAULT);
 	if (s_name == NULL) {
 		vm.logger().Error(E_E, 89, L"GETENV", p.dicname, p.line);
 		SetError(89);
@@ -7077,7 +7077,7 @@ CValue	CSystemFunction::EXECUTE(CSF_FUNCPARAM &p)
 #if defined(WIN32)
 	int result;
 
-	char *s_filestr = Ccct::Ucs2ToMbcs(p.arg.array()[0].s_value, CHARSET_DEFAULT);
+	char *s_filestr = Ccct::Ucs2ToMbcs(p.arg.array()[0].GetValueString(), CHARSET_DEFAULT);
 	if (s_filestr == NULL) {
 		vm.logger().Error(E_E, 89, L"EXECUTE", p.dicname, p.line);
 		return CValue(-1);
@@ -7085,8 +7085,8 @@ CValue	CSystemFunction::EXECUTE(CSF_FUNCPARAM &p)
 
 	char *s_parameter = NULL;
 	if ( p.arg.array_size() >= 2 ) {
-		if ( p.arg.array()[1].s_value.size() ) {
-			s_parameter = Ccct::Ucs2ToMbcs(p.arg.array()[1].s_value, CHARSET_DEFAULT);
+		if ( p.arg.array()[1].GetValueString().size() ) {
+			s_parameter = Ccct::Ucs2ToMbcs(p.arg.array()[1].GetValueString(), CHARSET_DEFAULT);
 		}
 	}
 
@@ -7283,7 +7283,7 @@ CValue	CSystemFunction::LINT_GetFuncUsedBy(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetFuncUsedBy", p.dicname, p.line);
 		SetError(12);
@@ -7321,7 +7321,7 @@ CValue	CSystemFunction::LINT_GetUserDefFuncUsedBy(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetUserDefFuncUsedBy", p.dicname, p.line);
 		SetError(12);
@@ -7359,7 +7359,7 @@ CValue	CSystemFunction::LINT_GetGlobalVarUsedBy(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetGlobalVarUsedBy", p.dicname, p.line);
 		SetError(12);
@@ -7397,7 +7397,7 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetLocalVarUsedBy", p.dicname, p.line);
 		SetError(12);
@@ -7406,7 +7406,7 @@ CValue	CSystemFunction::LINT_GetLocalVarUsedBy(CSF_FUNCPARAM &p)
 
 	CValue result(F_TAG_ARRAY, 0/*dmy*/);
 	const CFunction *it = &vm.function_exec().func[size_t(index)];
-	std::vector<CValueSub>& array = result.array();
+	std::vector<CValue>& array = result.array();
 	size_t value_count = 0;
 
 	for(auto&s:it->statement){
@@ -7448,7 +7448,7 @@ CValue	CSystemFunction::LINT_GetGlobalVarLetted(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetGlobalVarLetted", p.dicname, p.line);
 		SetError(12);
@@ -7494,7 +7494,7 @@ CValue	CSystemFunction::LINT_GetLocalVarLetted(CSF_FUNCPARAM &p)
 		return CValue(-1);
 	}
 
-	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].s_value);
+	ptrdiff_t index = vm.function_exec().GetFunctionIndexFromName(p.arg.array()[0].GetValueString());
 	if ( index < 0 ) {
 		vm.logger().Error(E_W, 12, L"LINT.GetLocalVarLetted", p.dicname, p.line);
 		SetError(12);

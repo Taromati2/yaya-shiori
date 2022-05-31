@@ -1,11 +1,11 @@
 ﻿// 
 // AYA version 5
 //
-// 値を扱うクラス　CValue/CValueSub
+// 値を扱うクラス　CValue/CValue
 // written by umeici. 2004
 // 
-// CValueは型フラグと型別の情報を持っています。その中にvector<CValueSub>という可変長配列があり、
-// これが汎用配列となります。CValueSubクラスは配列を持たないほかはCValueと類似しています（汎用
+// CValueは型フラグと型別の情報を持っています。その中にvector<CValue>という可変長配列があり、
+// これが汎用配列となります。CValueクラスは配列を持たないほかはCValueと類似しています（汎用
 // 配列を多次元化出来ない、というAYA5の制限はこの構造に由来しています）。
 // 
 
@@ -28,126 +28,13 @@
 #include "globaldef.h"
 
 class CValue;
-class CValueSub;
 
-typedef std::vector<CValueSub> CValueArray;
-typedef std::map<CValueSub, CValueSub> CValueHash;
-
-class	CValueSub
-{
-	friend class CValue;
-
-protected:
-	int	type;						// 型
-public:
-	aya::string_t	s_value;				// 文字列値
-	double	d_value;				// 実数値
-	aya::int_t		i_value;				// 整数値
-
-private:
-	int CalcEscalationTypeNum(const int rhs) const;
-	int CalcEscalationTypeStr(const int rhs) const;
-
-public:
-	CValueSub(void) :
-		type(F_TAG_VOID) , s_value(), d_value(0.0), i_value(0) { }
-
-	CValueSub(int value) :
-		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
-
-	CValueSub(aya::int_t value) :
-		type(F_TAG_INT) , d_value(0.0) , i_value(value) { }
-
-	CValueSub(double value) :
-		type(F_TAG_DOUBLE) , d_value(value), i_value(0) { }
-
-	CValueSub(const aya::string_t &value) :
-		type(F_TAG_STRING) , s_value(value), d_value(0.0), i_value(0) { }
-
-	CValueSub(const aya::char_t *value) :
-		type(F_TAG_STRING) , s_value(value), d_value(0.0), i_value(0) { }
-
-	CValueSub(const CValue &v);
-
-	~CValueSub(void) {}
-
-	inline int		GetType(void) const { return type; }
-	inline void		SetType(int tp) { type = tp; }
-
-	inline bool		IsVoid(void) const { return type == F_TAG_VOID; }
-	inline bool		IsString(void) const { return type == F_TAG_STRING || type == F_TAG_VOID; }
-	inline bool		IsStringReal(void) const { return type == F_TAG_STRING; }
-	inline bool		IsInt(void) const { return type == F_TAG_INT || type == F_TAG_VOID; }
-	inline bool		IsIntReal(void) const { return type == F_TAG_INT; }
-	inline bool		IsDouble(void) const { return type == F_TAG_DOUBLE || type == F_TAG_VOID; }
-	inline bool		IsDoubleReal(void) const { return type == F_TAG_DOUBLE; }
-
-	inline bool		IsNum(void) const { return type == F_TAG_INT || type == F_TAG_DOUBLE || type == F_TAG_VOID; }
-
-	aya::int_t		GetValueInt(void) const;
-	double			GetValueDouble(void) const;
-	aya::string_t	GetValueString(void) const;
-
-	CValueSub	&operator =(aya::int_t value)&;
-	CValueSub	&operator =(double value)&;
-	CValueSub	&operator =(const aya::string_t &value)&;
-	CValueSub	&operator =(aya::string_t&& value)&;
-	CValueSub	&operator =(const aya::char_t *value)&;
-	CValueSub	&operator =(const CValue &v)&;
-
-	CValueSub	operator +(const CValueSub &value) const;
-	CValueSub	operator -(const CValueSub &value) const;
-	CValueSub	operator *(const CValueSub &value) const;
-	CValueSub	operator /(const CValueSub &value) const;
-	CValueSub	operator %(const CValueSub &value) const;
-
-	void	operator +=(const CValueSub &value)&;
-	void	operator -=(const CValueSub &value)&;
-	void	operator *=(const CValueSub &value)&;
-	void	operator /=(const CValueSub &value)&;
-	void	operator %=(const CValueSub &value)&;
-
-	inline bool operator ==(const CValueSub &value) const {
-		return Compare(value);
-	}
-	inline bool operator !=(const CValueSub &value) const {
-		return !operator==(value);
-	}
-	inline bool operator <(const CValueSub &value) const {
-		return Less(value);
-	}
-
-	bool Less(const CValueSub &value) const;
-	bool Compare(const CValueSub &value) const;
-};
-
-// std::hash 的自定义特化能注入 namespace std
-namespace std
-{
-	template<> struct hash<CValueSub>
-	{
-		typedef CValueSub argument_type;
-		typedef std::size_t result_type;
-		result_type operator()(argument_type const& s) const
-		{
-			switch(s.GetType()){
-			default:
-				return 0;
-			case F_TAG_INT:
-				return std::hash<aya::int_t>{}(s.GetValueInt());
-			case F_TAG_DOUBLE:
-				return std::hash<double>{}(s.GetValueDouble());
-			case F_TAG_STRING:
-				return std::hash<aya::string_t>{}(s.GetValueString());
-			}
-		}
-	};
-}
-//----
+typedef std::vector<CValue> CValueArray;
+typedef std::map<CValue, CValue> CValueHash;
 
 class	CValue
 {
-	friend class CValueSub;
+	friend class CValue;
 
 protected:
 	int	type;						// 型
@@ -156,6 +43,9 @@ public:
 	double			d_value;				// 実数値
 	aya::int_t		i_value;				// 整数値
 
+	int Compare(const CValue &value) const;
+	int Great(const CValue &value) const;
+	int Less(const CValue &value) const;
 private:
 	mutable std_shared_ptr<CValueArray> m_array;		// 汎用配列
     mutable std_shared_ptr<CValueHash> m_hash;  // �n�b�V��
@@ -163,10 +53,6 @@ private:
 private:
 	int CalcEscalationTypeNum(const int rhs) const;
 	int CalcEscalationTypeStr(const int rhs) const;
-
-	int Compare(const CValue &value) const;
-	int Great(const CValue &value) const;
-	int Less(const CValue &value) const;
 
 public:
 	CValue(const CValue &rhs)
@@ -223,27 +109,6 @@ public:
 
 	CValue(const aya::char_t *value) :
 		type(F_TAG_STRING) , s_value(value), d_value(0.0), i_value(0) { }
-	
-	CValue(const CValueSub &value) : d_value(0.0), i_value(0)
-	{
-		switch(value.GetType()) {
-		case F_TAG_INT:
-			type      = F_TAG_INT;
-			i_value   = value.i_value;
-			break;
-		case F_TAG_DOUBLE:
-			type      = F_TAG_DOUBLE;
-			d_value   = value.d_value;
-			break;
-		case F_TAG_STRING:
-			type     = F_TAG_STRING;
-			s_value  = value.s_value;
-			break;
-		default:
-			type     = F_TAG_VOID;
-			break;
-		};
-	}
 
 	CValue(int tp, int) : type(tp), d_value(0.0), i_value(0) { }	// 型指定して初期化
 	CValue(void) : type(F_TAG_VOID), d_value(0.0), i_value(0) { }
@@ -301,13 +166,13 @@ public:
 	bool	DecodeArrayOrder(size_t& order, size_t& order1, aya::string_t& delimiter) const;
 
 	CValue	&operator =(aya::int_t value)&;
+	CValue	&operator =(bool value)&;
 	CValue	&operator =(double value)&;
 	CValue	&operator =(const aya::string_t &value)&;
 	CValue	&operator =(aya::string_t&& value)&;
 	CValue	&operator =(const aya::char_t *value)&;
 	CValue	&operator =(const CValueArray &value)&;
     CValue  &operator =(const CValueHash &value)&;
-	CValue	&operator =(const CValueSub &value)&;
 
 	void SubstToArray(CValueArray &value)&;
 
@@ -325,30 +190,30 @@ public:
 
 	CValue	operator [](const CValue &value) const;
 
-	inline CValue operator ==(const CValue &value) const {
-		return CValue(Compare(value));
+	inline bool operator ==(const CValue &value) const {
+		return Compare(value);
 	}
-	inline CValue operator !=(const CValue &value) const {
-		return CValue(1 - Compare(value));
+	inline bool operator !=(const CValue &value) const {
+		return !Compare(value);
 	}
-	inline CValue operator >(const CValue &value) const {
-		return CValue(Great(value));
+	inline bool operator>(const CValue &value) const {
+		return Great(value);
 	}
-	inline CValue operator <=(const CValue &value) const {
-		return CValue(1 - Great(value));
+	inline bool operator<=(const CValue &value) const {
+		return !Great(value);
 	}
-	inline CValue operator <(const CValue &value) const {
-		return CValue(Less(value));
+	inline bool operator<(const CValue &value) const {
+		return Less(value);
 	}
-	inline CValue operator >=(const CValue &value) const {
-		return CValue(1 - Less(value));
+	inline bool operator>=(const CValue &value) const {
+		return !Less(value);
 	}
 
-	inline CValue operator ||(const CValue &value) const {
-		return CValue(GetTruth() || value.GetTruth());
+	inline bool operator||(const CValue &value) const {
+		return GetTruth() || value.GetTruth();
 	}
-	inline CValue operator && (const CValue &value) const {
-		return CValue(GetTruth() && value.GetTruth());
+	inline bool operator&&(const CValue &value) const {
+		return GetTruth() && value.GetTruth();
 	}
 
 	//////////////////////////////////////////////
@@ -392,28 +257,57 @@ public:
 	std::shared_ptr<CValueHash> &hash_shared(void) const {
 		return m_hash;
 	}
-	const CValueHash& hash(void) const {
-		if ( ! m_hash.get() ) {
-			m_hash.reset(new CValueHash);
-		}
-		return *m_hash;
-	}
-	CValueHash& hash(void) {
-		if ( ! m_hash.get() ) {
-			m_hash.reset(new CValueHash);
-		}
-		else if ( m_hash.use_count() >= 2 ) {
-			CValueHash *pV = m_hash.get();
-			m_hash.reset(new CValueHash(*pV));
-		}
-		return *m_hash;
-	}
+	const CValueHash &hash(void) const;
+	CValueHash	   &hash(void);
 	inline void array_clear(void) {
 		m_array.reset();
 	}
 };
-
 //----
+// std::hash 的自定义特化能注入 namespace std
+namespace std {
+	template<>
+	struct hash<CValue> {
+		typedef CValue		argument_type;
+		typedef std::size_t result_type;
+		result_type			operator()(argument_type const &s) const {
+			using std::hash;
+			switch(s.GetType()) {
+			default:
+				return 0;
+			case F_TAG_INT:
+				return std::hash<aya::int_t>{}(s.GetValueInt());
+			case F_TAG_DOUBLE:
+				return std::hash<double>{}(s.GetValueDouble());
+			case F_TAG_STRING:
+				return std::hash<aya::string_t>{}(s.GetValueString());
+			case F_TAG_VOID:
+				return 0;
+			case F_TAG_ARRAY:
+				{
+					std::size_t hash_value = 0;
+					for(CValueArray::size_type i=0; i<s.array_size(); ++i) {
+						hash_value += hash<CValue>{}(s.array()[i]);
+						hash_value *= 17;
+					}
+					return hash_value;
+				}
+			case F_TAG_HASH:
+				{
+					std::size_t hash_value = 0;
+					for(CValueHash::const_iterator it=s.hash().begin(); it!=s.hash().end(); ++it) {
+						hash_value += hash<CValue>{}(it->first);
+						hash_value *= 31;
+						hash_value += hash<CValue>{}(it->second);
+						hash_value *= 17;
+					}
+					return hash_value;
+				}
+			}
+		}
+	};
+}		// namespace std
+
 
 //からっぽ変数（ダミー用）
 extern const CValue emptyvalue;

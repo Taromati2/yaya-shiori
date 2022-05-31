@@ -310,7 +310,7 @@ protected:
 	void	AppendReResultDetail(const aya::string_t &str, int pos, int len);
 	void	SetError(int code);
 
-	int		GetCharset(const CValueSub &var,const wchar_t *fname, const aya::string_t &d, int l);
+	int		GetCharset(const CValue &var,const wchar_t *fname, const aya::string_t &d, int l);
 };
 
 //----

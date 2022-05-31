@@ -155,7 +155,6 @@ public:
 	void	Make(const aya::string_t &name);
 	void	Make(const aya::char_t *name, const CValue &value);
 	void	Make(const aya::string_t &name, const CValue &value);
-	void	Make(const aya::string_t &name, const CValueSub &value);
 	void	Make(const aya::char_t *name, const aya::string_t &delimiter);
 	void	Make(const aya::string_t &name, const aya::string_t &delimiter);
 
@@ -231,7 +230,6 @@ public:
 	void	SetValue(size_t index, const aya::string_t &value) { var[index].Enable(); var[index].value() = value; }
 	void	SetValue(size_t index, const aya::char_t *value) { var[index].Enable(); var[index].value() = value; }
 	void	SetValue(size_t index, const CValueArray &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, const CValueSub &value) { var[index].Enable(); var[index].value() = value; }
 	void	SetDelimiter(size_t index, const aya::string_t value) { var[index].Enable(); var[index].delimiter = value; }
 
 	void	EnableValue(size_t index) { var[index].Enable(); }

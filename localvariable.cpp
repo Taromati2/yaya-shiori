@@ -118,15 +118,6 @@ void	CLocalVariable::Make(const aya::string_t &name, const CValue &value)
 
 //----
 
-void	CLocalVariable::Make(const aya::string_t &name, const CValueSub &value)
-{
-	CVariable	addlv(name);
-	addlv.value() = value;
-	stack[depth].substack.emplace_back(addlv);
-}
-
-//----
-
 void	CLocalVariable::Make(const aya::char_t *name, const aya::string_t &delimiter)
 {
 	CVariable	addlv(name);
