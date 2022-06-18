@@ -499,7 +499,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		return true;
 	}
 	// dic
-	else if(cmd == L"dic" && dics) {
+	else if ( (cmd == L"dic" || cmd == L"dicif") && dics) {
 		aya::string_t param1,param2;
 		Split(param, param1, param2, L",");
 
@@ -512,6 +512,15 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				cset = cx;
 			}
 		}
+
+		if ( cmd == L"dicif" ) {
+			FILE *fp = aya::w_fopen(filename.c_str(), L"rb");
+			if ( !fp ) {
+				return true; //skip loading if file not exist
+			}
+			fclose(fp);
+		}
+
 		dics->emplace_back(filename,cset);
 		return true;
 	}
@@ -530,7 +539,8 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 				return SetParameter(L"includeEX", file, dics);
 			}
 		}
-		//else include this folder
+
+		//else (loading_order not exist | param2 exist) include this folder
 		{
 			aya::string_t dirname = base_path + param1;
 			CDirEnum	  ef(dirname);
