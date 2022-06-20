@@ -239,6 +239,8 @@ constexpr CSF_FUNCTABLE CSystemFunction::sysfunc[] = {
 	// 型取得/変換(3)
 	{ &CSystemFunction::CVAUTO , L"CVAUTO" } ,
 	{ &CSystemFunction::TOAUTO , L"TOAUTO" } ,
+	{ &CSystemFunction::CVAUTOEX , L"CVAUTOEX" } ,
+	{ &CSystemFunction::TOAUTOEX , L"TOAUTOEX" } ,
 	// ファイル操作(3)
 	{ &CSystemFunction::FREADBIN , L"FREADBIN" } ,
 	{ &CSystemFunction::FWRITEBIN , L"FWRITEBIN" } ,
@@ -591,6 +593,43 @@ CValue	CSystemFunction::TOAUTO(CSF_FUNCPARAM &p)
 	}
 	else if ( IsDoubleButNotIntString(str) ) {
 		return CValue(p.arg.array()[0].GetValueDouble());
+	}
+	else {
+		return CValue(str);
+	}
+}
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::TOAUTOEX
+ * -----------------------------------------------------------------------
+ */
+CValue	CSystemFunction::TOAUTOEX(CSF_FUNCPARAM &p)
+{
+	if (!p.arg.array_size()) {
+		vm.logger().Error(E_W, 8, L"TOAUTOEX", p.dicname, p.line);
+		SetError(8);
+		return CValue();
+	}
+
+	if (!p.arg.array()[0].IsString()) {
+		return CValue(p.arg.array()[0]);
+	}
+
+	aya::string_t str = p.arg.array()[0].GetValueString();
+	CValue result;
+	
+	if ( IsIntString(str) ) {
+		result = p.arg.array()[0].GetValueInt();
+	}
+	else if ( IsDoubleButNotIntString(str) ) {
+		result = p.arg.array()[0].GetValueDouble();
+	}
+	else {
+		return CValue(str);
+	}
+
+	if(str==result.GetValueString()) {
+		return CValue(result);
 	}
 	else {
 		return CValue(str);
@@ -5391,29 +5430,73 @@ CValue	CSystemFunction::CVAUTO(CSF_FUNCPARAM &p)
 		return CValue(F_TAG_NOP, 0/*dmy*/);
 	}
 
-	if ( IsIntString(p.arg.array()[0].GetValueString()) ) {
-		if (p.pcellarg[0]->value_GetType() == F_TAG_VARIABLE) {
-			vm.variable().SetValue(p.pcellarg[0]->index, p.arg.array()[0].GetValueInt());
-		}
-		else if (p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE) {
-			p.lvar.SetValue(p.pcellarg[0]->name, CValue(p.arg.array()[0].GetValueInt()));
-		}
-		else {
-			vm.logger().Error(E_W, 11, L"CVAUTO", p.dicname, p.line);
-			SetError(11);
-		}
+	aya::string_t str = p.arg.array()[0].GetValueString();
+	CValue		  result;
+	if(IsIntString(str)) {
+		result = CValue(p.arg.array()[0].GetValueInt());
 	}
-	else if ( IsDoubleButNotIntString(p.arg.array()[0].GetValueString()) ) {
-		if (p.pcellarg[0]->value_GetType() == F_TAG_VARIABLE) {
-			vm.variable().SetValue(p.pcellarg[0]->index, p.arg.array()[0].GetValueDouble());
-		}
-		else if (p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE) {
-			p.lvar.SetValue(p.pcellarg[0]->name, CValue(p.arg.array()[0].GetValueDouble()));
-		}
-		else {
-			vm.logger().Error(E_W, 11, L"CVAUTO", p.dicname, p.line);
-			SetError(11);
-		}
+	else if(IsDoubleButNotIntString(str)) {
+		result = CValue(p.arg.array()[0].GetValueDouble());
+	}
+	else {
+		return CValue(F_TAG_NOP, 0 /*dmy*/);
+	}
+
+	if(p.pcellarg[0]->value_GetType() == F_TAG_VARIABLE) {
+		vm.variable().SetValue(p.pcellarg[0]->index, result);
+	}
+	else if(p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE) {
+		p.lvar.SetValue(p.pcellarg[0]->name, result);
+	}
+	else {
+		vm.logger().Error(E_W, 11, L"CVAUTO", p.dicname, p.line);
+		SetError(11);
+	}
+
+	return CValue(F_TAG_NOP, 0/*dmy*/);
+}
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::CVAUTOEX
+ * -----------------------------------------------------------------------
+ */
+CValue	CSystemFunction::CVAUTOEX(CSF_FUNCPARAM &p)
+{
+	if (!p.arg.array_size()) {
+		vm.logger().Error(E_W, 8, L"CVAUTOEX", p.dicname, p.line);
+		SetError(8);
+		return CValue(F_TAG_NOP, 0/*dmy*/);
+	}
+
+	if (!p.arg.array()[0].IsString()) {
+		return CValue(F_TAG_NOP, 0/*dmy*/);
+	}
+
+	aya::string_t str = p.arg.array()[0].GetValueString();
+	CValue result;
+	if(IsIntString(str)) {
+		result = CValue(p.arg.array()[0].GetValueInt());
+	}
+	else if(IsDoubleButNotIntString(str)) {
+		result = CValue(p.arg.array()[0].GetValueDouble());
+	}
+	else {
+		return CValue(F_TAG_NOP, 0 /*dmy*/);
+	}
+
+	if(str!=result.GetValueString()) {
+		return CValue(F_TAG_NOP, 0 /*dmy*/);
+	}
+	
+	if(p.pcellarg[0]->value_GetType() == F_TAG_VARIABLE) {
+		vm.variable().SetValue(p.pcellarg[0]->index, result);
+	}
+	else if(p.pcellarg[0]->value_GetType() == F_TAG_LOCALVARIABLE) {
+		p.lvar.SetValue(p.pcellarg[0]->name, result);
+	}
+	else {
+		vm.logger().Error(E_W, 11, L"CVAUTOEX", p.dicname, p.line);
+		SetError(11);
 	}
 
 	return CValue(F_TAG_NOP, 0/*dmy*/);
