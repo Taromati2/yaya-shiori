@@ -39,8 +39,11 @@ class Ccct {
 public:
 	static char		*Ucs2ToMbcs(const wchar_t *wstr, int charset);
 	static char		*Ucs2ToMbcs(const aya::string_t &wstr, int charset);
+
 	static wchar_t	*MbcsToUcs2(const char *mstr, int charset);
 	static wchar_t	*MbcsToUcs2(const std::string &mstr, int charset);
+	static bool     MbcsToUcs2Buf(aya::string_t &out, const char *mstr, int charset);
+	static bool     MbcsToUcs2Buf(aya::string_t &out, const std::string &mstr, int charset);
 
 	static bool     CheckInvalidCharset(int charset);
 	static int      CharsetTextToID(const wchar_t *ctxt);

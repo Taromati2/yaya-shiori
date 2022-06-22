@@ -399,7 +399,6 @@ char	CParser0::LoadDictionary1(const aya::string_t& filename, std::vector<CDefin
 	// 読み取り
 	CComment	comment;
 	char	ciphered = IsCipheredDic(file);
-	aya::string_t	linebuffer;
 	size_t depth = 0;
 	ptrdiff_t targetfunction = -1;
 	std::vector<CDefine>	defines;
@@ -409,6 +408,11 @@ char	CParser0::LoadDictionary1(const aya::string_t& filename, std::vector<CDefin
 	bool isHereDocumentFirstLine = true;
 
 	aya::string_t	readline;
+	readline.reserve(1000);
+
+	aya::string_t	linebuffer;
+	linebuffer.reserve(2000);
+
 	std::vector<aya::string_t>	factors;
 	int	ret;
 	std::string buf;

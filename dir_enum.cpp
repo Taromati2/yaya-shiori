@@ -154,11 +154,7 @@ bool CDirEnum::next(CDirEnumEntry &entry)
 		entry.name = name_w;
 	}
 	else {
-		aya::char_t *t_wfile = Ccct::MbcsToUcs2(name_a, CHARSET_DEFAULT);
-		if(! t_wfile ) { return false; }
-
-		entry.name = t_wfile;
-		free(t_wfile);
+		Ccct::MbcsToUcs2Buf(entry.name, name_a, CHARSET_DEFAULT);
 	}
 #if defined(POSIX)
 	entry.name = widen(name_a);

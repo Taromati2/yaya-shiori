@@ -353,17 +353,16 @@ int aya::ws_fgets(std::string &buf, aya::string_t &str, FILE *stream, int charse
 		}
 	}
 	
-	wchar_t *wstr_result = Ccct::MbcsToUcs2(buf, charset);
-	if( ! wstr_result ) { return 0; }
+	if ( ! Ccct::MbcsToUcs2Buf(str, buf, charset) ) { return 0; }
 
-	wchar_t *wstr = wstr_result;
-	if(cutspace) {
-		while (IsSpace(*wstr)) { ++wstr; }
+	const wchar_t *cstr = str.c_str();
+	if (cutspace) {
+		while (IsSpace(*cstr)) { ++cstr; }
 	}
-	str = wstr;
-
-	free(wstr_result);
-	wstr_result = NULL;
+	ptrdiff_t diff = cstr - str.c_str();
+	if ( diff > 0 ) {
+		str.erase(0,diff);
+	}
 	
 	if(c == EOF && str.empty()) {
 		return aya::WS_EOF;

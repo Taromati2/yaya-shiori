@@ -121,16 +121,13 @@ void	CBasis::SetPath(aya::global_t h, int len)
 	h = NULL;
 
 	// 文字コードをUCS-2へ変換（ここでのマルチバイト文字コードはOSデフォルト）
-	wchar_t	*wcpath = Ccct::MbcsToUcs2(mbpath, CHARSET_DEFAULT);
-	base_path = wcpath;
+	Ccct::MbcsToUcs2Buf(base_path, mbpath, CHARSET_DEFAULT);
 
 	//最後が\でも/でもなければ足す
 	if(!base_path.length() || ((base_path[base_path.length()-1] != L'/') && (base_path[base_path.length()-1] != L'\\'))) {
 		base_path += L"\\";
 	}
 
-	free(wcpath);
-	wcpath = NULL;
 	load_path = base_path;
 }
 #elif defined(POSIX)
@@ -386,9 +383,11 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 
 	// 読み取り処理
 	CComment	comment;
-	aya::string_t	readline;
 	aya::string_t	cmd, param;
 	size_t line=0;
+	
+	aya::string_t	readline;
+	readline.reserve(1000);
 
 	char cset_real;
 	std::string buf;
@@ -1133,7 +1132,11 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 
 	// 内容を読み取り、順次復元していく
 	aya::string_t	linebuffer;
+	linebuffer.reserve(2000);
+
 	aya::string_t	readline;
+	readline.reserve(1000);
+	
 	aya::string_t	parseline;
 	aya::string_t	varname, value, delimiter, watcher, setter, destorier;
 
