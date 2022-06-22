@@ -391,6 +391,8 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 	size_t line=0;
 
 	char cset_real;
+	std::string buf;
+	buf.reserve(1000);
 
 	while ( true ) {
 		line += 1;
@@ -404,7 +406,7 @@ void	CBasis::LoadBaseConfigureFile_Base(aya::string_t filename,std::vector<CDic1
 			cset_real = setting_charset;
 		}
 
-		if (aya::ws_fgets(readline, fp, cset_real, 0, line) == aya::WS_EOF) {
+		if (aya::ws_fgets(buf, readline, fp, cset_real, 0, line) == aya::WS_EOF) {
 			// ファイルを閉じる
 			fclose(fp);
 			break;
@@ -1136,11 +1138,13 @@ void	CBasis::RestoreVariable(const aya::char_t* pName)
 	aya::string_t	varname, value, delimiter, watcher, setter, destorier;
 
 	char savefile_charset = save_old_charset;
+	std::string buf;
+	buf.reserve(1000);
 
 	for (int i = 1; ; i++) {
 		watcher.clear(), setter.clear(), destorier.clear();
 		// 1行読み込み
-		if(aya::ws_fgets(readline, fp, savefile_charset, ayc, i, false) == aya::WS_EOF)
+		if (aya::ws_fgets(buf, readline, fp, savefile_charset, ayc, i, false) == aya::WS_EOF)
 			break;
 		// 改行は消去
 		CutCrLf(readline);

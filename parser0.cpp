@@ -411,10 +411,12 @@ char	CParser0::LoadDictionary1(const aya::string_t& filename, std::vector<CDefin
 	aya::string_t	readline;
 	std::vector<aya::string_t>	factors;
 	int	ret;
+	std::string buf;
+	buf.reserve(1000);
 
 	for (size_t i = 1; ; i++) {
 		// 1行読み込み　暗号化ファイルの場合は復号も行なう
-		ret = aya::ws_fgets(readline, fp, charset, ciphered, i);
+		ret = aya::ws_fgets(buf, readline, fp, charset, ciphered, i);
 		if (ret == aya::WS_EOF)
 			break;
 

@@ -201,7 +201,10 @@ int	CFile1::Read(aya::string_t &ostr)
 	if(fp == NULL)
 		return 0;
 
-	if(aya::ws_fgets(ostr, fp, charset, 0, bomcheck, false) == aya::WS_EOF)
+	std::string buf;
+	buf.reserve(1000);
+
+	if (aya::ws_fgets(buf, ostr, fp, charset, 0, bomcheck, false) == aya::WS_EOF)
 		return -1;
 
 	bomcheck++;

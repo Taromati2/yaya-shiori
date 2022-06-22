@@ -307,15 +307,14 @@ static int encodecipher(const int c)
 *  機能概要：  aya::string_tに取り出せる簡易版fgets、暗号復号とUCS-2 BOM削除も行なう
 * -----------------------------------------------------------------------
 */
-int aya::ws_fgets(aya::string_t &str, FILE *stream, int charset, int ayc, int lc, int cutspace)
+int aya::ws_fgets(std::string &buf, aya::string_t &str, FILE *stream, int charset, int ayc, int lc, int cutspace)
 {
 	//ayc = 1 復号化
 	//lc = 1 BOM削除
 	//cutspace = 1 先頭の空白削除
 
 	str.erase();
-	std::string buf;
-	buf.reserve(1000);
+	buf.erase();
 	int c = 1;
 	
 	if(ayc) {

@@ -58,12 +58,14 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 
 	MessageArray *ptr = NULL;
 	aya::string_t line;
+	std::string	  buf;
+	buf.reserve(1000);
 
 	ClearMessageArrays();
 
 	while ( true )
 	{
-		if(aya::ws_fgets(line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) == aya::WS_EOF) {
+		if(aya::ws_fgets(buf, line, fp, cset, 0 /*no_enc*/, 1 /*skip_bom*/, 1 /*cut_heading_space*/) == aya::WS_EOF) {
 			break;
 		}
 
@@ -106,8 +108,6 @@ bool ayamsg::LoadMessageFromTxt(const aya::string_t &file,char cset)
 			continue;
 		}
 	}
-
-	fclose(fp);
 
 	return true;
 }
