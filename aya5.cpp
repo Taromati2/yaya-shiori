@@ -137,6 +137,15 @@ public:
 
 static void AYA_InitModule(HMODULE hModule)
 {
+#ifdef _DEBUG
+	int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
+	tmpFlag |= _CRTDBG_LEAK_CHECK_DF | _CRTDBG_ALLOC_MEM_DF;
+	tmpFlag &= ~_CRTDBG_CHECK_CRT_DF;
+	_CrtSetDbgFlag( tmpFlag );
+#endif
+
+	g_hModule = hModule;
+
 	if ( IsUnicodeAware() ) {
 		wchar_t path[MAX_PATH] = L"";
 		::GetModuleFileNameW(hModule, path, sizeof(path) / sizeof(path[0]));
