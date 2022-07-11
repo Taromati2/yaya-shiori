@@ -489,7 +489,7 @@ void	CFunction::Foreach(CLocalVariable &lvar, CSelecter &output,size_t line,int 
 		}
 		else if ( fromtype == F_TAG_HASH ) {
 			t_value.SetType(F_TAG_ARRAY);
-			//t_value.array().push_back(hash_iterator->first); //second(value)�����ŗǂ�
+			//t_value.array().push_back(hash_iterator->first); //second(value)だけで良い
 			t_value.array().push_back(hash_iterator->second);
 			hash_iterator++;
 		}
