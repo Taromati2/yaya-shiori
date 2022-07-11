@@ -49,8 +49,7 @@
  *  返値　　：  0/1=正常/エラー
  * -----------------------------------------------------------------------
  */
-char	CParser0::Parse(int charset, const std::vector<CDic1>& dics)
-{
+bool CParser0::Parse(int charset, const std::vector<CDic1>& dics) {
 	// 読み取り、構文解析、中間コードの生成
 	vm.logger().Message(3);
 	std::vector<CDefine> &gdefines =vm.gdefines();
@@ -111,8 +110,7 @@ bool	CParser0::ParseAfterLoad(const aya::string_t &dicfilename)
  *  返値　　：  0/1=正常/エラー
  * -----------------------------------------------------------------------
  */
-char	CParser0::ParseEmbedString(aya::string_t& str, CStatement& st, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::ParseEmbedString(aya::string_t& str, CStatement& st, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	// 文字列を数式に成形
 	if (!StructFormula(str, st.cell(), dicfilename, linecount))
 		return 1;
@@ -354,8 +352,7 @@ int	CParser0::DynamicUndefFunc(const aya::string_t& funcname)
  *  返値　　：  0/1=ない/あった
  * -----------------------------------------------------------------------
  */
-char CParser0::IsDicFileAlreadyExist(aya::string_t dicfilename)
-{
+bool CParser0::IsDicFileAlreadyExist(aya::string_t dicfilename) {
 	dicfilename = vm.basis().ToFullPath(dicfilename);
 	std::vector<CFunction> &functions = vm.function_parse().func;
 	std::vector<CFunction>::iterator itf = functions.begin();
@@ -904,8 +901,7 @@ ptrdiff_t	CParser0::MakeFunction(const aya::string_t& name, choicetype_t chtype,
  *  返値　　：  0/1=エラー/正常
  * -----------------------------------------------------------------------
  */
-char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, size_t& depth, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t& str, size_t& depth, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	// パラメータのないステートメント
 	CFunction& targetfunction = vm.function_parse().func[targetfunc];
 
@@ -1041,8 +1037,7 @@ char	CParser0::StoreInternalStatement(size_t targetfunc, aya::string_t &str, siz
  *  返値　　：  0/1=エラー/正常
  * -----------------------------------------------------------------------
  */
-char	CParser0::MakeStatement(int type, size_t targetfunc, aya::string_t& str, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::MakeStatement(int type, size_t targetfunc, aya::string_t& str, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	if (!str.size()) {
 		vm.logger().Error(E_E, 27, dicfilename, linecount);
 		return 0;
@@ -1071,8 +1066,7 @@ char	CParser0::MakeStatement(int type, size_t targetfunc, aya::string_t& str, co
  *  渡された文字列はこの関数で破壊されます
  * -----------------------------------------------------------------------
  */
-char	CParser0::StructFormula(aya::string_t& str, std::vector<CCell>& cells, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::StructFormula(aya::string_t& str, std::vector<CCell>& cells, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	// 演算子と項に分解　項の種別はこの時点では調べていない
 	StructFormulaCell(str, cells);
 
@@ -1256,8 +1250,7 @@ char	CParser0::StructFormula(aya::string_t& str, std::vector<CCell>& cells, cons
  *  渡された文字列はこの関数で破壊されます
  * -----------------------------------------------------------------------
  */
-char	CParser0::StructWhen(aya::string_t& str, std::vector<CCell>& cells, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::StructWhen(aya::string_t& str, std::vector<CCell>& cells, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	// 演算子と項に分解　項の種別はこの時点では調べていない
 	StructFormulaCell(str, cells);
 
@@ -1328,12 +1321,9 @@ char	CParser0::StructWhen(aya::string_t& str, std::vector<CCell>& cells, const a
  *  関数名  ：  CParser0::StructFormulaCell
  *  機能概要：  文字列を数式の項と演算子に分解します
  *
- *  返値　　：  0/1=エラー/正常
- *
  *  渡された文字列はこの関数で破壊されます
  * -----------------------------------------------------------------------
  */
-//#include <iostream>
 void	CParser0::StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells)
 {
 	aya::string_t cell_name;
@@ -1504,8 +1494,7 @@ char	CParser0::SetCellType(const aya::string_t &dicfilename)
  *  返値　　：  1/0=エラー/正常
  * -----------------------------------------------------------------------
  */
-char	CParser0::SetCellType1(CCell& scell, char emb, const aya::string_t& dicfilename, ptrdiff_t linecount)
-{
+bool CParser0::SetCellType1(CCell& scell, bool emb, const aya::string_t& dicfilename, ptrdiff_t linecount) {
 	// 関数
 	ptrdiff_t i = vm.function_parse().GetFunctionIndexFromName(scell.value_const().s_value);
 	if(i >= 0) {

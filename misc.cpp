@@ -39,8 +39,7 @@
  *  返値　　：  0/1=失敗/成功
  * -----------------------------------------------------------------------
  */
-char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
-{
+bool Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr) {
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
@@ -60,8 +59,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
 
 //----
 
-char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr)
-{
+bool Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr) {
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
@@ -86,8 +84,7 @@ char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1,
  *  返値　　：  0/1=失敗/成功
  * -----------------------------------------------------------------------
  */
-char	SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
-{
+bool SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr) {
 	aya::string_t::size_type seppoint = str.find(sepstr);
 	if(seppoint == aya::string_t::npos) {
 		dstr0 = str;
@@ -172,8 +169,7 @@ aya::string_t::size_type find_last_str(const aya::string_t &str, const aya::stri
  * -----------------------------------------------------------------------
  */
 
-char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr)
-{
+bool Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr) {
 	aya::string_t::size_type seppoint = Find_IgnoreDQ(str,sepstr);
 	if( seppoint == aya::string_t::npos ) {
 		dstr0 = str;
@@ -488,8 +484,7 @@ aya::string_t::size_type IsInDQ(const aya::string_t &str, aya::string_t::size_ty
  *  返値　　：  0/1=×/○
  * -----------------------------------------------------------------------
  */
-char	IsDoubleButNotIntString(const aya::string_t &str)
-{
+bool IsDoubleButNotIntString(const aya::string_t &str) {
 	int	len = str.size();
 	if(!len)
 		return 0;
@@ -520,8 +515,7 @@ char	IsDoubleButNotIntString(const aya::string_t &str)
  *  返値　　：  0/1=×/○
  * -----------------------------------------------------------------------
  */
-char	IsIntString(const aya::string_t &str)
-{
+bool IsIntString(const aya::string_t &str) {
 	int	len = str.size();
 	if(!len)
 		return 0;
@@ -557,8 +551,7 @@ char	IsIntString(const aya::string_t &str)
  *  返値　　：  0/1=×/○
  * -----------------------------------------------------------------------
  */
-char	IsIntBinString(const aya::string_t &str, char header)
-{
+bool IsIntBinString(const aya::string_t &str, bool header) {
 	int	len = str.size();
 	if(!len)
 		return 0;
@@ -591,8 +584,7 @@ char	IsIntBinString(const aya::string_t &str, char header)
  *  返値　　：  0/1=×/○
  * -----------------------------------------------------------------------
  */
-char	IsIntHexString(const aya::string_t &str, char header)
-{
+bool IsIntHexString(const aya::string_t &str, bool header) {
 	int	len = str.size();
 	if(!len)
 		return 0;

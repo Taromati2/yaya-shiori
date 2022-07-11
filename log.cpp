@@ -321,8 +321,7 @@ void	CLog::Error(int mode, int id)
  *  引数　　：  io 0/1=開始時/終了時
  * -----------------------------------------------------------------------
  */
-void	CLog::Io(char io, const aya::char_t *str)
-{
+void CLog::Io(bool io, const aya::char_t *str) {
 	if(!enable || !iolog)
 		return;
 
@@ -390,8 +389,7 @@ void	CLog::Io(char io, const aya::char_t *str)
 	}
 }
 
-void	CLog::Io(char io, const aya::string_t &str)
-{
+void CLog::Io(bool io, const aya::string_t &str) {
 	Io(io,str.c_str());
 }
 
@@ -401,8 +399,7 @@ void	CLog::Io(char io, const aya::string_t &str)
  *  引数　　：  io 0/1=開始時/終了時
  * -----------------------------------------------------------------------
  */
-void	CLog::IoLib(char io, const aya::string_t &str, const aya::string_t &name)
-{
+void CLog::IoLib(bool io, const aya::string_t &str, const aya::string_t &name) {
 	if(!enable || !iolog)
 		return;
 

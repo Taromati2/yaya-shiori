@@ -24,10 +24,10 @@ aya::string_t::size_type Find_IgnoreDQ(const aya::string_t &str, const aya::stri
 aya::string_t::size_type find_last_str(const aya::string_t &str, const aya::char_t *findstr);
 aya::string_t::size_type find_last_str(const aya::string_t &str, const aya::string_t &findstr);
 
-char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr);
-char	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr);
+bool	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr);
+bool	Split(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr);
 char	SplitOnly(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, aya::char_t *sepstr);
-char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr);
+bool	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::char_t *sepstr);
 char	Split_IgnoreDQ(const aya::string_t &str, aya::string_t &dstr0, aya::string_t &dstr1, const aya::string_t &sepstr);
 size_t	SplitToMultiString(const aya::string_t &str, std::vector<aya::string_t> *array, const aya::string_t &delimiter);
 
@@ -54,10 +54,10 @@ extern const aya::string_t::size_type IsInDQ_runaway;
 extern const aya::string_t::size_type IsInDQ_npos;
 aya::string_t::size_type IsInDQ(const aya::string_t &str, aya::string_t::size_type startpoint, aya::string_t::size_type checkpoint);
 
-char	IsDoubleButNotIntString(const aya::string_t &str);
-char	IsIntString(const aya::string_t &str);
-char	IsIntBinString(const aya::string_t &str, char header);
-char	IsIntHexString(const aya::string_t &str, char header);
+bool	IsDoubleButNotIntString(const aya::string_t &str);
+bool	IsIntString(const aya::string_t &str);
+bool	IsIntBinString(const aya::string_t &str, bool header);
+bool	IsIntHexString(const aya::string_t &str, bool header);
 
 char	IsLegalFunctionName(const aya::string_t &str);
 char	IsLegalVariableName(const aya::string_t &str);

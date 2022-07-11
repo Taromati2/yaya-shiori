@@ -57,20 +57,20 @@ public:
 	inline const aya::string_t& GetName(void) const { return name; }
 	inline bool operator==(const aya::string_t &n) const { return n == name; }
 
-	int	Open(void);
+	bool Open(void);
 	int	Close(void);
 
 	inline aya::int_t Size(void) const { return size; }
 
-	int	Write(const aya::string_t &istr);
-	int	WriteBin(const aya::string_t &istr, const aya::char_t alt);
-	int	WriteDecode(const aya::string_t &istr, const aya::string_t &type);
+	bool Write(const aya::string_t &istr);
+	bool WriteBin(const aya::string_t &istr, const aya::char_t alt);
+	bool WriteDecode(const aya::string_t &istr, const aya::string_t &type);
 
 	int	Read(aya::string_t &ostr);
 	int	ReadBin(aya::string_t &ostr, size_t len, aya::char_t alt);
 	int	ReadEncode(aya::string_t &ostr, size_t len, const aya::string_t &type);
 
-	aya::int_t FSeek(aya::int_t offset,int origin);
+	bool	   FSeek(aya::int_t offset, int origin);
 	aya::int_t FTell();
 };
 
@@ -94,9 +94,9 @@ public:
 	int		Delete(const aya::string_t &name);
 	void	DeleteAll(void);
 
-	int		Write(const aya::string_t &name, const aya::string_t &istr);
-	int		WriteBin(const aya::string_t &name, const aya::string_t &istr, const aya::char_t alt);
-	int		WriteDecode(const aya::string_t &name, const aya::string_t &istr, const aya::string_t &type);
+	bool	Write(const aya::string_t &name, const aya::string_t &istr);
+	bool	WriteBin(const aya::string_t &name, const aya::string_t &istr, const aya::char_t alt);
+	bool	WriteDecode(const aya::string_t &name, const aya::string_t &istr, const aya::string_t &type);
 
 	int		Read(const aya::string_t &name, aya::string_t &ostr);
 	int		ReadBin(const aya::string_t &name, aya::string_t &ostr, size_t len, aya::char_t alt);
@@ -104,7 +104,7 @@ public:
 
 	aya::int_t Size(const aya::string_t &name);
 
-	aya::int_t FSeek(const aya::string_t &name, aya::int_t offset,const aya::string_t &mode);
+	bool	   FSeek(const aya::string_t &name, aya::int_t offset, const aya::string_t &mode);
 	aya::int_t FTell(const aya::string_t &name);
 };
 

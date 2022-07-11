@@ -66,8 +66,8 @@ public:
 
 	aya::string_t	GetName(void) { return name; }
 
-	int		LoadLib(void);
-	int		Load(void);
+	bool	LoadLib(void);
+	bool	Load(void);
 	int		Unload(void);
 	void	Release(void);
 
@@ -109,7 +109,7 @@ public:
 	int		Delete(const aya::string_t &name);
 	void	DeleteAll(void);
 
-	int		Request(const aya::string_t &name, const aya::string_t &istr, aya::string_t &ostr);
+	bool Request(const aya::string_t &name, const aya::string_t &istr, aya::string_t &ostr);
 };
 
 //----

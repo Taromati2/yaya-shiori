@@ -56,8 +56,8 @@ public:
 	CParser0(CAyaVM &vmr) : vm(vmr) {
 		; //NOOP
 	}
-	char	Parse(int charset, const std::vector<CDic1>& dics);
-	char	ParseEmbedString(aya::string_t& str, CStatement &st, const aya::string_t &dicfilename, ptrdiff_t linecount);
+	bool	Parse(int charset, const std::vector<CDic1>& dics);
+	bool	ParseEmbedString(aya::string_t& str, CStatement& st, const aya::string_t& dicfilename, ptrdiff_t linecount);
 
 	int		DynamicLoadDictionary(const aya::string_t& dicfilename, int charset);
 	int		DynamicAppendRuntimeDictionary(const aya::string_t& codes);
@@ -79,16 +79,16 @@ protected:
 	void	SeparateFactor(std::vector<aya::string_t> &s, aya::string_t &line);
 	char	DefineFunctions(std::vector<aya::string_t> &s, const aya::string_t& dicfilename, ptrdiff_t linecount, size_t&depth, ptrdiff_t&targetfunction);
 	ptrdiff_t MakeFunction(const aya::string_t& name, choicetype_t chtype, const aya::string_t& dicfilename, ptrdiff_t linecount);
-	char	StoreInternalStatement(size_t targetfunc, aya::string_t& str, size_t& depth, const aya::string_t& dicfilename, ptrdiff_t linecount);
-	char	MakeStatement(int type, size_t targetfunc, aya::string_t &str, const aya::string_t& dicfilename, ptrdiff_t linecount);
-	char	StructWhen(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
-	char	StructFormula(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	bool	StoreInternalStatement(size_t targetfunc, aya::string_t& str, size_t& depth, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	bool	MakeStatement(int type, size_t targetfunc, aya::string_t& str, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	bool	StructWhen(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	bool	StructFormula(aya::string_t &str, std::vector<CCell> &cells, const aya::string_t& dicfilename, ptrdiff_t linecount);
 	void	StructFormulaCell(aya::string_t &str, std::vector<CCell> &cells);
 
 	char	AddSimpleIfBrace(const aya::string_t &dicfilename);
 
 	char	SetCellType(const aya::string_t &dicfilename);
-	char	SetCellType1(CCell& scell, char emb, const aya::string_t& dicfilename, ptrdiff_t linecount);
+	bool	SetCellType1(CCell& scell, bool emb, const aya::string_t& dicfilename, ptrdiff_t linecount);
 
 	char	MakeCompleteFormula(const aya::string_t &dicfilename);
 	char	ParseEmbeddedFactor(const aya::string_t& dicfilename);
@@ -101,7 +101,7 @@ protected:
 	char	CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicfilename);
 	char	MakeCompleteConvertionWhenToIf(const aya::string_t& dicfilename);
 
-	char	IsDicFileAlreadyExist(aya::string_t dicfilename);
+	bool	IsDicFileAlreadyExist(aya::string_t dicfilename);
 };
 
 //----
