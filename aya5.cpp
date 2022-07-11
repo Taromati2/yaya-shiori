@@ -144,8 +144,6 @@ static void AYA_InitModule(HMODULE hModule)
 	_CrtSetDbgFlag( tmpFlag );
 #endif
 
-	g_hModule = hModule;
-
 	if ( IsUnicodeAware() ) {
 		wchar_t path[MAX_PATH] = L"";
 		::GetModuleFileNameW(hModule, path, sizeof(path) / sizeof(path[0]));
