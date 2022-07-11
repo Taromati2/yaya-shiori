@@ -36,7 +36,6 @@
 #include "function.h"
 #include "lib.h"
 #include "log.h"
-#include "logexcode.h"
 #include "messages.h"
 #include "misc.h"
 #include "parser0.h"
@@ -67,7 +66,6 @@ CBasis::CBasis(CAyaVM &vmr) : vm(vmr)
 {
 	ResetSuppress();
 
-	checkparser = 0;
 	iolog       = 1;
 
 	dic_charset       = CHARSET_SJIS;
@@ -224,18 +222,8 @@ void	CBasis::Configure(void)
 	if(vm.parser0().Parse(dic_charset, dics))
 		SetSuppress();
 
-	{
-		CLogExCode logex(vm);
-
-		if(checkparser)
-			logex.OutExecutionCodeForCheck();
-
-		// 前回終了時に保存した変数を復元
-		RestoreVariable();
-
-		if(checkparser)
-			logex.OutVariableInfoForCheck();
-	}
+	// 前回終了時に保存した変数を復元
+	RestoreVariable();
 
 	// ここまでの処理で重篤なエラーが発生した場合はここで終了
 	if(suppress)
@@ -701,11 +689,6 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 		vm.logger().SetMaxLogNum(maxlognum);
 		return true;
 	}
-	// checkparser closed function
-	else if(cmd == L"checkparser") {
-		checkparser = param == L"on";
-		return true;
-	}
 	// iolog.filter.keyword (old syntax : ignoreiolog)
 	else if(cmd == L"iolog.filter.keyword"){
 		vm.logger().AddIologFilterKeyword(param);
@@ -816,10 +799,6 @@ CValue CBasis::GetParameter(const aya::string_t &cmd)
 	// maxlognum
 	else if ( cmd == L"maxlognum" ) {
 		return CValue((aya::int_t)vm.logger().GetMaxLogNum());
-	}
-	// checkparser closed function
-	else if(cmd == L"checkparser") {
-		return checkparser ? L"on" : L"off";
 	}
 	// iolog.filter.keyword
 	else if(cmd == L"iolog.filter.keyword"){

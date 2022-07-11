@@ -54,7 +54,6 @@
 #include "function.h"
 #include "lib.h"
 #include "log.h"
-#include "logexcode.h"
 #include "messages.h"
 #include "misc.h"
 #include "parser0.h"
@@ -264,8 +263,6 @@ constexpr CSF_FUNCTABLE CSystemFunction::sysfunc[] = {
 	// 特殊(6)
 	{ &CSystemFunction::EXECUTE , L"EXECUTE" } ,
 	{ &CSystemFunction::SETSETTING , L"SETSETTING" } ,
-	// デバッグ用(3)
-	{ &CSystemFunction::DUMPVAR , L"DUMPVAR" } ,
     // �n�b�V��
     { &CSystemFunction::IHASH , L"IHASH" } ,
 	{ &CSystemFunction::HASH_KEYS , L"HASH_KEYS" } ,
@@ -7337,17 +7334,6 @@ bool CSystemFunction::ProcessTranslateSyntax(std::vector<aya::char_t> &array,aya
 		}
 	}
 	return true;
-}
-
-/* -----------------------------------------------------------------------
- *  関数名  ：  CSystemFunction::DUMPVAR
- * -----------------------------------------------------------------------
- */
-CValue	CSystemFunction::DUMPVAR(CSF_FUNCPARAM &p)
-{
-	CLogExCode logex(vm);
-	logex.OutVariableInfoForCheck();
-	return CValue(F_TAG_NOP, 0/*dmy*/);
 }
 
 /* -----------------------------------------------------------------------
