@@ -436,6 +436,10 @@ struct CValueRef {
 		return _m->operator&&(value);
 	}
 
+	void SetArrayValue(const CValue& oval, const CValue& value) {
+		_m->SetArrayValue(oval, value);
+	}
+	
 	CValueArray &array(void) {
 		return _m->array();
 	}
