@@ -288,6 +288,20 @@ struct CValueRef {
 		_m(std::make_shared<CValue>()) {}
 	CValueRef(const std::shared_ptr<CValue> &v):
 		_m(v) {}
+
+	explicit CValueRef(int value):
+		_m(std::make_shared<CValue>(value)) {}
+	explicit CValueRef(aya::int_t value):
+		_m(std::make_shared<CValue>(value)) {}
+	explicit CValueRef(double value):
+		_m(std::make_shared<CValue>(value)) {}
+	explicit CValueRef(const aya::string_t &value):
+		_m(std::make_shared<CValue>(value)) {}
+	explicit CValueRef(const aya::char_t *value):
+		_m(std::make_shared<CValue>(value)) {}
+	explicit CValueRef(int tp, int):
+		_m(std::make_shared<CValue>(tp)) {}
+
 	CValueRef &operator=(const CValueRef &v) {
 		*_m = *v._m;
 		return *this;
