@@ -265,7 +265,7 @@ public:
 			return m_hash->size();
 		}
 	}
-	std::shared_ptr<CValueHash> &hash_shared(void) const {
+	std_shared_ptr<CValueHash> &hash_shared(void) const {
 		return m_hash;
 	}
 	const CValueHash &hash(void) const;
