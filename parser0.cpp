@@ -2261,6 +2261,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 
 	//ここはintでないとだめ……i--のループで負（＝0xFFFFFFFFになってunsignedだと巨大な値）になる可能性がある
 	ptrdiff_t sz = st.cell_size();
+	auto&cells = st.cell();
 	ptrdiff_t i = 0;
 
 	std::vector<ptrdiff_t> depthvec;
@@ -2269,7 +2270,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 	size_t depth = 0;
 	for(i = 0; i < sz; i++) {
 		// 演算子
-		int	type = st.cell()[i].value_GetType();
+		int	type = cells[i].value_GetType();
 		if (type >= F_TAG_ORIGIN && type < F_TAG_ORIGIN_VALUE) {
 			if (F_TAG_ISIN_OR_OUT(type)) {
 				depth += formulatag_depth[type];
@@ -2309,7 +2310,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 			break;
 
 		// 定義の開始　演算子の登録
-		int	t_type = st.cell()[t_index].value_GetType();
+		int	t_type = cells[t_index].value_GetType();
 		CSerial	addserial(t_index);
 		depthvec[t_index] = -2;
 		// 左辺の項を取得
@@ -2317,9 +2318,9 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 		bool out_of_bracket = false;
 		for(i = t_index - 1; i >= 0; i--) {
 			// カッコ深さ検査
-			if (F_TAG_ISIN(st.cell()[i].value_GetType()))
+			if (F_TAG_ISIN(cells[i].value_GetType()))
 				f_depth--;
-			else if (F_TAG_ISOUT(st.cell()[i].value_GetType()))
+			else if (F_TAG_ISOUT(cells[i].value_GetType()))
 				f_depth++;
 			if (!f_depth) {
 				out_of_bracket = true;
@@ -2346,9 +2347,9 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 			f_depth = 1;
 			for( ; i >= 0; i--) {
 				// カッコ深さ検査
-				if (F_TAG_ISIN(st.cell()[i].value_GetType()))
+				if (F_TAG_ISIN(cells[i].value_GetType()))
 					f_depth--;
-				else if (F_TAG_ISOUT(st.cell()[i].value_GetType()))
+				else if (F_TAG_ISOUT(cells[i].value_GetType()))
 					f_depth++;
 				if (!f_depth) {
 					i--;
@@ -2356,7 +2357,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 				}
 			}
 			if (i > 0) {
-				if (st.cell()[i].value_GetType() == F_TAG_FUNCPARAM) {
+				if (cells[i].value_GetType() == F_TAG_FUNCPARAM) {
 					// 関数
 					depthvec[t_index] = -1;
 					addserial.tindex = i;
@@ -2366,7 +2367,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 						vm.logger().Error(E_E, 25, dicfilename, st.linecount);
 						return 1;
 					}
-					if (F_TAG_ISFUNC(st.cell()[i].value_GetType()) && depthvec[i] == -2) {
+					if (F_TAG_ISFUNC(cells[i].value_GetType()) && depthvec[i] == -2) {
 						addserial.index.insert(addserial.index.begin(), i);
 						depthvec[i] = -1;
 					}
@@ -2381,9 +2382,9 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 			f_depth = 1;
 			for(i = t_index + 1; i < sz; i++) {
 				// カッコ深さ検査
-				if (F_TAG_ISIN(st.cell()[i].value_GetType()))
+				if (F_TAG_ISIN(cells[i].value_GetType()))
 					f_depth++;
-				else if (F_TAG_ISOUT(st.cell()[i].value_GetType()))
+				else if (F_TAG_ISOUT(cells[i].value_GetType()))
 					f_depth--;
 				if (!f_depth)
 					break;
@@ -2396,7 +2397,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 				}
 				else if (depthvec[i] == -1)
 					continue;
-				else if (st.cell()[i].value_GetType() == F_TAG_COMMA) {
+				else if (cells[i].value_GetType() == F_TAG_COMMA) {
 					depthvec[i] = -1;
 					continue;
 				}
@@ -2435,7 +2436,7 @@ char	CParser0::CheckDepthAndSerialize1(CStatement& st, const aya::string_t& dicf
 	for(i = 0; i < sz; i++) {
 		if (depthvec[i] == -2) {
 			scount++;
-			if (st.cell()[i].value_GetType() >= F_TAG_ORIGIN_VALUE) {
+			if (cells[i].value_GetType() >= F_TAG_ORIGIN_VALUE) {
 				CSerial	addserial(i);
 				addserial.index.emplace_back(0);	// dmy
 				addserial.index.emplace_back(0);	// dmy
