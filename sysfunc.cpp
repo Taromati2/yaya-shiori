@@ -127,6 +127,7 @@ constexpr CSF_FUNCTABLE CSystemFunction::sysfunc[] = {
 	// 文字列操作
 	{ &CSystemFunction::STRSTR , L"STRSTR" } ,
 	{ &CSystemFunction::STRLEN , L"STRLEN" } ,
+	{ &CSystemFunction::STRSCH, L"STRSCH"},
 	{ &CSystemFunction::REPLACE , L"REPLACE" } ,
 	{ &CSystemFunction::SUBSTR , L"SUBSTR" } ,
 	{ &CSystemFunction::ERASE , L"ERASE" } ,
@@ -1750,6 +1751,38 @@ CValue	CSystemFunction::STRLEN(CSF_FUNCPARAM &p)
 	}
 
 	return CValue((aya::int_t)p.arg.array()[0].GetValueString().size());
+}
+
+/* -----------------------------------------------------------------------
+ *  関数名  ：  CSystemFunction::STRSCH
+ * -----------------------------------------------------------------------
+ */
+CValue	CSystemFunction::STRSCH(CSF_FUNCPARAM &p)
+{
+	if (p.arg.array_size() < 2) {
+		vm.logger().Error(E_W, 8, L"STRSCH", p.dicname, p.line);
+		SetError(8);
+		return CValue(-1);
+	}
+	if (!p.arg.array()[0].IsString() || !p.arg.array()[1].IsString()) {
+		vm.logger().Error(E_W, 9, L"STRSCH", p.dicname, p.line);
+		SetError(9);
+	}
+	
+	aya::string_t &str = p.arg.array()[0].GetValueString();
+	aya::string_t &sub = p.arg.array()[1].GetValueString();
+	aya::string_t::size_type len = sub.size();
+
+	CValue result;
+	CValueArray&output = result.array();
+	aya::string_t::size_type pos = 0;
+	while ((pos = str.find(sub, pos)) != aya::string_t::npos) {
+		output.emplace_back(CValue(static_cast<aya::int_t>(pos)));
+		pos += len;
+	}
+	if (output.size() < 1)
+		return CValue(-1);
+	return result;
 }
 
 /* -----------------------------------------------------------------------
