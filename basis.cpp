@@ -712,8 +712,7 @@ bool CBasis::SetParameter(const aya::string_t &cmd, const aya::string_t &param, 
 	// iolog.filter.mode
 	else if(cmd == L"iolog.filter.mode"){
 		vm.logger().SetIologFilterMode(
-			(param.find(L"allow") != aya::string_t::npos)
-			);
+			(param.find(L"white") != aya::string_t::npos) || (param.find(L"allow") != aya::string_t::npos));
 		return true;
 	}
 
