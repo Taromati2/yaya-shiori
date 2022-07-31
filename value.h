@@ -86,18 +86,17 @@ public:
 		i_value = rhs.i_value;
 		d_value = rhs.d_value;
 
-		if( type == F_TAG_ARRAY ) {
+		if(type == F_TAG_STRING)
+			s_value = rhs.s_value;
+		else
+			s_value.clear();
+		if( type == F_TAG_ARRAY )
 			m_array = rhs.m_array;
-		}
-        else if (type == F_TAG_HASH) {
+        else if (type == F_TAG_HASH)
             m_hash = rhs.m_hash;
-        }
 		else {
 			m_array.reset();
-            m_hash.reset((CValueHash*)NULL);
-			if ( type == F_TAG_STRING ) {
-				s_value = rhs.s_value;
-			}
+            m_hash.reset();
 		}
 		return *this;
 	}
