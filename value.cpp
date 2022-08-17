@@ -1093,6 +1093,25 @@ CValueRef CValue::operator[](const CValue &value) const {
 	return CValueRef(aya::string_t());
 }
 
+//////////////////////////////////////////////
+
+inline void CValue::array_check() const {
+	for(CValueArray::iterator it = m_array->begin(); it != m_array->end();) {
+		if(it->GetType() == F_TAG_ARRAY) {
+			if (m_array == it->_m->m_array) {
+				it = m_array->erase(it);
+				continue;
+			}
+			CValueArray tmp = *it->_m->m_array;
+			it->_m->m_array->clear();
+			m_array->erase(it);
+			m_array->insert(it, tmp.begin(), tmp.end());
+			continue;
+		}
+		it++;
+	}
+}
+
 inline const CValueHash &CValue::hash(void) const {
 	if(!m_hash.get()) {
 		m_hash.reset(new CValueHash);

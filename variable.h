@@ -224,12 +224,8 @@ public:
 
 	aya::string_t&	GetDelimiter(size_t index) { return var[index].delimiter; }
 
-	void	SetValue(size_t index, const CValue &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, aya::int_t value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, double value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, const aya::string_t &value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, const aya::char_t *value) { var[index].Enable(); var[index].value() = value; }
-	void	SetValue(size_t index, const CValueArray &value) { var[index].Enable(); var[index].value() = value; }
+	template<class T>
+	void	SetValue(size_t index, T&&value) { var[index].Enable(); var[index].value() = value; }
 	void	SetDelimiter(size_t index, const aya::string_t value) { var[index].Enable(); var[index].delimiter = value; }
 
 	void	EnableValue(size_t index) { var[index].Enable(); }

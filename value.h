@@ -223,11 +223,13 @@ public:
 	}
 
 	//////////////////////////////////////////////
+	void				   array_check() const;
 	CValueArray::size_type array_size(void) const {
 		if( ! m_array.get() ) {
 			return 0;
 		}
 		else {
+			array_check();
 			return m_array->size();
 		}
 	}
@@ -238,6 +240,7 @@ public:
 		if( ! m_array.get() ) {
 			m_array=std::make_shared<CValueArray>();
 		}
+		array_check();
 		return *m_array;
 	}
 	CValueArray& array(void) {
@@ -248,6 +251,7 @@ public:
 			CValueArray *pV = m_array.get();
 			m_array=std::make_shared<CValueArray>(*pV);
 		}
+		array_check();
 		return *m_array;
 	}
 
