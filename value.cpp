@@ -548,9 +548,13 @@ CValue &CValue::operator =(const CValueHash &value)&
 	return *this;
 }
 
-void CValue::SubstToArray(CValueArray &value)&
-{
+void CValue::SubstToArray(const CValueArray &value) & {
 	type    = F_TAG_ARRAY;
+	array() = value;
+	s_value.clear();
+}
+void CValue::SubstToArray(CValueArray&&value) & {
+	type = F_TAG_ARRAY;
 	array().swap(value);
 	s_value.clear();
 }
@@ -1031,13 +1035,13 @@ CValueRef CValue::operator[](const CValue &value) const {
 					else if(i >= e_index)
 						break;
 				}
-				return CValueRef(CValue(result_str));
+				return CValueRef(result_str);
 			}
 		}
 		else {
 			// 範囲なし
 			if(0 <= order && order < sz)
-				return CValueRef(CValue(s_array[order]));
+				return CValueRef(s_array[order]);
 			else 
 				return CValueRef();
 		}
@@ -1050,7 +1054,7 @@ CValueRef CValue::operator[](const CValue &value) const {
 		if(aoflg) {
 			// 範囲あり
 			if(order1 < 0 || order >= sz)
-				return CValueRef(CValue(F_TAG_ARRAY, 0 /*dmy*/));
+				return CValueRef(F_TAG_ARRAY, 0 /*dmy*/);
 			else {
 				size_t	s_index = (size_t)std::max<aya::int_t>(order, 0);
 				size_t	e_index = (size_t)std::min<aya::int_t>((aya::int_t)order1 + 1, sz);
@@ -1104,8 +1108,8 @@ inline void CValue::array_check() const {
 			}
 			CValueArray tmp = *it->_m->m_array;
 			it->_m->m_array->clear();
-			m_array->erase(it);
-			m_array->insert(it, tmp.begin(), tmp.end());
+			it = m_array->erase(it);
+			it = m_array->insert(it, tmp.begin(), tmp.end());
 			continue;
 		}
 		it++;
