@@ -4307,6 +4307,7 @@ static bool Utils_HTTPToTM(const char *pText,struct tm &outTime)
 
 	unsigned int len = strlen(pText) + 1;
 	char *pData = (char*)malloc(len);
+	if( ! pData ) { return false; }
 	memcpy(pData,pText,len);
 
 	char *pTok = strtok(pData,HTTP_DATE_TOKEN);
@@ -4455,7 +4456,14 @@ CValue	CSystemFunction::GETTICKCOUNT(CSF_FUNCPARAM &p)
 		return CValue(static_cast<aya::int_t>(pGetTickCount64()));
 	}
 	else {
+		#if _MSC_VER
+			#pragma warning(push)
+			#pragma warning(disable: 28159)
+		#endif
 		return CValue(static_cast<aya::int_t>(::GetTickCount()));
+		#if _MSC_VER
+			#pragma warning(pop)
+		#endif
 	}
 
 #elif defined(POSIX)
@@ -4497,7 +4505,14 @@ CValue	CSystemFunction::GETMEMINFO(CSF_FUNCPARAM &p)
 	else {
 		MEMORYSTATUS meminfo = {0};
 		meminfo.dwLength = sizeof(meminfo);
+		#if _MSC_VER
+			#pragma warning(push)
+			#pragma warning(disable: 28159)
+		#endif
 		::GlobalMemoryStatus(&meminfo);
+		#if _MSC_VER
+			#pragma warning(pop)
+		#endif
 
 		result.array().emplace_back((aya::int_t)meminfo.dwMemoryLoad   );
 		result.array().emplace_back((aya::int_t)meminfo.dwTotalPhys    );
